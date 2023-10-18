@@ -34,7 +34,8 @@ class State:
     def __init__(self, i, transition, ini, fin):
         self.id = i #Id es el numero de estado
         self.next_state = []
-        self.next_state.append(transition)
+        if i != None:
+            self.next_state.append(transition)
         self.initial_state = ini
         self.final_state = fin
     
@@ -69,10 +70,12 @@ class State:
     def displayTransitions(self):
         i = 0
         for s in self.next_state:
-            print("To State: " + str(self.next_state[i].getState()) + " with Symbol: " + self.next_state[i].getSymbol())
-            i+=1
+            if (self.next_state[i] != None):
+                print("To State: " + str(self.next_state[i].getState()) + " with Symbol: " + self.next_state[i].getSymbol())
+                i+=1
+                
     def __str__(self):
-        return "Id: " + str(self.id) + " Initial State: " + str(self.initial_state) + " Final State: " + str(self.final_state) + "\n"
+        return "Id: " + str(self.id) + " | Initial State: " + str(self.initial_state) + " | Final State: " + str(self.final_state) + "\n"
     
 
 #Para la lista _______________________________________________________________________
@@ -131,24 +134,33 @@ class LinkedList:
             current = current.next
         print("None")
 
-# Creating a linked list
-my_linked_list = LinkedList()
+'''
+____________________________________________________________________________________________________
 
-#Creating and object
-t1 = Transition("a", 1)
-t2 = Transition("b", 0)
-s = State(0,t1, True, False)
-r = State(1, t1, False, True)
+Se planea hacer una función por cada uno de los casos posibles
 
-s.addTransition(t2)
-s.addTransition(t1)
-
-# Appending elements to the linked list
-my_linked_list.append(s)
-my_linked_list.append(r)
-
-# Displaying the linked list
-my_linked_list.display()
-
-#Se planea hacer una función por cada uno de los casos posibles
+____________________________________________________________________________________________________
+'''
+def SingleLetter(sym):
+    List_SingleLetter = LinkedList()
+    t = Transition(sym, 1)
+    state1 = State(0, t, True, False)
+    state2 = State(1,None, False, True)
+    List_SingleLetter.append(state1)
+    List_SingleLetter.append(state2)
     
+    List_SingleLetter.display()
+    return
+
+
+
+'''
+____________________________________________________________________________________________________
+
+
+SCRIPT PRINCIPAL
+
+____________________________________________________________________________________________________
+'''
+
+SingleLetter("a")
