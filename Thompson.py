@@ -120,9 +120,6 @@ class LinkedList:
                 return
             current = current.next 
     
-    def get_first_node(self):
-        return self.head
-    
     def getTail(self): #Obtiene el ultimo estado de la lista
         current = self.head
         while current.next:
