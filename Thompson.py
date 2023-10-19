@@ -283,7 +283,7 @@ def Cerradura_de_Kleene(List): #Recibe como parametro una única lista enlazada
     return List
     
 
-def Cerradura_opcional(L):
+def Cerradura_Opcional(L):
     #Corregimos la numeracion de la lista, añadindo 1 porque agregaremos un nuevo edo inicial
     CorrectNumerarion(L,1)
     #Corregimos la bandera de estado inicial del primer estado de la lista
@@ -329,6 +329,9 @@ def Cerradura_Positiva(L):
     state2 = State(L.getTail().getId()+1,None,False,True) #Declaramos el nuevo estado final
     L.append(state2) #Añadimos el estado final a la lista
     
+    #Imprimimos la lista
+    L.display()
+    
     return L   
     
 '''
@@ -346,4 +349,5 @@ L2 = SingleLetter("b")
 #L1 = Union(L1,L2)
 #Concatenation(L1,L2)
 #Cerradura_de_Kleene(L1)
-#Cerradura_opcional(L1)
+#Cerradura_Opcional(L1)
+#Cerradura_Positiva(L1)
