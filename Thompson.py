@@ -152,6 +152,9 @@ class LinkedList:
             count+=1
         return count
     
+    def concatenateWith(self, List):
+        self.getLastNode().next = List.head
+    
     def display(self):
         current = self.head
         while current:
@@ -161,15 +164,6 @@ class LinkedList:
             if current != None:
                 print(end=" -> ")
     
-    def display2(self):
-        current = self.head
-        current = current.next2
-        while current:
-            if current != None:
-                print(end=" -> ")
-            print(current.state)
-            current.state.displayTransitions()
-            current = current.next 
 
 '''
 ____________________________________________________________________________________________________
@@ -182,8 +176,9 @@ def CorrectNumerarion(List, adder):
     current = List.head
     while current:
             current.state.setId(current.state.getId()+adder)  
-            for t in current.state.l_transitions:
-                t.setState(t.getState() + adder)
+            if current.state.getTransitions() != None: #Se añadio esta condicion para evitar errores
+                for t in current.state.l_transitions:
+                    t.setState(t.getState() + adder)
             current = current.next 
     return
 
@@ -200,6 +195,31 @@ def SingleLetter(sym):
 
     #List_SingleLetter.display()
     return List_SingleLetter
+
+def Concatenation(L1,L2):
+    #Quitamos que el estado final de la primera lista sea final
+    L1.getTail().setFinalState(False)
+    
+    #Corregimos la numeracion de las transiciones de la segunda lista  y
+    #Copiamos las transiciones del estado que se va a borrar 
+    for t in L2.head.state.l_transitions:
+        t.setState(t.getState() + 1)
+        L1.getTail().addTransition(t)
+
+    #Eliminamos el estado inicial de la segunda lista    
+    L2.delete(L2.head.state)
+    
+    #Corregimos la numeracion de la segunda lista aumentandole 1 a cada estado
+    CorrectNumerarion(L2,1)
+    
+    #Concatenamos las listas
+    L1.concatenateWith(L2)
+    
+    #Imprimimos la lista
+    L1.display()
+    
+    return L1
+    
 
 def Union(L1, L2): #L1 y L2 son listas enlazadas
     CorrectNumerarion(L1,1)
@@ -226,25 +246,90 @@ def Union(L1, L2): #L1 y L2 son listas enlazadas
     L1.getTail().setFinalState(False)
     L2.getTail().setFinalState(False)
 
-
     L1.getTail().addTransition(t3)    
     L2.getTail().addTransition(t3)
 
     L2.append(state2)
-     
-    #Generamos el nuevo nodo
-    #aux_state = L1.head
     
-    L1.getLastNode().next = L2.head
+    L1.concatenateWith(L2)
 
-    #L1.append(aux_state)
-    
     #Imprimimos la lista
-    L1.display()
-
+    #L1.display()
     
     return L1
     
+def Cerradura_de_Kleene(List): #Recibe como parametro una única lista enlazada
+    #Creamos las transiciones nueva y estados nuevos
+    CorrectNumerarion(List,1) #Corregimos la numeracion de la lista
+    
+    List.head.state.setIniState(False) #El primer estado de la lista ya sera el inicial
+    List.getTail().setFinalState(False) #El ultimo estado de la lista ya no sera final
+    
+    t1 = Transition("λ",List.head.state.getId())  #Transicion para llegar a la lista
+    t2 = Transition("λ",List.getTail().getId()+1) #Transicion con el edo final
+    state1 = State(0,t1,True,False) #Declaramos el nuevo estado inicial
+    state1.addTransition(t2) 
+    List.prepend(state1) #Añadimos el estado inicial a la lista
+    
+    state2 = State(List.getTail().getId()+1,None,False,True) #Declaramos el nuevo estado final
+    t3 = Transition("λ",List.getTail().getId()+1) #Transicion para llegar al estado final
+    t4 = Transition("λ",List.head.state.getId()+1) #Transicion para llegar al estado inicial + 1 (Lo que lo hace while)
+    List.getTail().addTransition(t3) #Añadimos la transicion al estado final de la lista
+    List.getTail().addTransition(t4) 
+    List.append(state2) #Añadimos el estado final a la lista
+    
+    List.display()
+    
+    return List
+    
+
+def Cerradura_opcional(L):
+    #Corregimos la numeracion de la lista, añadindo 1 porque agregaremos un nuevo edo inicial
+    CorrectNumerarion(L,1)
+    #Corregimos la bandera de estado inicial del primer estado de la lista
+    L.head.state.setIniState(False)
+    #Corregimos la bandera de estado final del ultimo estado de la lista
+    L.getTail().setFinalState(False)
+    #Creamos las transiciones nuevas y estados nuevos
+    
+    t1 = Transition("λ",L.head.state.getId()) #Transicion para llegar a la lista
+    t2 = Transition("λ",L.getTail().getId()+1) #Transicion para llegar al estado final
+    state1 = State(0,t1,True,False) #Declaramos el nuevo estado inicial
+    state1.addTransition(t2)
+    
+    L.prepend(state1) #Añadimos el estado inicial a la lista
+    
+    t3 = Transition("λ",L.getTail().getId()+1) #Transicion para llegar al estado final
+    L.getTail().addTransition(t3) #Añadimos la transicion al estado final de la lista
+    state2 = State(L.getTail().getId()+1,None,False,True) #Declaramos el nuevo estado final
+    L.append(state2) #Añadimos el estado final a la lista
+    
+    #Impresion de la lista
+    L.display()
+    
+    return L
+
+def Cerradura_Positiva(L):
+    #Corregimos la numeracion de la lista, ya que añadiremos un nuevo estado inicial
+    CorrectNumerarion(L,1)
+    #Corregimos la bandera de estado inicial del primer estado de la lista
+    L.head.state.setIniState(False)
+    #Corregimos la bandera de estado final del ultimo estado de la lista
+    L.getTail().setFinalState(False)
+    
+    #Creamos las transiciones nuevas y estados nuevos
+    t1 = Transition("λ",L.head.state.getId()) #Transicion para llegar a la lista
+    state1 = State(0,t1,True,False) #Declaramos el nuevo estado inicial
+    L.prepend(state1) #Añadimos el estado inicial a la lista
+    
+    t2 = Transition("λ",L.getTail().getId()+1) #Transicion para llegar al estado final
+    t3 = Transition("λ",L.head.state.getId()+1) #Transicion para llegar al estado inicial + 1
+    L.getTail().addTransition(t2) 
+    L.getTail().addTransition(t3)
+    state2 = State(L.getTail().getId()+1,None,False,True) #Declaramos el nuevo estado final
+    L.append(state2) #Añadimos el estado final a la lista
+    
+    return L   
     
 '''
 ____________________________________________________________________________________________________
@@ -258,4 +343,7 @@ ________________________________________________________________________________
 L1 = SingleLetter("a")
 L2 = SingleLetter("b")
 
-L2 = Union(L1,L2)
+#L1 = Union(L1,L2)
+#Concatenation(L1,L2)
+#Cerradura_de_Kleene(L1)
+#Cerradura_opcional(L1)
