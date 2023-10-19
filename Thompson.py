@@ -119,12 +119,21 @@ class LinkedList:
                 current.next = current.next.next
                 return
             current = current.next 
-            
-    def getTail(self):
+    
+    def get_first_node(self):
+        return self.head
+    
+    def getTail(self): #Obtiene el ultimo estado de la lista
         current = self.head
         while current.next:
             current = current.next
         return current.state
+    
+    def getLastNode(self): #Obtiene el ultimo nodo de la lista
+        current = self.head
+        while current.next:
+            current = current.next
+        return current
     
     def getNode(self, n):
         if not self.head:
@@ -226,8 +235,12 @@ def Union(L1, L2): #L1 y L2 son listas enlazadas
 
     L2.append(state2)
      
-    L1.append(L2.head.state)
-    #L2.display()
+    #Generamos el nuevo nodo
+    #aux_state = L1.head
+    
+    L1.getLastNode().next = L2.head
+
+    #L1.append(aux_state)
     
     #Imprimimos la lista
     L1.display()
