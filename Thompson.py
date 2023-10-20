@@ -72,7 +72,8 @@ class State:
     def __str__(self):
         return "Id: " + str(self.id) + " | Initial State: " + str(self.initial_state) + " | Final State: " + str(self.final_state) + "\n"
     
-
+    def Sort_Transitions(self):
+        self.l_transitions.sort(key = lambda transition: transition.getSymbol())
 #Para la lista _______________________________________________________________________
 
 # Definición de la clase Node
@@ -222,40 +223,28 @@ def Concatenation(L1,L2):
     
 
 def Union(L1, L2): #L1 y L2 son listas enlazadas
-    CorrectNumerarion(L1,1)
+    CorrectNumerarion(L1, 1)
+    CorrectNumerarion(L2, L1.getTail().getId() + 1)
+    
     L1.head.state.setIniState(False) #El primer estado de la primera lista ya no es inicial
-    #Obtenemos el ultimo id para poder numerar los estados de la segunda lista
-    sum = L1.getTail().getId() + 1 
-    sum  = sum - L2.head.state.getId()
-    CorrectNumerarion(L2,sum)
-    #Una vez corregidas las numeraciones concaenetamos las listas
-    t1 = Transition("λ",L1.head.state.getId()) #Enlace con la primera lista
-    t2 = Transition("λ",L2.head.state.getId()) #Enlace con la primera lista
-    state1 = State(0, t1, True, False) #El que se va a agregar al inicio
-    state1.addTransition(t2)
+    new_initial_state = State(0, Transition("λ", L1.head.state.getId()), True, False)
+    new_initial_state.addTransition(Transition("λ", L2.head.state.getId()))
+    L1.prepend(new_initial_state)
+
     
+    new_final_state = State(L2.getTail().getId() + 1, None, False, True)
     
-    L1.prepend(state1)
-     
-    state2 = State(L2.getTail().getId()+1,None, False, True) #El que se va a agregar al final
-   
-    
-    #Corregimos la bandera de estado final, añadimos la transicion y añadimos el último estado
-    t3 = Transition("λ", L2.getTail().getId()+1) #Transicion para el que se agrega al final, se agrega al último de ambas litas
-    #print(t3)
     L1.getTail().setFinalState(False)
     L2.getTail().setFinalState(False)
-
-    L1.getTail().addTransition(t3)    
-    L2.getTail().addTransition(t3)
-
-    L2.append(state2)
+    
+    
+    L1.getTail().addTransition(Transition("λ", new_final_state.getId()))
+    L2.getTail().addTransition(Transition("λ", new_final_state.getId()))
+    L2.append(new_final_state)
     
     L1.concatenateWith(L2)
-
     #Imprimimos la lista
-    #L1.display()
-    
+  
     return L1
     
 def Cerradura_de_Kleene(List): #Recibe como parametro una única lista enlazada
@@ -343,8 +332,8 @@ SCRIPT PRINCIPAL
 ____________________________________________________________________________________________________
 '''
 
-L1 = SingleLetter("a")
-L2 = SingleLetter("b")
+#L1 = SingleLetter("a")
+#L2 = SingleLetter("b")
 
 #L1 = Union(L1,L2)
 #Concatenation(L1,L2)
