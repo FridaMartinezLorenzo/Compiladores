@@ -1,2 +1,0 @@
-alfabeto1: cb
-expresion: c|b
