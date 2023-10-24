@@ -245,7 +245,9 @@ def Union(L1, L2): #L1 y L2 son listas enlazadas
     CorrectNumerarion(L1, 1)
     CorrectNumerarion(L2, L1.getTail().getId() + 1)
     
+    
     L1.head.state.setIniState(False) #El primer estado de la primera lista ya no es inicial
+    L2.head.state.setIniState(False)
     new_initial_state = State(0, Transition("λ", L1.head.state.getId()), True, False)
     new_initial_state.addTransition(Transition("λ", L2.head.state.getId()))
     L1.prepend(new_initial_state)
