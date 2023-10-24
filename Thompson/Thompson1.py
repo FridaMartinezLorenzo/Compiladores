@@ -484,6 +484,8 @@ Script para probar el procesamiento de expresiones regulares
 _______________________________________________________________________________________________________
 '''
 
+#Comentario
+
 
 #nombre_archivo = 'expresiones.txt'
 ## Leer el archivo de entrada
