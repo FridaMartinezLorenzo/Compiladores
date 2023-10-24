@@ -1,3 +1,0 @@
-letrasdigitosifor
-(i.f)|((f.o).r)|(letras)
-((((i.f)|((f.o).r))|(letras.((letras|digitos)*))))
