@@ -216,12 +216,11 @@ def Concatenation(L1,L2):
     #Quitamos que el estado final de la primera lista sea final
     L1.getTail().setFinalState(False)
     
-    #Corregimos la numeracion de las transiciones de la segunda lista  y
+    
     #Copiamos las transiciones del estado que se va a borrar 
     for t in L2.head.state.l_transitions:
-       # t.setState(t.getState() + 1)
-       t.setState(L1.getTail().getId()+1)
-       L1.getTail().addTransition(t)
+        t.setState(t.getState() + L1.getTail().getId()) #Corregimos la numeracion de los estados internos, no se le suma uno ya el inicial
+        L1.getTail().addTransition(t)
 
 
     #Eliminamos el estado inicial de la segunda lista    
