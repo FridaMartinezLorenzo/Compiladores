@@ -5,7 +5,7 @@ from lexico import *
 
 root=Tk()
 root.title("Compilador")#Titulo de ventana
-root.iconbitmap("Compiler.ico")#Icono del programa
+#root.iconbitmap("Compiler.ico")#Icono del programa
 root.geometry("900x900")
 root.state("zoomed")
 root.config(bg="#363062")
