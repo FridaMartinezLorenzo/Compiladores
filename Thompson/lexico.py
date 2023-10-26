@@ -134,13 +134,11 @@ def  printTable(alfabeto,tabla,canvas,lexWindow,arrLabels,er):
             if num_estado == 0:
                 #print("entro al edo inicial")
                 celda=Label(tabla,text=str(num_estado)+" i",width=20,borderwidth=1, relief="solid",font=font1)
-                celda.grid(row=i,column=l)
             if nodo.state.getFinalState():
                 celda=Label(tabla,text=str(num_estado)+ " f",width=20,borderwidth=1, relief="solid",font=font1)
-                celda.grid(row=i,column=l)
             if not nodo.state.getFinalState() and num_estado != 0:
                 celda=Label(tabla,text=str(num_estado),width=20,borderwidth=1, relief="solid",font=font1)
-                celda.grid(row=i,column=l)
+            celda.grid(row=i,column=l)
             l+=1
             edos=nodo.state.getTransitions()
             #print(edos)
