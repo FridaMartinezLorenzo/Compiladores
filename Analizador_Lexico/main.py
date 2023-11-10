@@ -34,31 +34,44 @@ def file_breakdown (lines, tokenList):
         nline+=1
         aux=""
         flag_string = False
+        flag_found1 = False
         for char in line:
+            print("flag_string: ",flag_string)
             aux+=char
-            if char == ' ' or char == '\n' or char == '\t' and flag_string == False: 
+            if (char == ' ' or char == '\n' ) and flag_string == False: 
+                aux=""
                 pass
+            print("aux: ",aux)
             if char == '"' and flag_string == True: #Se encontro el fin de la cadena
                 tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
                 flag_string = False
                 aux=""
-            if char == '"': #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
+                break
+            if char == '"' and flag_string == False: #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
                 flag_string = True
+                pass
             if char in lista_simbolos and flag_string == False: #Es un simbolo
                 tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
                 aux=""
+                pass
             if flag_string == False:
+                print("Evaluacion de palabra reservada")
+                print(len(aux))
                 flag_found1 = word_search(aux, nline, tokenList)
+                print("flag_found1: ",flag_found1)
                 if (flag_found1 == True):
+                    flag_found1 = False
                     aux=""
+                pass
+                    
 
 
 
 def word_search(word, nline, tokenList):
     if word in lista_pReservadas:
         tokenList.append(element_TokenTable(word, word, nline)) #Agregamos a la lista de tokens
-        return True
-    return False
+        return 1
+    return 0
     
 def es_numero(cadena):
     try:
@@ -80,3 +93,5 @@ tokenList = []
 file_breakdown(lines_entry_file, tokenList)   
 for token in tokenList:
     print(token)
+#word_search(cad, 1, tokenList)
+#print(tokenList[0])
