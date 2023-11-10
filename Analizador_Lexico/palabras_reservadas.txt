@@ -47,5 +47,9 @@ volatile
 while
 true
 false
-System.out.println
 String
+main
+args
+System
+out
+println
