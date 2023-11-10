@@ -35,9 +35,9 @@ def file_breakdown (lines, tokenList):
         aux=""
         flag_string = False
         for char in line:
+            aux+=char
             if char == ' ' or char == '\n' or char == '\t' and flag_string == False: 
                 pass
-            aux+=char
             if char == '"' and flag_string == True: #Se encontro el fin de la cadena
                 tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
                 flag_string = False
@@ -60,7 +60,12 @@ def word_search(word, nline, tokenList):
         return True
     return False
     
-
+def es_numero(cadena):
+    try:
+        int(cadena) # Intenta convertir la cadena a un entero
+        return True
+    except ValueError:
+        return False # La conversión a entero falló, no es un número
     
     
 #_____________________________________________________________________________________________________________________________________
