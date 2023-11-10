@@ -1,28 +1,17 @@
 from tkinter import *
+import lexico as lx
 from tkinter import filedialog
-from tkinter import ttk
 from tkinter import messagebox
+from tkinter import ttk
 from Thompson1 import *
-from Conjuntos import *
 
-def analizadorLexico(opcion):
-    arr=["Algoritmo de Thompson", "Algoritmo de Contruccion de Conjuntos","Analizador Lexico"]
-    if opcion==arr[0]:
-        Thompson()#Crea la ventana y dentro de ella se llama a la funcion que imprime y borra la tabla de transiciones
-    elif opcion==arr[1]:
-        Conjuntos()
-    else:
-        messagebox.showerror("Error","Aún no existe esa opción")
-    return
-
-def Thompson():
+def Conjuntos():
     font1=("Times New Roman",12)
     arrLabels=[]
     lexWindow=Toplevel()
     lexWindow.state("zoomed")
-    lexWindow.title("Algoritmo de Thompson")
+    lexWindow.title("Construccion de Conjuntos")
     lexWindow.config(bg="#363062")
-
 
     archivoL=Label(lexWindow,text="Selecciona una expresión regular",width=30,font=font1)
     archivoL.place(x=20,y=30)
@@ -87,12 +76,22 @@ def Thompson():
     canvas.bind_all("<KeyPress-Up>", on_arrow_key_v)
     canvas.bind_all("<KeyPress-Down>", on_arrow_key_v)
 
-    
+
 def  printTable(alfabeto,tabla,canvas,lexWindow,arrLabels,er):
     expresion_reg = er
     expresion_reg = expresion_postfija(expresion_reg)
     print(expresion_reg)
     Automata=evaluar_expresion_postfija(expresion_reg)
+
+    cerradura=[]
+    cerradura.append(Automata.head.state.getId())#Agrega el estado inicial para que se haga la cerradura
+    cerradura=cerradura_e(cerradura,Automata.head,"λ")
+    cerradura.insert(0,0)#Agrega el estado 0 al inicio del primer estado manualmente
+    cerradura.sort()#Ordena solo el estado 0
+    NuevosEstados=AFD(cerradura,alfabeto,Automata.head)
+    NuevosEstados.insert(0,cerradura)
+    print(NuevosEstados)
+
     font1=("Times New Roman",11)
     estados=alfabeto
     columna=1
@@ -130,14 +129,7 @@ def  printTable(alfabeto,tabla,canvas,lexWindow,arrLabels,er):
         while nodo:
             l=0
             num_estado=nodo.state.getId()
-            if num_estado == 0:
-                #print("entro al edo inicial")
-                celda=Label(tabla,text=str(num_estado)+" i",width=20,borderwidth=1, relief="solid",font=font1)
-            if nodo.state.getFinalState():
-                celda=Label(tabla,text=str(num_estado)+ " f",width=20,borderwidth=1, relief="solid",font=font1)
-            if not nodo.state.getFinalState() and num_estado != 0:
-                celda=Label(tabla,text=str(num_estado),width=20,borderwidth=1, relief="solid",font=font1)
-            
+            celda=Label(tabla,text=str(num_estado),width=20,borderwidth=1, relief="solid",font=font1)
             celda.grid(row=i,column=l)
             l+=1
             edos=nodo.state.getTransitions()
@@ -170,6 +162,85 @@ def  printTable(alfabeto,tabla,canvas,lexWindow,arrLabels,er):
         lexWindow.grab_set()
         messagebox.showerror("Error","introduce un alfabeto")
         lexWindow.grab_release()
+
+def cerradura_e(elems,head,letra):
+    pila=[]
+    conjunto=[]
+    #edos=nodo.state.getTransitions()#Tiene todas las transiciones de 0
+
+    for i in elems:#Agrega elementos a la pila
+        pila.append(i)
+    while pila:#Va sacando los numeros de estados de la lista
+        elemento=pila.pop()#Obtiene el ultimo estado en la pila
+        nodo1=buscarNodo(head,elemento)#Busca si esta el nodo en la
+        edos=nodo1.state.getTransitions()#Retorna el arreglo de transiciones
+        for transition in edos:#Recorrer todas las transiciones
+            char=transition.getSymbol()#Obtiene solo el simbolo de la transicion iterada
+            if char==letra:#Compara lambda con el simbolo de la transicion
+                pila.append(transition.getState())#Agrega el estado al conjunto generado
+                conjunto.append(transition.getState())#
+    return conjunto #Devuelve una lista
+
+def buscarNodo(head,num_estado):
+    nodo=head
+    while nodo:
+        if num_estado==nodo.state.getId():
+            return nodo#Encontro el nodo buscado
+        nodo=nodo.next
+    return None#No encontró nada
+
+def AFD(listaInicial,abecedario,head):
+    pilaEdos=[]
+    pilaEdos.append(listaInicial)#Agregar el primer estado A
+    conjuntoEdos=[]#trae los nuevos estados
+    transicionesEstado=[]#trae una lista de tuplas
+    transiciones=[]
+    while pilaEdos:
+        #print("pila",pilaEdos)
+        estado=pilaEdos.pop()
+       # pilaEdos = [sublista for sublista in pilaEdos if sublista]
+        for letra in abecedario:#Mandar el alfabeto sin epsilon
+            cerraduraAux= Mueve(estado,head,letra)
+            nuevoEdo=cerradura_e(cerraduraAux,head,"λ")
+            nuevoEdo+=cerraduraAux#Unir la lista Mueve con la otra lista
+            nuevoEdo.sort()
+            if nuevoEdo not in conjuntoEdos:
+                pilaEdos.append(nuevoEdo)
+                #pilaEdos = [sublista for sublista in pilaEdos if sublista]
+                conjuntoEdos.append(nuevoEdo)
+                #conjuntoEdos=[sublista for sublista in conjuntoEdos if sublista]
+                #print("Conjunto=",conjuntoEdos)    
+
+            transicionesEstado.append((estado,letra,nuevoEdo))
+            cerraduraAux.clear()
+            
+        transiciones.append(transicionesEstado)
+        #transicionesEstado.clear()
+
+    #conjuntoEdos=[sublista for sublista in conjuntoEdos if sublista]
+    return conjuntoEdos
+
+def Mueve(elems,head,letra):#Esta funcion realiza el Mueve
+    pila=[]
+    conjunto=[]
+    for i in elems:
+        pila.append(i)
+    while pila:
+        elemento=pila.pop()#Obtener
+        nodo1=buscarNodo(head,elemento)
+        edos=nodo1.state.getTransitions()
+        for transition in edos:#Recorrer todas las transiciones
+            char=transition.getSymbol()
+            if char==letra:
+                #pila.append(transition.getState())
+                conjunto.append(transition.getState())
+
+    #cerraduratemp=cerradura_e(conjunto,head,letra)
+    cerradura=[]
+    for j in conjunto:
+        cerradura.append(j)
+
+    return cerradura #Devuelve una lista
 
 def cleanTable(tabla,arrLabels,alphaEntry,erEntry):
     for widget in tabla.winfo_children():
