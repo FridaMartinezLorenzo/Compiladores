@@ -35,13 +35,12 @@ def file_breakdown (lines, tokenList):
         aux=""
         flag_string = False
         for char in line:
-            if char == ' ' or char == '\n' or char == '\t':
+            if char == ' ' or char == '\n' or char == '\t' and flag_string == False: 
                 pass
             aux+=char
-            print("flag_string: ",flag_string)
-            print("aux: ",aux)
             if char == '"' and flag_string == True: #Se encontro el fin de la cadena
                 tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
+                flag_string = False
                 aux=""
             if char == '"': #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
                 flag_string = True
