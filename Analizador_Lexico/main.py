@@ -81,6 +81,18 @@ def es_numero(cadena):
     except ValueError:
         return False # La conversión a entero falló, no es un número
     
+def es_nint_re(cadena):
+    prueba = re.match(r'[0-9]*(?!\.)', cadena)    # Cualquier repetición de números, pero sin un punto decimal al final
+    if prueba is not None:
+        return True
+    return False
+
+def es_float_re(cadena):
+    prueba = re.match(r'[0-9]*\.[0-9]', cadena)   # Dos repeticiones de números, con un punto decimal entre ellas
+    if prueba is not None:
+        return True
+    return False
+    
 def es_id(cadena):
     prueba = re.match('[a-zA-Z][a-zA-z0-9$_]*', cadena)
     if prueba is not None:
