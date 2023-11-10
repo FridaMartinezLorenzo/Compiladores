@@ -1,2 +1,2 @@
-letrasdigitosif
+ifletrasdigitos
 (i.f)|(letras.(letras|digitos)*)
