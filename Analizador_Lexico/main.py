@@ -1,4 +1,5 @@
 from Cargado_Datos import *
+import re
 
 class element_TokenTable:
     def __init__(self, lexema, token,nl):
@@ -79,6 +80,24 @@ def es_numero(cadena):
         return True
     except ValueError:
         return False # La conversión a entero falló, no es un número
+    
+def es_id(cadena):
+    prueba = re.match('[a-zA-Z][a-zA-z0-9$_]*', cadena)
+    if prueba is not None:
+        return True     # Encontró un nombre que empieza por letra, y contiene letras, números, $ ó _
+    return False
+
+def es_cad(cadena):
+    prueba = re.match('".*"', cadena)
+    if prueba is not None:
+        return True     # Encontró una frase que está encerrada entre comillas dobles
+    return False
+
+def es_car(cadena):
+    prueba = re.match("'.'", cadena)
+    if prueba is not None:
+        return True     # Encuentra un solo caracter entre comillas simples
+    return False
     
     
 #_____________________________________________________________________________________________________________________________________
