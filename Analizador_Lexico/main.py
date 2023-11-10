@@ -29,15 +29,30 @@ class element_TokenTable:
     
 
 def file_breakdown (lines, tokenList):
-    nline = 1
+    nline = 0
     for line in lines:
-        words_list = line.split()
-        for word in words_list:
-            flag_found = word_search(word, nline, tokenList) 
-            if (flag_found == False):
-                not_word_search(word, nline, tokenList)
-        nline += 1
-        #print("nline: ", nline)
+        nline+=1
+        aux=""
+        flag_string = False
+        for char in line:
+            if char == ' ' or char == '\n' or char == '\t':
+                pass
+            aux+=char
+            print("flag_string: ",flag_string)
+            print("aux: ",aux)
+            if char == '"' and flag_string == True: #Se encontro el fin de la cadena
+                tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
+                aux=""
+            if char == '"': #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
+                flag_string = True
+            if char in lista_simbolos and flag_string == False: #Es un simbolo
+                tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
+                aux=""
+            if flag_string == False:
+                flag_found1 = word_search(aux, nline, tokenList)
+                if (flag_found1 == True):
+                    aux=""
+
 
 
 def word_search(word, nline, tokenList):
@@ -46,34 +61,7 @@ def word_search(word, nline, tokenList):
         return True
     return False
     
-    
-def not_word_search(word, nline, tokenList):
-    aux=""
-    flag_string = False
-    for char in word:
-        aux+=char
-        print("flag_string: ",flag_string)
-        print("aux: ",aux)
-        
-        if char == '"' and flag_string == True: #Se encontro el fin de la cadena
-            tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
-            aux=""
-            
-        if char == '"': #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
-            flag_string = True
-            
-        if char in lista_simbolos and flag_string == False: #Es un simbolo
-            tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
-            aux=""
-            
-        
-        if flag_string == False:
-            flag_found1 = word_search(aux, nline, tokenList)
-            if (flag_found1 == True):
-                aux=""
-        
-    
-        
+
     
     
 #_____________________________________________________________________________________________________________________________________
@@ -88,8 +76,3 @@ tokenList = []
 file_breakdown(lines_entry_file, tokenList)   
 for token in tokenList:
     print(token)
-
-#char = '"hola"'
-#if '"' == char:
-#    print("good")
-#not_word_search(char, 1, tokenList)
