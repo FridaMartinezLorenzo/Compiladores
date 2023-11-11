@@ -38,6 +38,7 @@ def file_breakdown (lines, tokenList):
         flag_found1 = False
         flag_id = False
         flag_number = False
+        flag_float = False
         for char in line:
             #print("flag_string: ",flag_string)
             aux+=char
@@ -62,21 +63,26 @@ def file_breakdown (lines, tokenList):
                 tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
                 aux=""
                 pass
-        
+            print("char:",char)
             if char.isdigit() and flag_string == False and flag_id == False: #Es un numero
-                print("Evaluacion de numero")
+                print("Se encontró un numero")
                 flag_number = True
                 pass
             
+            #Deteccion de los numeros de punto flotante
             elif flag_number == True: #Evaluar si es un numero entero o flotante
+                print("Evaluando un numero\n")
                 if char == '.':
-                    if(not es_float_re(aux)):
-                        aux = aux[-1]
+                    flag_float = True
+    
+                elif(es_float_re(aux) and flag_float == True):
+                        print("Evaluando un flotante")
                         tokenList.append(element_TokenTable(aux, "nfloat", nline))                      
                         aux=""
                         aux+=char
                         flag_number = False
-                if (not char.isdigit()):
+                        
+                if (not char.isdigit()) and flag_float == False:# Se había detectado un numero, se lee hasta que no sea un numero
                     aux = aux[:-1] #"le restamos uno porque el ultimo no es un numero"
                     tokenList.append(element_TokenTable(aux, "nint", nline))                      
                     aux=""
@@ -126,7 +132,7 @@ def es_float_re(cadena):
     return False
     
 def es_id(cadena):
-    prueba = re.match('[a-zA-Z][a-zA-z0-9$_]*', cadena)
+    prueba = re.match('[a-zA-Z][a-zA-z0-9$_]f*', cadena)
     if prueba is not None:
         return True     # Encontró un nombre que empieza por letra, y contiene letras, números, $ ó _
     return False
@@ -153,6 +159,8 @@ with open(file, 'r') as f:
     lines_entry_file = f.readlines()
 
 tokenList = []
+#print(es_float_re("1.2f;"))
+
 file_breakdown(lines_entry_file, tokenList)   
 for token in tokenList:
     print(token)
