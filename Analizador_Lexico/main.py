@@ -27,7 +27,8 @@ class element_TokenTable:
 
     def __str__(self):
         return self.lexema + " " + self.token+ " " + str(self.nlinea)
-     
+    
+#Función que desgloza el archivo de entrada 
 def file_breakdown (lines, tokenList):
     nline = 0
     for line in lines:
@@ -69,14 +70,11 @@ def file_breakdown (lines, tokenList):
                 print("posNum: ", posNum)
                 flag_found_num = es_numero(char)
                 
-                #Evaluamos si posNum es diferente de vacio y existe un punto, porque entonces existe un flotante
-                if posNum != "" and char == '.':
-                    print("Es un flotante")
+                if posNum != "" and char == '.': #Evaluamos si posNum es diferente de vacio y existe un punto, porque entonces existe un flotante
+                    print("Evaluacion de un flotante")
                     flag_found_float = True
                     posNum += char #Agregamos el punto al numero
                     pass
-                
-                print("flag_found_num: ", flag_found_num)
                 
                 if flag_found_num == True:
                     posNum += char
