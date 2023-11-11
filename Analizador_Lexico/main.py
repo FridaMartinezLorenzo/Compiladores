@@ -36,34 +36,63 @@ def file_breakdown (lines, tokenList):
         aux=""
         flag_string = False
         flag_found1 = False
+        flag_id = False
+        flag_number = False
         for char in line:
-            print("flag_string: ",flag_string)
+            #print("flag_string: ",flag_string)
             aux+=char
             if (char == ' ' or char == '\n' ) and flag_string == False: 
                 aux=""
                 pass
-            print("aux: ",aux)
-            if char == '"' and flag_string == True: #Se encontro el fin de la cadena
-                tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
-                flag_string = False
-                aux=""
-                break
+            print("aux:",aux)
             if char == '"' and flag_string == False: #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
                 flag_string = True
                 pass
-            if char in lista_simbolos and flag_string == False: #Es un simbolo
+            
+            elif char == '"' and flag_string == True: #Se encontro el fin de la cadena
+                tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
+                flag_string = False
+                aux=""
+                pass
+            
+            if char in lista_simbolos and flag_string == False and flag_number == False: #Es un simbolo
                 tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
                 aux=""
                 pass
+        
+            if char.isdigit() and flag_string == False and flag_id == False: #Es un numero
+                print("Evaluacion de numero")
+                flag_number = True
+                pass
+            
+            elif flag_number == True: #Evaluar si es un numero entero o flotante
+                if char == '.':
+                    if(not es_float_re(aux)):
+                        aux-=char
+                        tokenList.append(element_TokenTable(aux, "nfloat", nline))                      
+                        aux=""
+                        aux+=char
+                        flag_number = False
+                if (not char.isdigit()):
+                    aux-=char
+                    tokenList.append(element_TokenTable(aux, "nint", nline))                      
+                    aux=""
+                    aux+=char
+                    flag_number = False
+                pass
+            
+            if char.isalpha(): #Existe la posibilidad de que sea un identificador 
+                #print("Evaluacion de identificador")
+                flag_id = True
+                pass
             if flag_string == False:
-                print("Evaluacion de palabra reservada")
-                print(len(aux))
+                #print("Evaluacion de palabra reservada")
                 flag_found1 = word_search(aux, nline, tokenList)
-                print("flag_found1: ",flag_found1)
+                #print("flag_found1: ",flag_found1)
                 if (flag_found1 == True):
                     flag_found1 = False
                     aux=""
-                pass
+                pass       
                     
 
 
