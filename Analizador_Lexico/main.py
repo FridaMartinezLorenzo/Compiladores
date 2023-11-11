@@ -27,81 +27,95 @@ class element_TokenTable:
 
     def __str__(self):
         return self.lexema + " " + self.token+ " " + str(self.nlinea)
-    
-
+     
 def file_breakdown (lines, tokenList):
     nline = 0
     for line in lines:
         nline+=1
         aux=""
+        posNum = ""
         flag_string = False
-        flag_found1 = False
-        flag_id = False
-        flag_number = False
-        flag_float = False
+        flag_found1 = flag_found_id = flag_found_num = flag_found_float=False
+        flag_chkLex = False
         for char in line:
-            #print("flag_string: ",flag_string)
-            aux+=char
+
+            # Si es espacio, y no es cadena, se activa la bandera para revisar el lexema
+            print("flag_string: ",flag_string)
             if (char == ' ' or char == '\n' ) and flag_string == False: 
-                aux=""
+                flag_chkLex = True
+            else:
+                aux+=char
                 pass
-            print("aux:",aux)
-            if char == '"' and flag_string == False: #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
-                flag_string = True
-                pass
-            
-            elif char == '"' and flag_string == True: #Se encontro el fin de la cadena
+
+            # Si son comillas, revisar el estado de la bandera de cadena
+            print("aux: ",aux)
+            if char == '"' and flag_string == True: #Se encontro el fin de la cadena
                 tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
                 flag_string = False
                 aux=""
                 pass
-            
-            print("flag_number:",flag_number)
-            print("flag_string:",flag_string)
-            if char in lista_simbolos and flag_string == False and flag_number == False: #Es un simbolo
-                print("Evaluacion de simbolo")
+            elif char == '"' and flag_string == False: #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
+                flag_string = True
+                pass
+
+            # Si es un solo caracter, revisa si es un símbolo
+            if char in lista_simbolos and flag_string == False and posNum == "": #Es un simbolo
                 tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
                 aux=""
                 pass
-            print("char:",char)
-            if char.isdigit() and flag_string == False and flag_id == False: #Es un numero
-                print("Se encontró un numero")
-                flag_number = True
-                pass
-            
-            #Deteccion de los numeros de punto flotante
-            elif flag_number == True: #Evaluar si es un numero entero o flotante
-                print("Evaluando un numero\n")
-                if char == '.':
-                    flag_float = True
-    
-                elif(es_float_re(aux) and flag_float == True):
-                        print("Evaluando un flotante")
-                        tokenList.append(element_TokenTable(aux, "nfloat", nline))                      
-                        aux=""
-                        aux+=char
-                        flag_number = False
-                        
-                if (not char.isdigit()) and flag_float == False:# Se había detectado un numero, se lee hasta que no sea un numero
-                    aux = aux[:-1] #"le restamos uno porque el ultimo no es un numero"
-                    tokenList.append(element_TokenTable(aux, "nint", nline))                      
-                    aux=""
-                    aux+=char
-                    flag_number = False
-                pass
-            
-            if char.isalpha(): #Existe la posibilidad de que sea un identificador 
-                #print("Evaluacion de identificador")
-                #flag_id = True
-                pass
             if flag_string == False:
-                #print("Evaluacion de palabra reservada")
+                print(len(aux))
+                print("Evaluacion de número entero")        # Busca si es un entero
+                print("posNum: ", posNum)
+                flag_found_num = es_numero(char)
+                
+                #Evaluamos si posNum es diferente de vacio y existe un punto, porque entonces existe un flotante
+                if posNum != "" and char == '.':
+                    print("Es un flotante")
+                    flag_found_float = True
+                    posNum += char #Agregamos el punto al numero
+                    pass
+                
+                print("flag_found_num: ", flag_found_num)
+                
+                if flag_found_num == True:
+                    posNum += char
+                    flag_found_num = False
+                    pass
+                elif flag_found_float == False:
+                    if posNum != "" and char in lista_simbolos:     # Si hay un número posible, y el último char es un símbolo
+                        tokenList.append(element_TokenTable(posNum, "nint", nline))
+
+                        tokenAux = tokenList[len(tokenList)-2]          # Intercambia posiciones del símbolo y el número, para que estén bien ordenados
+                        tokenList[len(tokenList)-2] = tokenList[len(tokenList)-1]
+                        tokenList[len(tokenList)-1] = tokenAux
+                        posNum = ""
+                
+                if flag_found_float == True and char != '.' and flag_found_num == False:
+                    if posNum != "" and char in lista_simbolos:     # Si hay un número posible, y el último char es un símbolo
+                        tokenList.append(element_TokenTable(posNum, "nfloat", nline))
+                        flag_found_float = False
+
+                        tokenAux = tokenList[len(tokenList)-2]          # Intercambia posiciones del símbolo y el número, para que estén bien ordenados
+                        tokenList[len(tokenList)-2] = tokenList[len(tokenList)-1]
+                        tokenList[len(tokenList)-1] = tokenAux
+                        posNum = ""
+
+                print("Evaluacion de palabra reservada")    # Busca si es una palabra reservada
                 flag_found1 = word_search(aux, nline, tokenList)
-                #print("flag_found1: ",flag_found1)
+                print("flag_found1: ",flag_found1)
                 if (flag_found1 == True):
                     flag_found1 = False
                     aux=""
-                pass       
+                elif flag_chkLex == True:       # Si se detecta un espacio, puede haber una palabra por revisar
+                    print("Evaluación de id")   # Busca si es un id
+                    flag_found_id = es_id(aux, nline, tokenList)
+                    if flag_found_id is True:
+                        flag_found_id = False
+                        aux = ""
+                    flag_chkLex = False
+                    aux = ""
+                pass
                     
 
 
@@ -131,9 +145,10 @@ def es_float_re(cadena):
         return True
     return False
     
-def es_id(cadena):
-    prueba = re.match('[a-zA-Z][a-zA-z0-9$_]f*', cadena)
+def es_id(cadena, nline, tokenList):
+    prueba = re.match('[a-zA-Z][a-zA-z0-9$_]*', cadena)
     if prueba is not None:
+        tokenList.append(element_TokenTable(cadena, "id", nline))
         return True     # Encontró un nombre que empieza por letra, y contiene letras, números, $ ó _
     return False
 
