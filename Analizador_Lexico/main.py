@@ -55,7 +55,10 @@ def file_breakdown (lines, tokenList):
                 aux=""
                 pass
             
+            print("flag_number:",flag_number)
+            print("flag_string:",flag_string)
             if char in lista_simbolos and flag_string == False and flag_number == False: #Es un simbolo
+                print("Evaluacion de simbolo")
                 tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
                 aux=""
                 pass
@@ -68,13 +71,13 @@ def file_breakdown (lines, tokenList):
             elif flag_number == True: #Evaluar si es un numero entero o flotante
                 if char == '.':
                     if(not es_float_re(aux)):
-                        aux-=char
+                        aux = aux[-1]
                         tokenList.append(element_TokenTable(aux, "nfloat", nline))                      
                         aux=""
                         aux+=char
                         flag_number = False
                 if (not char.isdigit()):
-                    aux-=char
+                    aux = aux[:-1] #"le restamos uno porque el ultimo no es un numero"
                     tokenList.append(element_TokenTable(aux, "nint", nline))                      
                     aux=""
                     aux+=char
@@ -83,7 +86,7 @@ def file_breakdown (lines, tokenList):
             
             if char.isalpha(): #Existe la posibilidad de que sea un identificador 
                 #print("Evaluacion de identificador")
-                flag_id = True
+                #flag_id = True
                 pass
             if flag_string == False:
                 #print("Evaluacion de palabra reservada")
