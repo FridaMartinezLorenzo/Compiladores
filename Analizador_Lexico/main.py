@@ -34,35 +34,69 @@ def file_breakdown (lines, tokenList):
     for line in lines:
         nline+=1
         aux=""
+        posNum = ""
         flag_string = False
-        flag_found1 = False
+        flag_found1 = flag_found_id = flag_found_int = False
+        flag_chkLex = False
         for char in line:
+
+            # Si es espacio, y no es cadena, se activa la bandera para revisar el lexema
             print("flag_string: ",flag_string)
-            aux+=char
             if (char == ' ' or char == '\n' ) and flag_string == False: 
-                aux=""
+                flag_chkLex = True
+            else:
+                aux+=char
                 pass
+
+            # Si son comillas, revisar el estado de la bandera de cadena
             print("aux: ",aux)
             if char == '"' and flag_string == True: #Se encontro el fin de la cadena
                 tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
                 flag_string = False
                 aux=""
-                break
-            if char == '"' and flag_string == False: #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
+                pass
+            elif char == '"' and flag_string == False: #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
                 flag_string = True
                 pass
+
+            # Si es un solo caracter, revisa si es un símbolo
             if char in lista_simbolos and flag_string == False: #Es un simbolo
                 tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
                 aux=""
                 pass
             if flag_string == False:
-                print("Evaluacion de palabra reservada")
                 print(len(aux))
+                print("Evaluacion de número entero")        # Busca si es un entero
+                print("posNum: ", posNum)
+                flag_found_int = es_numero(char)
+                print("flag_found_int: ", flag_found_int)
+                if flag_found_int == True:
+                    posNum += char
+                    flag_found_int = False
+                    pass
+                else:
+                    if posNum != "" and char in lista_simbolos:     # Si hay un número posible, y el último char es un símbolo
+                        tokenList.append(element_TokenTable(posNum, "nint", nline))
+
+                        tokenAux = tokenList[len(tokenList)-2]          # Intercambia posiciones del símbolo y el número, para que estén bien ordenados
+                        tokenList[len(tokenList)-2] = tokenList[len(tokenList)-1]
+                        tokenList[len(tokenList)-1] = tokenAux
+                        posNum = ""
+
+                print("Evaluacion de palabra reservada")    # Busca si es una palabra reservada
                 flag_found1 = word_search(aux, nline, tokenList)
                 print("flag_found1: ",flag_found1)
                 if (flag_found1 == True):
                     flag_found1 = False
                     aux=""
+                elif flag_chkLex == True:       # Si se detecta un espacio, puede haber una palabra por revisar
+                    print("Evaluación de id")   # Busca si es un id
+                    flag_found_id = es_id(aux, nline, tokenList)
+                    if flag_found_id is True:
+                        flag_found_id = False
+                        aux = ""
+                    flag_chkLex = False
+                    aux = ""
                 pass
                     
 
@@ -81,8 +115,8 @@ def es_numero(cadena):
     except ValueError:
         return False # La conversión a entero falló, no es un número
     
-def es_nint_re(cadena):
-    prueba = re.match(r'[0-9]*(?!\.)', cadena)    # Cualquier repetición de números, pero sin un punto decimal al final
+def es_num_re(cadena):
+    prueba = re.match(r'[0-9]', cadena)    # Cualquier repetición de números, pero sin un punto decimal al final
     if prueba is not None:
         return True
     return False
@@ -93,9 +127,10 @@ def es_float_re(cadena):
         return True
     return False
     
-def es_id(cadena):
+def es_id(cadena, nline, tokenList):
     prueba = re.match('[a-zA-Z][a-zA-z0-9$_]*', cadena)
     if prueba is not None:
+        tokenList.append(element_TokenTable(cadena, "id", nline))
         return True     # Encontró un nombre que empieza por letra, y contiene letras, números, $ ó _
     return False
 
