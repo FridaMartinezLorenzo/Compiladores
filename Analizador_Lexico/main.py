@@ -29,7 +29,7 @@ class element_TokenTable:
         return self.lexema + " " + self.token+ " " + str(self.nlinea)
     
 #Función que desgloza el archivo de entrada 
-def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
+def file_breakdown (lines, tokenList):
     nline = 0
     for line in lines:
         nline+=1
@@ -60,22 +60,11 @@ def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
                 pass
 
             # Si es un solo caracter, revisa si es un símbolo
-            if char in lista_simbolos and flag_string == False: #Es un simbolo
-                if (flag_found_float == True):                  # Si ya se ha encontrado un punto antes en el número
-                    tokenList.append(element_TokenTable(posNum, "nfloat", nline))
-                    tokenList.append(element_TokenTable(char, char, nline))
-                    flag_found_float = False
-                    posNum = ""
-                elif (posNum != "" and char != "."):            # Si hay un número entero posible, pero el símbolo no es un punto
-                    tokenList.append(element_TokenTable(posNum, "nint", nline))
-                    tokenList.append(element_TokenTable(char, char, nline))
-                    posNum = ""
-                elif (posNum == ""):
-                    tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
-                aux = ""
+            if char in lista_simbolos and flag_string == False and posNum == "": #Es un simbolo
+                tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
+                aux=""
                 pass
-
-            if flag_string == False:        # Si no es cadena, revisa el estado actual de aux y char...
+            if flag_string == False:
                 print(len(aux))
                 print("Evaluacion de número entero")        # Busca si es un entero
                 print("posNum: ", posNum)
@@ -92,14 +81,22 @@ def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
                     flag_found_num = False
                     pass
                 elif flag_found_float == False:
-                    if posNum != "" and char in lista_simbolos:     # Si hay un número entero posible
+                    if posNum != "" and char in lista_simbolos:     # Si hay un número posible, y el último char es un símbolo
                         tokenList.append(element_TokenTable(posNum, "nint", nline))
+
+                        tokenAux = tokenList[len(tokenList)-2]          # Intercambia posiciones del símbolo y el número, para que estén bien ordenados
+                        tokenList[len(tokenList)-2] = tokenList[len(tokenList)-1]
+                        tokenList[len(tokenList)-1] = tokenAux
                         posNum = ""
                 
                 if flag_found_float == True and char != '.' and flag_found_num == False:
-                    if posNum != "" and char in lista_simbolos:     # Si hay un número flotante posible
+                    if posNum != "" and char in lista_simbolos:     # Si hay un número posible, y el último char es un símbolo
                         tokenList.append(element_TokenTable(posNum, "nfloat", nline))
                         flag_found_float = False
+
+                        tokenAux = tokenList[len(tokenList)-2]          # Intercambia posiciones del símbolo y el número, para que estén bien ordenados
+                        tokenList[len(tokenList)-2] = tokenList[len(tokenList)-1]
+                        tokenList[len(tokenList)-1] = tokenAux
                         posNum = ""
 
                 print("Evaluacion de palabra reservada")    # Busca si es una palabra reservada
@@ -112,11 +109,8 @@ def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
                     print("Evaluación de id")   # Busca si es un id
                     flag_found_id = es_id(aux, nline, tokenList)
                     if flag_found_id is True:
-                        if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
-                            symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
                         flag_found_id = False
-                    elif (len(aux)>0):
-                        errorList_prog.append(nline, "Error: Lexema "+aux+" no definido")
+                        aux = ""
                     flag_chkLex = False
                     aux = ""
                 pass
@@ -137,8 +131,8 @@ def es_numero(cadena):
     except ValueError:
         return False # La conversión a entero falló, no es un número
     
-def es_num_re(cadena):
-    prueba = re.match(r'[0-9]', cadena)    # Cualquier repetición de números, pero sin un punto decimal al final
+def es_nint_re(cadena):
+    prueba = re.match(r'[0-9]*(?!\.)', cadena)    # Cualquier repetición de números, pero sin un punto decimal al final
     if prueba is not None:
         return True
     return False
@@ -178,6 +172,8 @@ with open(file, 'r') as f:
     lines_entry_file = f.readlines()
 
 tokenList = []
+#print(es_float_re("1.2f;"))
+
 file_breakdown(lines_entry_file, tokenList)   
 for token in tokenList:
     print(token)
