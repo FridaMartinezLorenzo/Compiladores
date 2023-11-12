@@ -54,10 +54,10 @@ def Analizador_Lexico():
     canvas.create_window((100, 50), window=tabla, anchor=NW)
     canvas.configure(yscrollcommand=scrollbar.set,xscrollcommand=horizontal_scrollbar.set)
     
-    ttokenButton=Button(lexWindow,text="Tabla Tokens",width=20,command=lambda:MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lineas_entrada,Prog_lista_tokens,Prog_lista_simbolos),bg="#83A2E8" ,font=font1)
+    ttokenButton=Button(lexWindow,text="Tabla Tokens",width=20,command=lambda:MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lineas_entrada,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores),bg="#83A2E8" ,font=font1)
     ttokenButton.place(x=350,y=70)
         
-    terroresButton=Button(lexWindow,text="Tabla Errores",width=20,command=lambda:MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels),bg="#83A2E8" ,font=font1)
+    terroresButton=Button(lexWindow,text="Tabla Errores",width=20,command=lambda:MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores),bg="#83A2E8" ,font=font1)
     terroresButton.place(x=550,y=70)
     
     tsimbolosButton=Button(lexWindow,text="Tabla Símbolos",width=20,command=lambda:MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos),bg="#83A2E8" ,font=font1)
@@ -85,15 +85,18 @@ def cleanTable(tabla,arrLabels):
     arrLabels.clear()#Limpiar la lista
     
     
-def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file,Prog_lista_tokens,Prog_lista_simbolos):
+def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores):
     font1=("Times New Roman",11)
     columnas_titulos = ['Lexema', 'Token', '# Linea']
     columna=1
     lista_Tokens = []
     listaSimbolos_programa = []
-    file_breakdown(lines_entry_file, lista_Tokens, listaSimbolos_programa)   
+    lista_errores = []
+    file_breakdown(lines_entry_file, lista_Tokens, listaSimbolos_programa,lista_errores)   
     Prog_lista_tokens.extend(lista_Tokens)
     Prog_lista_simbolos.extend(listaSimbolos_programa)
+    Prog_lista_errores.extend(lista_errores)
+    
     for titulo in columnas_titulos:
         col=Label(tabla,text=titulo,width=20,borderwidth=1, relief="solid",font=font1)
         col.grid(row=0,column=columna)
