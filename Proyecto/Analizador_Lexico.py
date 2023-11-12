@@ -411,7 +411,21 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     aux = ""
                 pass
                     
+def contar_llaves(tokens):
+    contador_llaves = 0
+
+    for token in tokens:
+        lexema = token.get_lexema()
+
+        if lexema == "{":
+            contador_llaves += 1
+        elif lexema == "}":
+            contador_llaves -= 1
+
+    return contador_llaves
                     
+
+
 def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
     for i, token in enumerate(tokenList_prog):
         if token.get_lexema() == "=":
