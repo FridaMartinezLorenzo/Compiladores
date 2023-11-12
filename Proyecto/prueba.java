@@ -1,8 +1,7 @@
 public class prueba {
     public static void main(String[] args) {
         System.out.println("Hola, Mundo");
-        int numero = 1111111111;
-        numero = 2;
-        @
-    }
+        int a = 5;
+        float i = 1.0987;
+    } @
 }

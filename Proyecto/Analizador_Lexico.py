@@ -176,8 +176,6 @@ def MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores):
     font1=("Times New Roman",11)
     columnas_titulos = ['simbolo', 'descripcion', 'nlinea']
     columna=1
-    for simbolo in Prog_lista_errores:
-        print(simbolo)
     
     for titulo in columnas_titulos:
         col=Label(tabla,text=titulo,width=20,borderwidth=1, relief="solid",font=font1)
@@ -190,8 +188,8 @@ def MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores):
     numElementos=len(Prog_lista_errores)#Numero de estados
     i = 1
     if numElementos > 0:
-        while i < numElementos:
-            nodo  = Prog_lista_errores[i]
+        while i <= numElementos:
+            nodo  = Prog_lista_errores[i-1]
             simbolo_nodo = nodo.get_simbolo()
             descripcion_nodo  = nodo.get_descripcion()
             nlinea_nodo = nodo.get_nlinea()
