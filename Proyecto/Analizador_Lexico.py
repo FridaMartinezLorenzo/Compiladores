@@ -413,13 +413,22 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     
                     
 def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
-    
     for i, token in enumerate(tokenList_prog):
         if token.get_lexema() == "=":
             if i > 0 and tokenList_prog[i - 1].get_lexema() in [s.get_identificador() for s in symbolList_prog]:
                 # Encontramos un símbolo seguido por un "=" y hay un token antes de "=" que es un identificador válido
                 identificador = tokenList_prog[i - 1].get_lexema()
-                valor_token_siguiente = tokenList_prog[i + 1].get_lexema() if i + 1 < len(tokenList_prog) else None
+                index_igual = i 
+
+                while i < len(tokenList_prog) and tokenList_prog[i].get_lexema() != ";":
+                    i += 1
+
+                index_punto_coma = i
+
+                if index_punto_coma is not None:
+                    print("index_igual:", index_igual)
+                    print("index_punto_coma:", index_punto_coma)
+                    valor_token_siguiente = " ".join(token.get_lexema() for token in tokenList_prog[index_igual + 1 : index_punto_coma])
 
                 for simbolo in symbolList_prog:
                     if simbolo.get_identificador() == identificador:
@@ -428,6 +437,7 @@ def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
 
     for simbolo in symbolList_prog:
         print(simbolo)
+
 
 
                 
