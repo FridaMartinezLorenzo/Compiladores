@@ -390,7 +390,8 @@ def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
                     print("Evaluación de id")   # Busca si es un id
                     flag_found_id = es_id(aux, nline, tokenList)
                     if flag_found_id is True:
-                        symbolList_prog.append(element_SymbolTable(aux, "null", "null")) 
+                        if (not BuscarSimbolo_ts(aux, symbolList_prog)): #No existe en la tabla
+                            symbolList_prog.append(element_SymbolTable(aux, "null", "null")) 
                         flag_found_id = False
                         aux = ""
                     flag_chkLex = False
@@ -411,6 +412,11 @@ def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
                 flag_asignar_sig = False
                 pass
                 
+def BuscarSimbolo_ts(id, symbolList_prog): #Se verifica que no este en la tabla de simbolos
+    for simbolo in symbolList_prog:
+        if simbolo.get_identificador() == id:
+            return True #Ya existe en la tabla, no se añade
+    return False #No existe en la tabla, se añade
                 
                 
 
