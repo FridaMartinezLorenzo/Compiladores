@@ -15,6 +15,9 @@ def Analizador_Lexico():
     lexWindow.title("Analizador Lexico")
     lexWindow.config(bg="#363062")
     lineas_entrada = []
+    Prog_lista_tokens = []
+    Prog_lista_simbolos = []
+    Prog_lista_errores = []
 
     archivoL=Label(lexWindow,text="Selecciona un archivo .java",width=30,font=font1)
     archivoL.place(x=20,y=25)
@@ -51,13 +54,13 @@ def Analizador_Lexico():
     canvas.create_window((100, 50), window=tabla, anchor=NW)
     canvas.configure(yscrollcommand=scrollbar.set,xscrollcommand=horizontal_scrollbar.set)
     
-    ttokenButton=Button(lexWindow,text="Tabla Tokens",width=20,command=lambda:MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lineas_entrada),bg="#83A2E8" ,font=font1)
+    ttokenButton=Button(lexWindow,text="Tabla Tokens",width=20,command=lambda:MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lineas_entrada,Prog_lista_tokens,Prog_lista_simbolos),bg="#83A2E8" ,font=font1)
     ttokenButton.place(x=350,y=70)
         
     terroresButton=Button(lexWindow,text="Tabla Errores",width=20,command=lambda:MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels),bg="#83A2E8" ,font=font1)
     terroresButton.place(x=550,y=70)
     
-    tsimbolosButton=Button(lexWindow,text="Tabla Símbolos",width=20,command=lambda:MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels),bg="#83A2E8" ,font=font1)
+    tsimbolosButton=Button(lexWindow,text="Tabla Símbolos",width=20,command=lambda:MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos),bg="#83A2E8" ,font=font1)
     tsimbolosButton.place(x=750,y=70)
     
 
@@ -82,12 +85,15 @@ def cleanTable(tabla,arrLabels):
     arrLabels.clear()#Limpiar la lista
     
     
-def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file):
+def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file,Prog_lista_tokens,Prog_lista_simbolos):
     font1=("Times New Roman",11)
     columnas_titulos = ['Lexema', 'Token', '# Linea']
     columna=1
     lista_Tokens = []
-    file_breakdown(lines_entry_file, lista_Tokens)   
+    listaSimbolos_programa = []
+    file_breakdown(lines_entry_file, lista_Tokens, listaSimbolos_programa)   
+    Prog_lista_tokens.extend(lista_Tokens)
+    Prog_lista_simbolos.extend(listaSimbolos_programa)
     for titulo in columnas_titulos:
         col=Label(tabla,text=titulo,width=20,borderwidth=1, relief="solid",font=font1)
         col.grid(row=0,column=columna)
@@ -121,7 +127,45 @@ def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file):
         messagebox.showerror("Error","Elige un archivo valido")
         lexWindow.grab_release()
         
+def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos):
+    font1=("Times New Roman",11)
+    columnas_titulos = ['id', 'valor', 'funcion']
+    columna=1
+    for simbolo in Prog_lista_simbolos:
+        print(simbolo)
     
+    for titulo in columnas_titulos:
+        col=Label(tabla,text=titulo,width=20,borderwidth=1, relief="solid",font=font1)
+        col.grid(row=0,column=columna)
+        arrLabels.append(col)
+        columna+=1
+   
+    tabla.update_idletasks()
+    #canvas.config(scrollregion=canvas.bbox("all"))
+    numElementos=len(Prog_lista_simbolos)#Numero de estados
+    i = 1
+    if numElementos > 0:
+        while i < numElementos:
+            nodo  = Prog_lista_simbolos[i]
+            id_nodo = nodo.get_identificador()
+            valor_nodo  = nodo.get_valor()
+            funcion_nodo = nodo.get_funcion()
+
+            celda_lexema = Label(tabla,text=id_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_lexema.grid(row=i,column=1)
+
+            celda_token = Label(tabla,text=valor_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_token.grid(row=i,column=2)
+
+            celda_sym = Label(tabla,text=funcion_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_sym.grid(row=i,column=3)
+
+            i+=1
+        #canvas.config(scrollregion=canvas.bbox("all"))
+    else:
+        lexWindow.grab_set()
+        messagebox.showerror("Error","Elige un archivo valido")
+        lexWindow.grab_release()    
     
 
 def abrirArchivo(lexWindow, lineas_entrada):
@@ -150,6 +194,7 @@ def abrirArchivo(lexWindow, lineas_entrada):
 #__________________________________________________________________________________________________________________________
 #__________________________________________________________________________________________________________________________
 
+#Clase para la tabla de tokens
 class element_TokenTable:
     def __init__(self, lexema, token,nl):
         self.lexema = lexema
@@ -176,9 +221,55 @@ class element_TokenTable:
 
     def __str__(self):
         return self.lexema + " " + self.token+ " " + str(self.nlinea)
+
+#clase para la tabla de errores
+class element_ErrorTable:  
+    def __init__(self, nlinea,descripcion):
+        self.nlinea = nlinea
+        self.descripcion = descripcion 
     
+    def get_nlinea(self):
+        return self.nlinea
+    
+    def get_descripcion(self):
+        return self.descripcion
+    
+    def set_nlinea(self, nlinea):
+        self.nlinea = nlinea
+    
+    def set_descripcion(self, descripcion):
+        self.descripcion = descripcion
+        
+#clase para la tabla de simbolos
+class element_SymbolTable:
+    def __init__(self,identificador, v, funcion):
+        self.identificador = identificador
+        self.valor = v
+        self.funcion = funcion
+    
+    def get_identificador(self):
+        return self.identificador
+    
+    def get_valor(self):
+        return self.valor
+    
+    def get_funcion(self):
+        return self.funcion
+    
+    def set_identificador(self, identificador):
+        self.identificador = identificador
+
+    def set_valor(self, v):
+        self.valor = v
+    
+    def set_funcion(self, funcion):
+        self.funcion = funcion
+    
+    def __str__(self):
+        return str(self.identificador) + " " + str(self.valor)+ " " + str(self.funcion)
+
 #Función que desgloza el archivo de entrada 
-def file_breakdown (lines, tokenList):
+def file_breakdown (lines, tokenList, symbolList_prog):
     nline = 0
     for line in lines:
         nline+=1
@@ -258,6 +349,7 @@ def file_breakdown (lines, tokenList):
                     print("Evaluación de id")   # Busca si es un id
                     flag_found_id = es_id(aux, nline, tokenList)
                     if flag_found_id is True:
+                        symbolList_prog.append(element_SymbolTable(aux, "null", "null")) 
                         flag_found_id = False
                         aux = ""
                     flag_chkLex = False
