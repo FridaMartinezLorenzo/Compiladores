@@ -30,14 +30,14 @@ def Analizador_Lexico():
                 canvas.xview_scroll(-1, "units")
             elif event.keysym == "Right":
                 canvas.xview_scroll(1, "units")
-            canvas.config(scrollregion=canvas.bbox("all"))    
+            #canvas.config(scrollregion=canvas.bbox("all"))    
 
     def on_arrow_key_v(event):
          if event.keysym == "Up":
              canvas.yview_scroll(-1, "units")
          elif event.keysym == "Down":
              canvas.yview_scroll(1, "units")
-         canvas.config(scrollregion=canvas.bbox("all"))
+         #canvas.config(scrollregion=canvas.bbox("all"))
     
     scrollbar=ttk.Scrollbar(canvas, orient="vertical", command=canvas.yview)
     scrollbar.set(0.0, 1.0)
@@ -67,7 +67,7 @@ def Analizador_Lexico():
     cleanButton=Button(lexWindow,text="Limpiar",font=font1,bg="#F99417",command=lambda:cleanTable(tabla,arrLabels))
     cleanButton.place(x=550,y=20)
     tabla.update_idletasks()
-    canvas.config(scrollregion=canvas.bbox("all"))
+    #canvas.config(scrollregion=canvas.bbox("all"))
     canvas.bind("<MouseWheel>", on_mousewheel)
     canvas.bind_all("<KeyPress-Left>", on_arrow_key)
     canvas.bind_all("<KeyPress-Right>", on_arrow_key)
@@ -95,7 +95,7 @@ def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file):
         columna+=1
    
     tabla.update_idletasks()
-    canvas.config(scrollregion=canvas.bbox("all"))
+    #canvas.config(scrollregion=canvas.bbox("all"))
     numElementos=len(lista_Tokens)#Numero de estados
     i = 1
     if numElementos > 0:
@@ -115,7 +115,7 @@ def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file):
             celda_sym.grid(row=i,column=3)
 
             i+=1
-        canvas.config(scrollregion=canvas.bbox("all"))
+        #canvas.config(scrollregion=canvas.bbox("all"))
     else:
         lexWindow.grab_set()
         messagebox.showerror("Error","Elige un archivo valido")
