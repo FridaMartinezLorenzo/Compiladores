@@ -120,8 +120,8 @@ def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file,Prog_li
             celda_token = Label(tabla,text=token_nodo,width=20,borderwidth=1, relief="solid",font=font1)
             celda_token.grid(row=i,column=2)
 
-            celda_sym = Label(tabla,text=nlinea_nodo,width=20,borderwidth=1, relief="solid",font=font1)
-            celda_sym.grid(row=i,column=3)
+            celda_nlinea = Label(tabla,text=nlinea_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_nlinea.grid(row=i,column=3)
 
             i+=1
         #canvas.config(scrollregion=canvas.bbox("all"))
@@ -137,7 +137,7 @@ def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Pr
     for simbolo in Prog_lista_simbolos:
         print(simbolo)
     
-    #hacerSeguimientodelValor(Prog_lista_simbolos,Prog_lista_tokens)
+    hacerSeguimientodelValor(Prog_lista_simbolos,Prog_lista_tokens)
     
     for titulo in columnas_titulos:
         col=Label(tabla,text=titulo,width=20,borderwidth=1, relief="solid",font=font1)
@@ -156,14 +156,14 @@ def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Pr
             valor_nodo  = nodo.get_valor()
             funcion_nodo = nodo.get_funcion()
 
-            celda_lexema = Label(tabla,text=id_nodo,width=20,borderwidth=1, relief="solid",font=font1)
-            celda_lexema.grid(row=i,column=1)
+            celda_id = Label(tabla,text=id_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_id.grid(row=i,column=1)
 
-            celda_token = Label(tabla,text=valor_nodo,width=20,borderwidth=1, relief="solid",font=font1)
-            celda_token.grid(row=i,column=2)
+            celda_valor = Label(tabla,text=valor_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_valor.grid(row=i,column=2)
 
-            celda_sym = Label(tabla,text=funcion_nodo,width=20,borderwidth=1, relief="solid",font=font1)
-            celda_sym.grid(row=i,column=3)
+            celda_funcion = Label(tabla,text=funcion_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_funcion.grid(row=i,column=3)
 
             i+=1
         #canvas.config(scrollregion=canvas.bbox("all"))
@@ -174,7 +174,7 @@ def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Pr
  
 def MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores):   
     font1=("Times New Roman",11)
-    columnas_titulos = ['simbolo', 'descripcion']
+    columnas_titulos = ['simbolo', 'descripcion', 'nlinea']
     columna=1
     for simbolo in Prog_lista_errores:
         print(simbolo)
@@ -192,21 +192,24 @@ def MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores):
     if numElementos > 0:
         while i < numElementos:
             nodo  = Prog_lista_errores[i]
-            nlinea_nodo = nodo.get_nlinea()
+            simbolo_nodo = nodo.get_simbolo()
             descripcion_nodo  = nodo.get_descripcion()
+            nlinea_nodo = nodo.get_nlinea()
 
-            celda_lexema = Label(tabla,text=nlinea_nodo,width=20,borderwidth=1, relief="solid",font=font1)
-            celda_lexema.grid(row=i,column=1)
+            celda_simbolo = Label(tabla,text=simbolo_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_simbolo.grid(row=i,column=1)
 
-            celda_token = Label(tabla,text=descripcion_nodo,width=20,borderwidth=1, relief="solid",font=font1)
-            celda_token.grid(row=i,column=2)
+            celda_descripcion = Label(tabla,text=descripcion_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_descripcion.grid(row=i,column=2)
+            
+            celda_nlinea = Label(tabla,text=nlinea_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_nlinea.grid(row=i,column=3)
 
 
             i+=1
         #canvas.config(scrollregion=canvas.bbox("all"))
     else:
         lexWindow.grab_set()
-        messagebox.showerror("Error","Elige un archivo valido")
         lexWindow.grab_release()    
 
 def abrirArchivo(lexWindow, lineas_entrada):
@@ -265,9 +268,13 @@ class element_TokenTable:
 
 #clase para la tabla de errores
 class element_ErrorTable:  
-    def __init__(self, nlinea,descripcion):
-        self.nlinea = nlinea
+    def __init__(self, simbolo,descripcion,nlinea):
+        self.simbolo = simbolo
         self.descripcion = descripcion 
+        self.nlinea = nlinea
+    
+    def get_simbolo(self):
+        return self.simbolo
     
     def get_nlinea(self):
         return self.nlinea
@@ -280,6 +287,9 @@ class element_ErrorTable:
     
     def set_descripcion(self, descripcion):
         self.descripcion = descripcion
+    
+    def set_simbolo(self, simbolo):
+        self.simbolo = simbolo
         
 #clase para la tabla de simbolos
 class element_SymbolTable:
@@ -310,7 +320,8 @@ class element_SymbolTable:
         return str(self.identificador) + " " + str(self.valor)+ " " + str(self.funcion)
 
 #Función que desgloza el archivo de entrada 
-def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
+#Función que desgloza el archivo de entrada 
+def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
     nline = 0
     for line in lines:
         nline+=1
@@ -341,11 +352,22 @@ def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
                 pass
 
             # Si es un solo caracter, revisa si es un símbolo
-            if char in lista_simbolos and flag_string == False and posNum == "": #Es un simbolo
-                tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
-                aux=""
+            if char in lista_simbolos and flag_string == False: #Es un simbolo
+                if (flag_found_float == True):                  # Si ya se ha encontrado un punto antes en el número
+                    tokenList.append(element_TokenTable(posNum, "nfloat", nline))
+                    tokenList.append(element_TokenTable(char, char, nline))
+                    flag_found_float = False
+                    posNum = ""
+                elif (posNum != "" and char != "."):            # Si hay un número entero posible, pero el símbolo no es un punto
+                    tokenList.append(element_TokenTable(posNum, "nint", nline))
+                    tokenList.append(element_TokenTable(char, char, nline))
+                    posNum = ""
+                elif (posNum == ""):
+                    tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
+                aux = ""
                 pass
-            if flag_string == False:
+
+            if flag_string == False:        # Si no es cadena, revisa el estado actual de aux y char...
                 print(len(aux))
                 print("Evaluacion de número entero")        # Busca si es un entero
                 print("posNum: ", posNum)
@@ -362,22 +384,14 @@ def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
                     flag_found_num = False
                     pass
                 elif flag_found_float == False:
-                    if posNum != "" and char in lista_simbolos:     # Si hay un número posible, y el último char es un símbolo
+                    if posNum != "" and char in lista_simbolos:     # Si hay un número entero posible
                         tokenList.append(element_TokenTable(posNum, "nint", nline))
-
-                        tokenAux = tokenList[len(tokenList)-2]          # Intercambia posiciones del símbolo y el número, para que estén bien ordenados
-                        tokenList[len(tokenList)-2] = tokenList[len(tokenList)-1]
-                        tokenList[len(tokenList)-1] = tokenAux
                         posNum = ""
                 
                 if flag_found_float == True and char != '.' and flag_found_num == False:
-                    if posNum != "" and char in lista_simbolos:     # Si hay un número posible, y el último char es un símbolo
+                    if posNum != "" and char in lista_simbolos:     # Si hay un número flotante posible
                         tokenList.append(element_TokenTable(posNum, "nfloat", nline))
                         flag_found_float = False
-
-                        tokenAux = tokenList[len(tokenList)-2]          # Intercambia posiciones del símbolo y el número, para que estén bien ordenados
-                        tokenList[len(tokenList)-2] = tokenList[len(tokenList)-1]
-                        tokenList[len(tokenList)-1] = tokenAux
                         posNum = ""
 
                 print("Evaluacion de palabra reservada")    # Busca si es una palabra reservada
@@ -390,27 +404,34 @@ def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
                     print("Evaluación de id")   # Busca si es un id
                     flag_found_id = es_id(aux, nline, tokenList)
                     if flag_found_id is True:
-                        if (not BuscarSimbolo_ts(aux, symbolList_prog)): #No existe en la tabla
-                            symbolList_prog.append(element_SymbolTable(aux, "null", "null")) 
+                        if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                            symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
                         flag_found_id = False
-                        aux = ""
+                    elif (len(aux)>0):
+                        errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
                     flag_chkLex = False
                     aux = ""
                 pass
                     
+                    
 def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
-    flag_found = flag_asignar_sig= False
+    
+    for i, token in enumerate(tokenList_prog):
+        if token.get_lexema() == "=":
+            if i > 0 and tokenList_prog[i - 1].get_lexema() in [s.get_identificador() for s in symbolList_prog]:
+                # Encontramos un símbolo seguido por un "=" y hay un token antes de "=" que es un identificador válido
+                identificador = tokenList_prog[i - 1].get_lexema()
+                valor_token_siguiente = tokenList_prog[i + 1].get_lexema() if i + 1 < len(tokenList_prog) else None
+
+                for simbolo in symbolList_prog:
+                    if simbolo.get_identificador() == identificador:
+                        simbolo.set_valor(valor_token_siguiente)
+                        break
+
     for simbolo in symbolList_prog:
-        for token in tokenList_prog:
-            if simbolo.get_identificador() == token.get_lexema():
-                flag_found = True
-            if flag_found == True and token.get_lexema() == "=": #Se encontro el simbolo y el igual, ahora se busca el valor
-                flag_asignar_sig = True
-                flag_found = False
-            if flag_asignar_sig == True:
-                simbolo.set_valor(token.get_lexema())
-                flag_asignar_sig = False
-                pass
+        print(simbolo)
+
+
                 
 def BuscarSimbolo_ts(id, symbolList_prog): #Se verifica que no este en la tabla de simbolos
     for simbolo in symbolList_prog:
