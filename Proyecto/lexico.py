@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from Thompson1 import *
 from Conjuntos import *
+from Analizador_Lexico import *
 
 def analizadorLexico(opcion):
     arr=["Algoritmo de Thompson", "Algoritmo de Contruccion de Conjuntos","Analizador Lexico"]
@@ -11,6 +12,8 @@ def analizadorLexico(opcion):
         Thompson()#Crea la ventana y dentro de ella se llama a la funcion que imprime y borra la tabla de transiciones
     elif opcion==arr[1]:
         Conjuntos()
+    elif opcion==arr[2]:
+        Analizador_Lexico()
     else:
         messagebox.showerror("Error","Aún no existe esa opción")
     return
