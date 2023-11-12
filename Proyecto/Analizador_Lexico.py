@@ -166,7 +166,43 @@ def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos):
         lexWindow.grab_set()
         messagebox.showerror("Error","Elige un archivo valido")
         lexWindow.grab_release()    
+ 
+def MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores):   
+    font1=("Times New Roman",11)
+    columnas_titulos = ['simbolo', 'descripcion']
+    columna=1
+    for simbolo in Prog_lista_errores:
+        print(simbolo)
     
+    for titulo in columnas_titulos:
+        col=Label(tabla,text=titulo,width=20,borderwidth=1, relief="solid",font=font1)
+        col.grid(row=0,column=columna)
+        arrLabels.append(col)
+        columna+=1
+   
+    tabla.update_idletasks()
+    #canvas.config(scrollregion=canvas.bbox("all"))
+    numElementos=len(Prog_lista_errores)#Numero de estados
+    i = 1
+    if numElementos > 0:
+        while i < numElementos:
+            nodo  = Prog_lista_errores[i]
+            nlinea_nodo = nodo.get_nlinea()
+            descripcion_nodo  = nodo.get_descripcion()
+
+            celda_lexema = Label(tabla,text=nlinea_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_lexema.grid(row=i,column=1)
+
+            celda_token = Label(tabla,text=descripcion_nodo,width=20,borderwidth=1, relief="solid",font=font1)
+            celda_token.grid(row=i,column=2)
+
+
+            i+=1
+        #canvas.config(scrollregion=canvas.bbox("all"))
+    else:
+        lexWindow.grab_set()
+        messagebox.showerror("Error","Elige un archivo valido")
+        lexWindow.grab_release()    
 
 def abrirArchivo(lexWindow, lineas_entrada):
     lexWindow.grab_set()
