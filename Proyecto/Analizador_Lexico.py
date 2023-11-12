@@ -60,7 +60,7 @@ def Analizador_Lexico():
     terroresButton=Button(lexWindow,text="Tabla Errores",width=20,command=lambda:MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores),bg="#83A2E8" ,font=font1)
     terroresButton.place(x=550,y=70)
     
-    tsimbolosButton=Button(lexWindow,text="Tabla Símbolos",width=20,command=lambda:MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos),bg="#83A2E8" ,font=font1)
+    tsimbolosButton=Button(lexWindow,text="Tabla Símbolos",width=20,command=lambda:MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Prog_lista_tokens),bg="#83A2E8" ,font=font1)
     tsimbolosButton.place(x=750,y=70)
     
 
@@ -108,8 +108,8 @@ def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file,Prog_li
     numElementos=len(lista_Tokens)#Numero de estados
     i = 1
     if numElementos > 0:
-        while i < numElementos:
-            nodo  = lista_Tokens[i]
+        while i <= numElementos:
+            nodo  = lista_Tokens[i-1]
             lexema_nodo = nodo.get_lexema()
             token_nodo  = nodo.get_token()
             nlinea_nodo = nodo.get_nlinea()
@@ -130,12 +130,14 @@ def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file,Prog_li
         messagebox.showerror("Error","Elige un archivo valido")
         lexWindow.grab_release()
         
-def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos):
+def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Prog_lista_tokens):
     font1=("Times New Roman",11)
     columnas_titulos = ['id', 'valor', 'funcion']
     columna=1
     for simbolo in Prog_lista_simbolos:
         print(simbolo)
+    
+    #hacerSeguimientodelValor(Prog_lista_simbolos,Prog_lista_tokens)
     
     for titulo in columnas_titulos:
         col=Label(tabla,text=titulo,width=20,borderwidth=1, relief="solid",font=font1)
@@ -148,8 +150,8 @@ def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos):
     numElementos=len(Prog_lista_simbolos)#Numero de estados
     i = 1
     if numElementos > 0:
-        while i < numElementos:
-            nodo  = Prog_lista_simbolos[i]
+        while i <= numElementos:
+            nodo  = Prog_lista_simbolos[i-1]
             id_nodo = nodo.get_identificador()
             valor_nodo  = nodo.get_valor()
             funcion_nodo = nodo.get_funcion()
@@ -308,7 +310,7 @@ class element_SymbolTable:
         return str(self.identificador) + " " + str(self.valor)+ " " + str(self.funcion)
 
 #Función que desgloza el archivo de entrada 
-def file_breakdown (lines, tokenList, symbolList_prog):
+def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
     nline = 0
     for line in lines:
         nline+=1
@@ -395,11 +397,26 @@ def file_breakdown (lines, tokenList, symbolList_prog):
                     aux = ""
                 pass
                     
-
+def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
+    flag_found = flag_asignar_sig= False
+    for simbolo in symbolList_prog:
+        for token in tokenList_prog:
+            if simbolo.get_identificador() == token.get_lexema():
+                flag_found = True
+            if flag_found == True and token.get_lexema() == "=": #Se encontro el simbolo y el igual, ahora se busca el valor
+                flag_asignar_sig = True
+                flag_found = False
+            if flag_asignar_sig == True:
+                simbolo.set_valor(token.get_lexema())
+                flag_asignar_sig = False
+                pass
+                
+                
+                
 
 
 def word_search(word, nline, tokenList):
-    if word in lista_pReservadas:
+    if word in lista_pReservadas: 
         tokenList.append(element_TokenTable(word, word, nline)) #Agregamos a la lista de tokens
         return 1
     return 0
