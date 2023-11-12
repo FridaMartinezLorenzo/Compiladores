@@ -29,7 +29,7 @@ class element_TokenTable:
         return self.lexema + " " + self.token+ " " + str(self.nlinea)
     
 #Función que desgloza el archivo de entrada 
-def file_breakdown (lines, tokenList):
+def file_breakdown (lines, tokenList, symbolList_prog, ErrorList_prog):
     nline = 0
     for line in lines:
         nline+=1
@@ -116,7 +116,7 @@ def file_breakdown (lines, tokenList):
                             symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
                         flag_found_id = False
                     elif (len(aux)>0):
-                        tokenList.append(element_TokenTable(aux, "ERROR", nline))
+                        errorList_prog.append(nline, "Error: Lexema "+aux+" no definido")
                     flag_chkLex = False
                     aux = ""
                 pass
