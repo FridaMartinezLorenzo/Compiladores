@@ -431,6 +431,8 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     flag_chkLex = False
                     aux = ""
                 pass
+        if posSimb != "":
+            tokenList.append(element_TokenTable(posSimb, posSimb, nline))
                     
 def contar_llaves(tokens):
     contador_llaves = 0
