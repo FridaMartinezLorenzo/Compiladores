@@ -500,6 +500,34 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
         print(simbolo)
     
 
+def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
+    for i, token in enumerate(tokenList_prog):
+        if token.get_lexema() == "=":
+            if i > 0 and tokenList_prog[i - 1].get_lexema() in [s.get_identificador() for s in symbolList_prog]:
+                # Encontramos un símbolo seguido por un "=" y hay un token antes de "=" que es un identificador válido
+                identificador = tokenList_prog[i - 1].get_lexema()
+                index_igual = i 
+
+                while i < len(tokenList_prog) and tokenList_prog[i].get_lexema() != ";":
+                    i += 1
+
+                index_punto_coma = i
+
+                if index_punto_coma is not None:
+                    print("index_igual:", index_igual)
+                    print("index_punto_coma:", index_punto_coma)
+                    valor_token_siguiente = " ".join(token.get_lexema() for token in tokenList_prog[index_igual + 1 : index_punto_coma])
+
+                for simbolo in symbolList_prog:
+                    if simbolo.get_identificador() == identificador:
+                        simbolo.set_valor(valor_token_siguiente)
+                        break
+
+    for simbolo in symbolList_prog:
+        print(simbolo)
+
+
+
                 
 def BuscarSimbolo_ts(id, symbolList_prog): #Se verifica que no este en la tabla de simbolos
     for simbolo in symbolList_prog:
