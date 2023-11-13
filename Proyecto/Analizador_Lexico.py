@@ -407,7 +407,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                 print(len(aux))
                 print("Evaluacion de número entero")        # Busca si es un entero
                 print("posNum: ", posNum)
-                flag_found_num = es_numero(char)
+                flag_found_num = es_numero(char) and es_numero(aux) 
                 
                 if posNum != "" and char == '.': #Evaluamos si posNum es diferente de vacio y existe un punto, porque entonces existe un flotante
                     print("Evaluacion de un flotante")
@@ -480,33 +480,33 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
     identificador_principal = None
     for i, token in enumerate(tokenList_prog):
         if token.get_token() == "id" or token.get_token() == "main":
-            print("token[i-1].get_token():", tokenList_prog[i - 1].get_token())
-            print("token[i+1].get_token():", tokenList_prog[i + 1].get_token()) 
-            if (i > 0 and tokenList_prog[i - 1].get_token() in [td for td in lista_tipo_datos] and tokenList_prog[i + 1].get_token() =='(') : #hay un tipo de retorno antes del id así que es una función
-                print("Identificador de función")
-                identificador_principal = tokenList_prog[i].get_lexema() 
-                for simbolo in symbolList_prog:
-                    if simbolo.get_identificador() == identificador_principal:
-                        simbolo.set_funcion("Es una función");
-            
             if token.get_token() == 'main': #Es la función principal
                 if not 'main' in [s.get_identificador() for s in symbolList_prog]:
                     symbolList_prog.append(element_SymbolTable(token.get_token(), "null", "Es la función principal"))
                 identificador_principal = 'main'
             
-            elif identificador_principal is not None:  #Es un id dentro de una función del nombre contenido por idenficador_principal
-                print("Es un id dentro de una funcion")
-                for simbolo in symbolList_prog:
-                    if simbolo.get_identificador() == token.get_lexema():
-                        simbolo.set_funcion(identificador_principal)
-            
-            #Procedemos a identificar si es una clase
+            print("token[i-1].get_token():", tokenList_prog[i - 1].get_token())
+            print("token[i+1].get_token():", tokenList_prog[i + 1].get_token()) 
+             #Procedemos a identificar si es una clase
             if (i > 0 and tokenList_prog[i - 1].get_token() == 'class' and tokenList_prog[i + 1].get_token() =='{') :
                 print("Identificador de clase")
                 identificador_clase = tokenList_prog[i].get_lexema() 
                 for simbolo in symbolList_prog:
                     if simbolo.get_identificador() == identificador_clase:
                         simbolo.set_funcion("Es una clase")
+                        
+            if (i > 0 and tokenList_prog[i - 1].get_token() in [td for td in lista_tipo_datos] and tokenList_prog[i + 1].get_token() =='(') : #hay un tipo de retorno antes del id así que es una función
+                print("Identificador de función")
+                identificador_principal = tokenList_prog[i].get_lexema() 
+                for simbolo in symbolList_prog:
+                    if simbolo.get_identificador() == identificador_principal:
+                        simbolo.set_funcion("Es una función");
+            elif identificador_principal is not None:  #Es un id dentro de una función del nombre contenido por idenficador_principal
+                print("Es un id dentro de una funcion")
+                for simbolo in symbolList_prog:
+                    if simbolo.get_identificador() == token.get_lexema():
+                        simbolo.set_funcion(identificador_principal)
+        
                         
         
     
