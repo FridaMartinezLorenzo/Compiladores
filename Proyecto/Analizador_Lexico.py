@@ -71,6 +71,10 @@ def Analizador_Lexico():
     
     cleanButton=Button(lexWindow,text="Limpiar",font=font1,bg="#F99417",command=lambda:cleanTable(tabla,arrLabels))
     cleanButton.place(x=550,y=20)
+    
+    cleanAllButton=Button(lexWindow,text="Limpiar todo",font=font1,bg="#F99417",command=lambda:cleanAll(tabla,arrLabels,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores,lineas_entrada))
+    cleanAllButton.place(x=750,y=20)
+    
     tabla.update_idletasks()
     #canvas.config(scrollregion=canvas.bbox("all"))
     canvas.bind("<MouseWheel>", on_mousewheel)
@@ -85,6 +89,17 @@ def cleanTable(tabla,arrLabels):
     for widget in arrLabels:
         widget.destroy()
     arrLabels.clear()#Limpiar la lista
+
+def cleanAll(tabla,arrLabels,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores,lineas_entrada):
+    for widget in tabla.winfo_children():
+        widget.destroy()
+    for widget in arrLabels:
+        widget.destroy()
+    arrLabels.clear()#Limpiar la lista
+    lineas_entrada.clear()
+    Prog_lista_tokens.clear()
+    Prog_lista_simbolos.clear()
+    Prog_lista_errores.clear()
     
     
 def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores):
@@ -475,7 +490,8 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
                         simbolo.set_funcion("Es una función");
             
             if token.get_token() == 'main': #Es la función principal
-                symbolList_prog.append(element_SymbolTable(token.get_token(), "null", "Es la función principal"))
+                if not 'main' in [s.get_identificador() for s in symbolList_prog]:
+                    symbolList_prog.append(element_SymbolTable(token.get_token(), "null", "Es la función principal"))
                 identificador_principal = 'main'
             
             elif identificador_principal is not None:  #Es un id dentro de una función del nombre contenido por idenficador_principal
