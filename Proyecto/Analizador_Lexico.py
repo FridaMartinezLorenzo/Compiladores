@@ -137,6 +137,9 @@ def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Pr
     for simbolo in Prog_lista_simbolos:
         print(simbolo)
     
+    contar_llaves(Prog_lista_tokens)
+    
+    
     hacerSeguimientodelValor(Prog_lista_simbolos,Prog_lista_tokens)
     
     for titulo in columnas_titulos:
@@ -412,16 +415,21 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                 pass
                     
 def contar_llaves(tokens):
+    print("Contando llaves...")
     contador_llaves = 0
+    maximo_llaves = 0
 
     for token in tokens:
         lexema = token.get_lexema()
 
         if lexema == "{":
             contador_llaves += 1
+            if maximo_llaves < contador_llaves:
+                maximo_llaves = contador_llaves
         elif lexema == "}":
             contador_llaves -= 1
-
+       
+    print("maximo_llaves:", maximo_llaves)
     return contador_llaves
                     
 
