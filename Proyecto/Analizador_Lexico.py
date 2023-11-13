@@ -229,6 +229,8 @@ def MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores):
         lexWindow.grab_release()    
 
 def abrirArchivo(lexWindow, lineas_entrada):
+    flag_coment = False
+    lineas_aux = []
     lexWindow.grab_set()
     direccionArchivo=filedialog.askopenfilename(initialdir=r"C:\Users\Documents\Compiladores",title="Abrir",filetypes=(("java","*.java"),))
     try:
@@ -236,6 +238,21 @@ def abrirArchivo(lexWindow, lineas_entrada):
             # Modificar directamente la lista lineas_entrada
             lineas_entrada.clear()  # Limpiar la lista actual
             lineas_entrada.extend(archivo.readlines())  # Extender la lista con las nuevas líneas
+            lineas_aux = lineas_entrada
+            for n in range(0, len(lineas_entrada)):     # Revisa si hay comentarios y los elimina
+                if flag_coment == False:                        # Si no hay un comentario multilínea activo...
+                    if (re.search(r'(//.*)|(/\*.*?\*/)', lineas_aux[n]) is not None):   # Si es un comentario de línea o multilínea que cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'(//.*)|(/\*.*?\*/)', '', lineas_aux[n])
+                    if (re.search(r'/\*.*', lineas_aux[n]) is not None):           # Si es un comentario multilínea que no cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'/\*.*', '', lineas_aux[n])
+                        flag_coment = True
+                else:                                           # Si hay un comentario multilínea activo...
+                    if (re.search(r'.*\*/', lineas_aux[n]) is not None):            # Si se encuentra el cierre del comentario multilínea...
+                        lineas_entrada[n] = re.sub(r'.*\*/', '', lineas_aux[n])
+                        flag_coment = False
+                    else:                                                           # Si aún no se cierra el comentario multilínea...
+                        lineas_entrada[n] = ''
+                    
             print(direccionArchivo)
     except Exception as e:
         print(f"Error al abrir el archivo: {e}")
@@ -407,7 +424,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                 print(len(aux))
                 print("Evaluacion de número entero")        # Busca si es un entero
                 print("posNum: ", posNum)
-                flag_found_num = es_numero(char)
+                flag_found_num = es_numero(char) and es_numero(aux)
                 
                 if posNum != "" and char == '.': #Evaluamos si posNum es diferente de vacio y existe un punto, porque entonces existe un flotante
                     print("Evaluacion de un flotante")
@@ -444,12 +461,27 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                             symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
                         flag_found_id = False
                     elif (len(aux)>0):
-                        errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
+                        errorList_prog.append(element_ErrorTable(aux, "Lexema no definido", nline))
                     flag_chkLex = False
                     aux = ""
                 pass
-        if posSimb != "":
+
+        if posSimb != "":           # Busca si hay un símbolo aún almacenado
             tokenList.append(element_TokenTable(posSimb, posSimb, nline))
+
+        if posNum != "":            # Busca si hay un número aún almacenado
+            if flag_found_float == True:
+                tokenList.append(element_TokenTable(posNum, "nfloat", nline))
+            else:
+                tokenList.append(element_TokenTable(posNum, "nint", nline))
+        flag_found_id = es_id(aux, nline, tokenList)
+
+        if flag_found_id is True:   # Busca si hay una cadena aún almacenada en aux
+            if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
+            flag_found_id = False
+        elif (len(aux)>0):
+            errorList_prog.append(element_ErrorTable(aux, "Lexema no definido", nline))
                     
 def contar_llaves(tokens):
     print("Contando llaves...")
