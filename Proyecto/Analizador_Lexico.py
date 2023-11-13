@@ -229,6 +229,8 @@ def MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores):
         lexWindow.grab_release()    
 
 def abrirArchivo(lexWindow, lineas_entrada):
+    flag_coment = False
+    lineas_aux = []
     lexWindow.grab_set()
     direccionArchivo=filedialog.askopenfilename(initialdir=r"C:\Users\Documents\Compiladores",title="Abrir",filetypes=(("java","*.java"),))
     try:
@@ -236,11 +238,27 @@ def abrirArchivo(lexWindow, lineas_entrada):
             # Modificar directamente la lista lineas_entrada
             lineas_entrada.clear()  # Limpiar la lista actual
             lineas_entrada.extend(archivo.readlines())  # Extender la lista con las nuevas líneas
+            lineas_aux = lineas_entrada
+            for n in range(0, len(lineas_entrada)):     # Revisa si hay comentarios y los elimina
+                if flag_coment == False:                        # Si no hay un comentario multilínea activo...
+                    if (re.search(r'(//.*)|(/\*.*?\*/)', lineas_aux[n]) is not None):   # Si es un comentario de línea o multilínea que cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'(//.*)|(/\*.*?\*/)', '', lineas_aux[n])
+                    if (re.search(r'/\*.*', lineas_aux[n]) is not None):           # Si es un comentario multilínea que no cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'/\*.*', '', lineas_aux[n])
+                        flag_coment = True
+                else:                                           # Si hay un comentario multilínea activo...
+                    if (re.search(r'.*\*/', lineas_aux[n]) is not None):            # Si se encuentra el cierre del comentario multilínea...
+                        lineas_entrada[n] = re.sub(r'.*\*/', '', lineas_aux[n])
+                        flag_coment = False
+                    else:                                                           # Si aún no se cierra el comentario multilínea...
+                        lineas_entrada[n] = ''
+                    
             print(direccionArchivo)
     except Exception as e:
         print(f"Error al abrir el archivo: {e}")
     
     lexWindow.grab_release()
+
 
 
 
@@ -346,6 +364,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
         flag_string = False
         flag_found1 = flag_found_id = flag_found_num = flag_found_float=False
         flag_chkLex = False
+        flag_comilla_simple = False
         for char in line:
 
             # Si es espacio, y no es cadena, se activa la bandera para revisar el lexema
@@ -357,12 +376,20 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
 
             # Si son comillas, revisar el estado de la bandera de cadena
             print("aux: ",aux)
-            if char == '"' and flag_string == True: #Se encontro el fin de la cadena
-                tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
+            if (char == '"' and flag_string == True) or (flag_string == True and char == "'"): #Se encontro el fin de la cadena
+                print(len(aux), "aux: ", aux)
+                print("flag_comilla:", flag_comilla_simple)
+            
+                if char == "'" and flag_comilla_simple == True:
+                    tokenList.append(element_TokenTable(aux,"literalCar",nline)) #Literal caracter
+                else:
+                    tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
                 flag_string = False
                 aux=""
-            elif char == '"' and flag_string == False: #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
+            elif (char == '"' and flag_string == False) or (char == "'" and flag_string == False): #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
                 flag_string = True
+                if char == "'":
+                    flag_comilla_simple = True
 
             # Revisa si el caracter actual es un símbolo
             if char in lista_simbolos and flag_string == False: #Es un simbolo
@@ -404,13 +431,13 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     posSimb = ""                                                    # Y se resetea posSimb
 
             if flag_string == False:        # Si no es cadena, revisa el estado actual de aux y char...
-                print(len(aux))
-                print("Evaluacion de número entero")        # Busca si es un entero
-                print("posNum: ", posNum)
+                #print(len(aux))
+                #print("Evaluacion de número entero")        # Busca si es un entero
+                #print("posNum: ", posNum)
                 flag_found_num = es_numero(char) and es_numero(aux) 
                 
                 if posNum != "" and char == '.': #Evaluamos si posNum es diferente de vacio y existe un punto, porque entonces existe un flotante
-                    print("Evaluacion de un flotante")
+                    #print("Evaluacion de un flotante")
                     flag_found_float = True
                     posNum += char #Agregamos el punto al numero
                     pass
@@ -480,27 +507,31 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
     identificador_principal = None
     for i, token in enumerate(tokenList_prog):
         if token.get_token() == "id" or token.get_token() == "main":
+            
             if token.get_token() == 'main': #Es la función principal
                 if not 'main' in [s.get_identificador() for s in symbolList_prog]:
                     symbolList_prog.append(element_SymbolTable(token.get_token(), "null", "Es la función principal"))
                 identificador_principal = 'main'
+                pass
             
-            print("token[i-1].get_token():", tokenList_prog[i - 1].get_token())
-            print("token[i+1].get_token():", tokenList_prog[i + 1].get_token()) 
+            #print("token[i-1].get_token():", tokenList_prog[i - 1].get_token())
+            #print("token[i+1].get_token():", tokenList_prog[i + 1].get_token()) 
              #Procedemos a identificar si es una clase
-            if (i > 0 and tokenList_prog[i - 1].get_token() == 'class' and tokenList_prog[i + 1].get_token() =='{') :
+            elif (i > 0 and tokenList_prog[i - 1].get_token() == 'class' and tokenList_prog[i + 1].get_token() =='{') :
                 print("Identificador de clase")
                 identificador_clase = tokenList_prog[i].get_lexema() 
                 for simbolo in symbolList_prog:
                     if simbolo.get_identificador() == identificador_clase:
                         simbolo.set_funcion("Es una clase")
+                pass
                         
-            if (i > 0 and tokenList_prog[i - 1].get_token() in [td for td in lista_tipo_datos] and tokenList_prog[i + 1].get_token() =='(') : #hay un tipo de retorno antes del id así que es una función
+            elif (i > 0 and tokenList_prog[i - 1].get_token() in [td for td in lista_tipo_datos] and tokenList_prog[i + 1].get_token() =='(') : #hay un tipo de retorno antes del id así que es una función
                 print("Identificador de función")
                 identificador_principal = tokenList_prog[i].get_lexema() 
                 for simbolo in symbolList_prog:
                     if simbolo.get_identificador() == identificador_principal:
                         simbolo.set_funcion("Es una función");
+                pass
             elif identificador_principal is not None:  #Es un id dentro de una función del nombre contenido por idenficador_principal
                 print("Es un id dentro de una funcion")
                 for simbolo in symbolList_prog:
