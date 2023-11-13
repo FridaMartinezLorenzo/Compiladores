@@ -1,3 +1,5 @@
+#Respaldo de mi avance
+
 from Cargado_Datos_AL import *
 from tkinter import *
 import lexico as lx
@@ -69,6 +71,10 @@ def Analizador_Lexico():
     
     cleanButton=Button(lexWindow,text="Limpiar",font=font1,bg="#F99417",command=lambda:cleanTable(tabla,arrLabels))
     cleanButton.place(x=550,y=20)
+    
+    cleanAllButton=Button(lexWindow,text="Limpiar todo",font=font1,bg="#F99417",command=lambda:cleanAll(tabla,arrLabels,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores,lineas_entrada))
+    cleanAllButton.place(x=750,y=20)
+    
     tabla.update_idletasks()
     #canvas.config(scrollregion=canvas.bbox("all"))
     canvas.bind("<MouseWheel>", on_mousewheel)
@@ -83,6 +89,17 @@ def cleanTable(tabla,arrLabels):
     for widget in arrLabels:
         widget.destroy()
     arrLabels.clear()#Limpiar la lista
+
+def cleanAll(tabla,arrLabels,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores,lineas_entrada):
+    for widget in tabla.winfo_children():
+        widget.destroy()
+    for widget in arrLabels:
+        widget.destroy()
+    arrLabels.clear()#Limpiar la lista
+    lineas_entrada.clear()
+    Prog_lista_tokens.clear()
+    Prog_lista_simbolos.clear()
+    Prog_lista_errores.clear()
     
     
 def MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lines_entry_file,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores):
@@ -136,9 +153,10 @@ def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Pr
     columna=1
     for simbolo in Prog_lista_simbolos:
         print(simbolo)
+
     
     hacerSeguimientodelValor(Prog_lista_simbolos,Prog_lista_tokens)
-    
+    detectarFuncion_tSimbolos(Prog_lista_simbolos,Prog_lista_tokens)
     for titulo in columnas_titulos:
         col=Label(tabla,text=titulo,width=20,borderwidth=1, relief="solid",font=font1)
         col.grid(row=0,column=columna)
@@ -318,7 +336,6 @@ class element_SymbolTable:
         return str(self.identificador) + " " + str(self.valor)+ " " + str(self.funcion)
 
 #Función que desgloza el archivo de entrada 
-#Función que desgloza el archivo de entrada 
 def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
     nline = 0
     for line in lines:
@@ -435,19 +452,67 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
             tokenList.append(element_TokenTable(posSimb, posSimb, nline))
                     
 def contar_llaves(tokens):
-    contador_llaves = 0
-
+    print("Contando llaves...")
+    contador_llaves = []
+    maximo_llaves = 0
+    contador = 0
     for token in tokens:
-        lexema = token.get_lexema()
-
-        if lexema == "{":
-            contador_llaves += 1
-        elif lexema == "}":
-            contador_llaves -= 1
-
+        t = token.get_token()
+        if t == "{":
+            print("detecto la llave {")
+            contador += 1
+            if maximo_llaves < contador:
+                maximo_llaves = contador
+        elif t == "}":
+            print("detecto la llave }")
+            contador -= 1
+            if contador == 0:
+                print("conta =0")
+                contador_llaves.append(maximo_llaves)
+                maximo_llaves = 0
+            elif contador < 0:
+                print("Error: Llave de cierre sin llave de apertura")            
     return contador_llaves
                     
+def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
+    print("Detectando funciones...")
 
+    identificador_principal = None
+    for i, token in enumerate(tokenList_prog):
+        if token.get_token() == "id" or token.get_token() == "main":
+            print("token[i-1].get_token():", tokenList_prog[i - 1].get_token())
+            print("token[i+1].get_token():", tokenList_prog[i + 1].get_token()) 
+            if (i > 0 and tokenList_prog[i - 1].get_token() in [td for td in lista_tipo_datos] and tokenList_prog[i + 1].get_token() =='(') : #hay un tipo de retorno antes del id así que es una función
+                print("Identificador de función")
+                identificador_principal = tokenList_prog[i].get_lexema() 
+                for simbolo in symbolList_prog:
+                    if simbolo.get_identificador() == identificador_principal:
+                        simbolo.set_funcion("Es una función");
+            
+            if token.get_token() == 'main': #Es la función principal
+                if not 'main' in [s.get_identificador() for s in symbolList_prog]:
+                    symbolList_prog.append(element_SymbolTable(token.get_token(), "null", "Es la función principal"))
+                identificador_principal = 'main'
+            
+            elif identificador_principal is not None:  #Es un id dentro de una función del nombre contenido por idenficador_principal
+                print("Es un id dentro de una funcion")
+                for simbolo in symbolList_prog:
+                    if simbolo.get_identificador() == token.get_lexema():
+                        simbolo.set_funcion(identificador_principal)
+            
+            #Procedemos a identificar si es una clase
+            if (i > 0 and tokenList_prog[i - 1].get_token() == 'class' and tokenList_prog[i + 1].get_token() =='{') :
+                print("Identificador de clase")
+                identificador_clase = tokenList_prog[i].get_lexema() 
+                for simbolo in symbolList_prog:
+                    if simbolo.get_identificador() == identificador_clase:
+                        simbolo.set_funcion("Es una clase")
+                        
+        
+    
+    for simbolo in symbolList_prog:
+        print(simbolo)
+    
 
 def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
     for i, token in enumerate(tokenList_prog):
@@ -500,17 +565,17 @@ def es_numero(cadena):
     except ValueError:
         return False # La conversión a entero falló, no es un número
     
-'''def es_nint_re(cadena):          # No se utiliza
+def es_nint_re(cadena):
     prueba = re.match(r'[0-9]*(?!\.)', cadena)    # Cualquier repetición de números, pero sin un punto decimal al final
     if prueba is not None:
         return True
-    return False'''
+    return False
 
-'''def es_float_re(cadena):         # No se utiliza
+def es_float_re(cadena):
     prueba = re.match(r'[0-9]*\.[0-9]', cadena)   # Dos repeticiones de números, con un punto decimal entre ellas
     if prueba is not None:
         return True
-    return False'''
+    return False
     
 def es_id(cadena, nline, tokenList):
     prueba = re.match('[a-zA-Z][a-zA-z0-9$_]*', cadena)
@@ -519,17 +584,17 @@ def es_id(cadena, nline, tokenList):
         return True     # Encontró un nombre que empieza por letra, y contiene letras, números, $ ó _
     return False
 
-'''def es_cad(cadena):              # No se utiliza
+def es_cad(cadena):
     prueba = re.match('".*"', cadena)
     if prueba is not None:
         return True     # Encontró una frase que está encerrada entre comillas dobles
-    return False'''
+    return False
 
-'''def es_car(cadena):              # No se utiliza
+def es_car(cadena):
     prueba = re.match("'.'", cadena)
     if prueba is not None:
         return True     # Encuentra un solo caracter entre comillas simples
-    return False'''
+    return False
     
     
 #_____________________________________________________________________________________________________________________________________
