@@ -461,14 +461,7 @@ def contar_llaves(tokens):
                     
 def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
     print("Detectando funciones...")
-    #contador_llaves = contar_llaves(tokenList_prog)
-    print("ESTA LLEGANDO")
-    #if contador_llaves:
-    #    for valor in contador_llaves:
-    #        print(f"Valor de llaves: {valor}")
-    #else:
-    #    print("La lista de contador_llaves está vacía.")
-    #conta_llaves_finales = j =0
+
     identificador_principal = None
     for i, token in enumerate(tokenList_prog):
         if token.get_token() == "id" or token.get_token() == "main":
@@ -481,13 +474,12 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
                     if simbolo.get_identificador() == identificador_principal:
                         simbolo.set_funcion("Es una función");
             
-            if token.get_token() == 'main':
+            if token.get_token() == 'main': #Es la función principal
                 symbolList_prog.append(element_SymbolTable(token.get_token(), "null", "Es la función principal"))
                 identificador_principal = 'main'
             
-            elif identificador_principal is not None: 
+            elif identificador_principal is not None:  #Es un id dentro de una función del nombre contenido por idenficador_principal
                 print("Es un id dentro de una funcion")
-            #elif identificador_principal is not None and conta_llaves_finales < contador_llaves[j]: #Es un id dentro de una función del nombre contenido por idenficador_principal
                 for simbolo in symbolList_prog:
                     if simbolo.get_identificador() == token.get_lexema():
                         simbolo.set_funcion(identificador_principal)
@@ -500,12 +492,6 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
                     if simbolo.get_identificador() == identificador_clase:
                         simbolo.set_funcion("Es una clase")
                         
-        #if token.get_lexema() == "}":
-        #    conta_llaves_finales += 1
-        #    if conta_llaves_finales == contador_llaves[j]:
-        #        j += 1
-        #        identificador_principal = None
-    
         
     
     for simbolo in symbolList_prog:
