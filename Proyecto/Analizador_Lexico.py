@@ -528,6 +528,8 @@ def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
 
 
 
+
+
                 
 def BuscarSimbolo_ts(id, symbolList_prog): #Se verifica que no este en la tabla de simbolos
     for simbolo in symbolList_prog:
