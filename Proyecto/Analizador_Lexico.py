@@ -325,6 +325,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
         nline+=1
         aux=""
         posNum = ""
+        posSimb = ""
         flag_string = False
         flag_found1 = flag_found_id = flag_found_num = flag_found_float=False
         flag_chkLex = False
@@ -336,7 +337,6 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                 flag_chkLex = True
             else:
                 aux+=char
-                pass
 
             # Si son comillas, revisar el estado de la bandera de cadena
             print("aux: ",aux)
@@ -344,36 +344,47 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                 tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
                 flag_string = False
                 aux=""
-                pass
             elif char == '"' and flag_string == False: #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
                 flag_string = True
-                pass
 
             # Revisa si el caracter actual es un símbolo
             if char in lista_simbolos and flag_string == False: #Es un simbolo
-                if (flag_found_float == True):                  # Si ya se ha encontrado un punto antes en el número
-                    tokenList.append(element_TokenTable(posNum, "nfloat", nline))
-                    tokenList.append(element_TokenTable(char, char, nline))
+                if (flag_found_float == True):                  # Si ya se ha encontrado un punto antes en el número...
+                    tokenList.append(element_TokenTable(posNum, "nfloat", nline))   # Agrega el número decimal de posNum
+                    posSimb += char                 # Agrega el símbolo encontrado a simbPos
                     flag_found_float = False
                     posNum = ""
-                elif (posNum != "" and char != "."):            # Si hay un número entero posible, pero el símbolo no es un punto
-                    tokenList.append(element_TokenTable(posNum, "nint", nline))
-                    tokenList.append(element_TokenTable(char, char, nline))
+                    aux = ""
+                elif (posNum != "" and char != "."):            # Si hay un número entero posible, pero el símbolo no es un punto...
+                    tokenList.append(element_TokenTable(posNum, "nint", nline))     # Agrega el número entero de posNum
+                    posSimb += char                 # Agrega el símbolo encontrado a simbPos
                     posNum = ""
-                elif (posNum == "" and aux != char and (char != "$" or char != "_")):              # Si no hay número posible, pero aux no está vacío
+                    aux = ""
+                elif (posNum == "" and aux != char and (char != "$" or char != "_")):   # Si no hay número posible, pero aux no está vacío...
                     id_aux = ""
-                    for letra in aux:
+                    for letra in aux:               # Crea otra cadena auxiliar donde almacena los caracteres antes del símbolo
                         if (not letra in lista_simbolos):
                             id_aux += letra
-                    tokenList.append(element_TokenTable(id_aux, "id", nline))
-                    tokenList.append(element_TokenTable(char, char, nline))
-                    if (not BuscarSimbolo_ts(id_aux, symbolList_prog)):    # No existe en la tabla
+                    tokenList.append(element_TokenTable(id_aux, "id", nline))       # Agrega el ID de aux
+                    posSimb += char                 # Agrega el símbolo encontrado a simbPos
+                    if (not BuscarSimbolo_ts(id_aux, symbolList_prog)):    # No existe aún el ID en la tabla
                             symbolList_prog.append(element_SymbolTable(id_aux, "null", "null"))
                     aux = ""
-                elif (posNum == ""):
-                    tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
+                elif (posNum == ""):                # Si no hay números posibles almacenados
+                    posSimb += char
+                    if len(posSimb) == 2:           # Si ya hay dos símbolos almacenados...
+                        if posSimb in lista_simbolos:   # Si posSimb es un símbolo válido...
+                            tokenList.append(element_TokenTable(posSimb, posSimb, nline))       # Se añade el símbolo de posSimb
+                            posSimb = ""                                                        # Y se resetea posSimb
+                        else:                           # Si posSimb NO es un símbolo válido...
+                            tokenList.append(element_TokenTable(posSimb[0], posSimb[0], nline)) # Se añade solo el primer símbolo de posSimb y
+                            posSimb = posSimb[1]                                                # Solo se queda el segundo símbolo en posSimb
+
                 aux = ""
-                pass
+            else:           # Si el caracter leído NO es símbolo...
+                if posSimb != "":       # Si hay símbolo guardado...
+                    tokenList.append(element_TokenTable(posSimb, posSimb, nline))   # Se agrega el símbolo de posSimb
+                    posSimb = ""                                                    # Y se resetea posSimb
 
             if flag_string == False:        # Si no es cadena, revisa el estado actual de aux y char...
                 print(len(aux))
