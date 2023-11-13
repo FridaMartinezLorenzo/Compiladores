@@ -349,7 +349,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                 flag_string = True
                 pass
 
-            # Si es un solo caracter, revisa si es un símbolo
+            # Revisa si el caracter actual es un símbolo
             if char in lista_simbolos and flag_string == False: #Es un simbolo
                 if (flag_found_float == True):                  # Si ya se ha encontrado un punto antes en el número
                     tokenList.append(element_TokenTable(posNum, "nfloat", nline))
@@ -360,6 +360,16 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     tokenList.append(element_TokenTable(posNum, "nint", nline))
                     tokenList.append(element_TokenTable(char, char, nline))
                     posNum = ""
+                elif (posNum == "" and aux != char and (char != "$" or char != "_")):              # Si no hay número posible, pero aux no está vacío
+                    id_aux = ""
+                    for letra in aux:
+                        if (not letra in lista_simbolos):
+                            id_aux += letra
+                    tokenList.append(element_TokenTable(id_aux, "id", nline))
+                    tokenList.append(element_TokenTable(char, char, nline))
+                    if (not BuscarSimbolo_ts(id_aux, symbolList_prog)):    # No existe en la tabla
+                            symbolList_prog.append(element_SymbolTable(id_aux, "null", "null"))
+                    aux = ""
                 elif (posNum == ""):
                     tokenList.append(element_TokenTable(char, char, nline)) #Agregamos a la lista de tokens
                 aux = ""
@@ -477,17 +487,17 @@ def es_numero(cadena):
     except ValueError:
         return False # La conversión a entero falló, no es un número
     
-def es_nint_re(cadena):
+'''def es_nint_re(cadena):          # No se utiliza
     prueba = re.match(r'[0-9]*(?!\.)', cadena)    # Cualquier repetición de números, pero sin un punto decimal al final
     if prueba is not None:
         return True
-    return False
+    return False'''
 
-def es_float_re(cadena):
+'''def es_float_re(cadena):         # No se utiliza
     prueba = re.match(r'[0-9]*\.[0-9]', cadena)   # Dos repeticiones de números, con un punto decimal entre ellas
     if prueba is not None:
         return True
-    return False
+    return False'''
     
 def es_id(cadena, nline, tokenList):
     prueba = re.match('[a-zA-Z][a-zA-z0-9$_]*', cadena)
@@ -496,17 +506,17 @@ def es_id(cadena, nline, tokenList):
         return True     # Encontró un nombre que empieza por letra, y contiene letras, números, $ ó _
     return False
 
-def es_cad(cadena):
+'''def es_cad(cadena):              # No se utiliza
     prueba = re.match('".*"', cadena)
     if prueba is not None:
         return True     # Encontró una frase que está encerrada entre comillas dobles
-    return False
+    return False'''
 
-def es_car(cadena):
+'''def es_car(cadena):              # No se utiliza
     prueba = re.match("'.'", cadena)
     if prueba is not None:
         return True     # Encuentra un solo caracter entre comillas simples
-    return False
+    return False'''
     
     
 #_____________________________________________________________________________________________________________________________________
