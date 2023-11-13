@@ -38,5 +38,5 @@ cargar_tipo_datos(lineas)
 #unimos la lista de tipos de datos al de palabras reservadas
 lista_pReservadas = lista_pReservadas + lista_tipo_datos
 
-for pReservada in lista_pReservadas:
-    print(pReservada)
+#for pReservada in lista_pReservadas:
+#    print(pReservada)
