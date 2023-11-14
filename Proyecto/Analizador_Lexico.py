@@ -609,7 +609,7 @@ def es_float_re(cadena):
     return False
     
 def es_id(cadena, nline, tokenList):
-    prueba = re.match('[a-zA-Z][a-zA-z0-9$_]*', cadena)
+    prueba = re.match('([a-zA-Z][a-zA-Z0-9$_]*)|([_$]+[a-zA-Z0-9]+[a-zA-Z0-9$_]*)', cadena)
     if prueba is not None:
         tokenList.append(element_TokenTable(cadena, "id", nline))
         return True     # Encontró un nombre que empieza por letra, y contiene letras, números, $ ó _
