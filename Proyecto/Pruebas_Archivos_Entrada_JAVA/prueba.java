@@ -3,7 +3,7 @@ public class prueba {
         System.out.println("Hola, Mundo");
         int var_a=5+2;
         //Prueba de comentario 1
-        float i = 1.0987f;
+        float _i$32 = 1.0987f;
         /*
           System.out.println(x<vnfmgx);
           Prueba de comentario multilinea
