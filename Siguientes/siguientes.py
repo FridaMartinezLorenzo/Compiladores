@@ -57,6 +57,15 @@ def obtencionSiguientes(reglasProducccion): #Recibe un arreglo de reglas de prod
     elementos_para_siguientes = []
     for r in reglasProduccion:
         elementos_para_siguientes.append(r.getBase())
+    #Hacemos un orden de prioridad de los elementos para calcular los siguientes
+    nueva_lista = []
+    for r in reglasProduccion:
+        if r.getProduccion()[0].islower():
+            #Es un terminal, se sugiere empezar por estos
+            nueva_lista.append(r)
+            
+        
+    
     
     elementos_para_siguientes = list(set(elementos_para_siguientes)) #Eliminamos los repetidos
     print("Elementos para siguientes: ", elementos_para_siguientes)    
