@@ -1,7 +1,0 @@
-float
-double
-char
-id
-num
-print
-int

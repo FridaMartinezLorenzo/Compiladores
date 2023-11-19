@@ -1,14 +1,11 @@
-
 from itertools import islice
 def calcularReglasP(archivo,listaNoTerminales):
     listaProducciones=[]#contiene las tuplas de las producciones
     cadena = []
     lineas = archivo.readlines()   
-    #print(len(lineas))
     archivo2=open("gramatica.txt",encoding="utf-8")
     archivo2.readline()#Salto de linea en el archivo
     archivo2.readline()
-    #print(len(lineas))
     for l in lineas:#Obtener las producciones de cada no terminal
         cadena=[]
         reglaP = archivo2.readline().split("->")  # separa el no terminal de la produccion
@@ -33,21 +30,11 @@ def calcularReglasP(archivo,listaNoTerminales):
                         aux+=caracter
                         indice += 1
                     cadena.append(aux)
-        #print(reglaP[0],cadena)
         producciones = (reglaP[0], cadena)
-        #print("hola",producciones)
         listaProducciones.append(producciones)
-        #cadena.clear()
-    #print(listaProducciones)
     return listaProducciones
 
-#def getProducciones(symbol):
-#    global reglasProduccion
-#    aux=[]
-#    for i in reglasProduccion:
-#        if i[0] == symbol:
-#            aux+= i[1]
-#    return aux
+
 def getProducciones(symbol):#Ya esta bien
     global reglasProduccion
     aux=[]
@@ -84,9 +71,6 @@ def primeros(symbol):#Funcion recursiva que obtiene los primeros de un simbolo d
                 array1.extend(aux)  # Agrega los primeros de 'a' al conjunto de primeros
                 if "λ" not in aux:  # Si 'a' no deriva en λ, deja de procesar esta producción
                     break
-
-    # Guarda los primeros calculados para este símbolo
-    
     primerosArray.append([symbol, array1])
     nuevoArray=quitar_duplicados(array1)
     return nuevoArray#Devuelve los primeros de symbol en forma de lista
@@ -97,12 +81,11 @@ def getPrimeros(symbol):
         if i[0] == symbol:
             return i[1]#Devuelve solo los primeros de la letra symbol
     return None
-
 def quitar_duplicados(lista):
     return list(dict.fromkeys(lista))
 
 #Abre archivo gramatica.txt
-ruta="gramatica3.txt"#Ruta del archivo
+ruta="gramatica.txt"#Ruta del archivo
 archivoGramatica=open(ruta,encoding="utf-8")#Usar esta codificacion para que lea lambda
 #Variables
 noTerminales=archivoGramatica.readline().split()
@@ -114,8 +97,8 @@ reglasProduccion=calcularReglasP(archivoGramatica,noTerminales)
 primerosArray=[]
 #primerosArray=primeros("L")
 #hacer un ciclo para recorrer los no terminales y obtener sus primeros
+
 for i in noTerminales:#Esto debe salir en la interfaz gráfica
     print("Primeros de ",i,":")
     print(primeros(i))
 
-#print(primeros("L"))

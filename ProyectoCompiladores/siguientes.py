@@ -63,19 +63,18 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                             bandera_existe = True
                     if bandera_existe == False:
                             lista_siguientes[index].addSiguientes('$')
-                else: #Armado de la beta y la alfa, caso dos y tres
-                    alfa = []
-                    beta = []
-                    for e in regla.getProduccion():
-                        if e == elemento_evaluado:
-                            bandera_elemento_evaluado_encontrado = True
-                        if bandera_elemento_evaluado_encontrado == False:
-                            alfa.append(e) #Todo lo que esta antes
-                        if bandera_elemento_evaluado_encontrado == True and e != elemento_evaluado:
-                            beta.append(e)
-
-                    print("alfa: ", alfa)
-                    print("beta: ", beta)
+                #Armado de la beta y la alfa, caso dos y tres
+                alfa = []
+                beta = []
+                for e in regla.getProduccion():
+                    if e == elemento_evaluado:
+                        bandera_elemento_evaluado_encontrado = True
+                    if bandera_elemento_evaluado_encontrado == False:
+                        alfa.append(e) #Todo lo que esta antes
+                    if bandera_elemento_evaluado_encontrado == True and e != elemento_evaluado:
+                        beta.append(e)
+                print("alfa: ", alfa)
+                print("beta: ", beta)
                 if bandera_elemento_evaluado_encontrado == True: #Encontramos el elemento_evaluado en la produccion así que hay que checar
                     bandera_epsilon_encontrado_beta = False
                     if bandera_elemento_evaluado_encontrado == True and len(beta) != 0:#Caso dos, no evaluamos alfa porque no la ocupamos
@@ -87,7 +86,7 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                             bandera_solo_una_vez = False
                             if e.islower() == True: #Es terminal
                                 bandera_solo_una_vez = True
-                                
+                        
                             while (bandera_solo_una_vez == True or e.islower() == False) and contador < len(beta) :
                                 primeros_elemento = primeros(e) 
                                 print("Primeros de ", e, " : ", primeros_elemento)

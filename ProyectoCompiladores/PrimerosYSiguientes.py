@@ -1,11 +1,16 @@
-
+from tkinter import *
+from tkinter import filedialog
+from tkinter import ttk
+from tkinter import messagebox
 from itertools import islice
-def calcularReglasP(archivo,listaNoTerminales):
+import getpass
+from tkinter import ttk
+def calcularReglasP(ruta,archivo,listaNoTerminales):
     listaProducciones=[]#contiene las tuplas de las producciones
     cadena = []
     lineas = archivo.readlines()   
     #print(len(lineas))
-    archivo2=open("gramatica.txt",encoding="utf-8")
+    archivo2=open(str(ruta),encoding="utf-8")
     archivo2.readline()#Salto de linea en el archivo
     archivo2.readline()
     #print(len(lineas))
@@ -33,21 +38,11 @@ def calcularReglasP(archivo,listaNoTerminales):
                         aux+=caracter
                         indice += 1
                     cadena.append(aux)
-        #print(reglaP[0],cadena)
         producciones = (reglaP[0], cadena)
-        #print("hola",producciones)
         listaProducciones.append(producciones)
-        #cadena.clear()
-    #print(listaProducciones)
+
     return listaProducciones
 
-#def getProducciones(symbol):
-#    global reglasProduccion
-#    aux=[]
-#    for i in reglasProduccion:
-#        if i[0] == symbol:
-#            aux+= i[1]
-#    return aux
 def getProducciones(symbol):#Ya esta bien
     global reglasProduccion
     aux=[]
@@ -60,15 +55,14 @@ def ObtenerPrimeros(noTerminales,producciones):
     primerosP=[]
 
 def primeros(symbol):#Funcion recursiva que obtiene los primeros de un simbolo dado symbol
-    global terminales, primerosArray
-
+    global terminales,noTerminales, primerosArray
     if symbol in terminales or not symbol.isalpha() or symbol == "λ":#Si es terminal o lambda
         return [symbol]
-
     if getPrimeros(symbol) is not None:  # Ya se calcularon estos primeros
         return getPrimeros(symbol)
     array1 = []
     for produccion in getProducciones(symbol):#getProducciones(symbol) devuelve una lista de listas con las reglas de produccion
+        
         for a in produccion:
             if a == symbol and a in noTerminales:
                 break  # Es el mismo no terminal
@@ -85,8 +79,6 @@ def primeros(symbol):#Funcion recursiva que obtiene los primeros de un simbolo d
                 if "λ" not in aux:  # Si 'a' no deriva en λ, deja de procesar esta producción
                     break
 
-    # Guarda los primeros calculados para este símbolo
-    
     primerosArray.append([symbol, array1])
     nuevoArray=quitar_duplicados(array1)
     return nuevoArray#Devuelve los primeros de symbol en forma de lista
@@ -101,8 +93,9 @@ def getPrimeros(symbol):
 def quitar_duplicados(lista):
     return list(dict.fromkeys(lista))
 
+"""
 #Abre archivo gramatica.txt
-ruta="gramatica3.txt"#Ruta del archivo
+ruta="gramatica.txt"#Ruta del archivo
 archivoGramatica=open(ruta,encoding="utf-8")#Usar esta codificacion para que lea lambda
 #Variables
 noTerminales=archivoGramatica.readline().split()
@@ -118,4 +111,100 @@ for i in noTerminales:#Esto debe salir en la interfaz gráfica
     print("Primeros de ",i,":")
     print(primeros(i))
 
-#print(primeros("L"))
+"""
+direccionArchivo = ""
+terminales=[]
+noTerminales=[]
+primerosArray=[]
+reglasProduccion=[]
+
+def PrimerosYSiguientes():
+    font1=("Times New Roman",14)
+    VentanaPrincipal =Toplevel()
+    VentanaPrincipal.title("Algoritmo de primeros y siguientes")
+    VentanaPrincipal.state("zoomed")
+    VentanaPrincipal.config(background="#363062")
+    VentanaPrincipal.iconbitmap("Compiler.ico")
+    font2=("Times New Roman",20)
+    archivoLabel=Label(VentanaPrincipal,text="Seleccionar Archivo:",font=font1,width=20,background="#363062",foreground="white")
+    archivoLabel.place(x=60,y=30)
+
+    frameGramatica=Frame(VentanaPrincipal,width=470,height=600)
+    frameGramatica.place(x=60,y=100)
+    framePrimeros=Frame(VentanaPrincipal,width=800,height=600,background="red")
+    framePrimeros.place(x=550,y=100)
+    archivoButton=Button(VentanaPrincipal,text="Abrir archivo",width=20,command=lambda:abrirArchivo(VentanaPrincipal,frameGramatica),bg="#F99417",font=font1)
+    archivoButton.place(x=300,y=20)
+    ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:ImprimirResultados(VentanaPrincipal,framePrimeros))
+    ImprimirResultad0s.place(x=300,y=60)
+
+def abrirArchivo(Ventana,frameGramatica):
+    global direccionArchivo
+    Ventana.grab_set()
+    username=getpass.getuser()
+    ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
+    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("texto","*.txt"),))
+    archivoGramatica=open(direccionArchivo,encoding="utf-8")
+    noTerminales=archivoGramatica.readline().split()
+    terminales=archivoGramatica.readline().split()
+    ImprimirGramatica(frameGramatica,direccionArchivo)
+    archivoGramatica.close()
+    Ventana.grab_release()
+
+def ImprimirGramatica(FrameGramatica,ruta_proyecto):
+    fuente=("Times New Roman",15)
+    archivoGramatica=open(ruta_proyecto,encoding="utf-8")
+    contador=0
+    lista=Listbox(FrameGramatica)
+    lista.config(width=45,height=30,font=fuente)
+    lista.pack()
+    texto="hola"
+    lista.insert(END,"-----Gramatica:------")
+    while texto!="":
+        texto=archivoGramatica.readline()
+        lista.insert(END,texto)
+def procesarCadenas(array):
+    cadenna=""
+    print(array)
+    for  i in array:
+        cadenna+=i
+        cadenna+=" "
+    return cadenna
+
+def ImprimirResultados(Ventana,FrameResultados):
+    global direccionArchivo
+    global terminales
+    global noTerminales
+    global reglasProduccion
+    Ventana.grab_set()
+    if direccionArchivo=="":
+
+        messagebox.showerror("Error","No se ha seleccionado ningun archivo")
+    else:
+        archivoGramatica=open(direccionArchivo,encoding="utf-8")#Usar esta codificacion para que lea lambda
+        noTerminales=archivoGramatica.readline().split()
+        terminales=archivoGramatica.readline().split()
+        reglasProduccion=calcularReglasP(direccionArchivo,archivoGramatica,noTerminales)
+        fuente=("Times New Roman",15)
+        lista=Listbox(FrameResultados)
+        lista.config(width=45,height=30,font=fuente)
+        lista.pack()
+        lista.insert(END,"-----Primeros:------")
+        for i in noTerminales:#Esto debe salir en la interfaz gráfica
+            regla="Primeros de "+i+": ["
+            primerosText=primeros(i)
+            aux=regla+procesarCadenas(primerosText)+" ]"
+            print(aux)
+            lista.insert(END,aux)
+        direccionArchivo=""
+        lista.insert(END,"-----Siguientes:------")
+        Ventana.grab_release()
+
+    
+
+
+    
+
+
+
+    
