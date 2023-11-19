@@ -63,7 +63,7 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                             bandera_existe = True
                     if bandera_existe == False:
                             lista_siguientes[index].addSiguientes('$')
-                #Armado de la beta y la alfa, caso dos y tres
+                 #Armado de la beta y la alfa, caso dos y tres
                 alfa = []
                 beta = []
                 for e in regla.getProduccion():
@@ -86,7 +86,7 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                             bandera_solo_una_vez = False
                             if e.islower() == True: #Es terminal
                                 bandera_solo_una_vez = True
-                        
+                                
                             while (bandera_solo_una_vez == True or e.islower() == False) and contador < len(beta) :
                                 primeros_elemento = primeros(e) 
                                 print("Primeros de ", e, " : ", primeros_elemento)

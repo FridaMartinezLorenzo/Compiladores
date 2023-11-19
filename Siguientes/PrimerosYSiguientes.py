@@ -102,7 +102,7 @@ def quitar_duplicados(lista):
     return list(dict.fromkeys(lista))
 
 #Abre archivo gramatica.txt
-ruta="gramatica3.txt"#Ruta del archivo
+ruta="gramatica2.txt"#Ruta del archivo
 archivoGramatica=open(ruta,encoding="utf-8")#Usar esta codificacion para que lea lambda
 #Variables
 noTerminales=archivoGramatica.readline().split()
