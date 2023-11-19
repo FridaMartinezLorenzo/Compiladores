@@ -1,10 +1,9 @@
 import re
-
+from PrimerosYSiguientes import *
 class reglaProduccion:
     
-    def __init__(self, b, p):
+    def __init__(self, b):
         self.base = b
-        self.produccion_cadena = p
         self.produccion = []
 
     def getBase(self):
@@ -15,16 +14,17 @@ class reglaProduccion:
 
     def setBase(self, b):
         self.base = b
-    
-    def setProduccionCadena(self, p):
-        self.produccion = p
+   
     
     def addProduccion(self, p):
         self.produccion.append(p)
         
     
     def __str__(self):
-        return self.base + " -> " + self.produccion + ";"
+        cadena = self.base + " -> " 
+        for p in self.produccion:
+            cadena += str(p) + " "
+        return cadena
 
 class Siguientes:
     def __init__(self, base):
@@ -45,108 +45,103 @@ class Siguientes:
     
 #________________________________________________________________________________________________________
 
-
-def obtencionSiguientes(reglasProducccion): #Recibe un arreglo de reglas de producción
-    lista_siguientes = [] #Se va a retornar
-
+def getSimboloInicial(reglasProduccion):
     simbolos_inicial = reglasProduccion[0].getBase()
     print("Simbolo inicial: ", simbolos_inicial)
+    return simbolos_inicial
 
+def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,index,simbolo_inicial): #Recibe un arreglo de reglas de producción    
+    for regla in reglasProducccion:    
+        if index != -1:
+            for elemento in regla.getProduccion(): 
+                bandera_elemento_evaluado_encontrado = False #Se va a buscar el elemento_evaluado en la produccion de la regla
 
-    #Obtenemos el arreglo de los elementos a los ue les vamos a sacar siguientes
-    elementos_para_siguientes = []
-    for r in reglasProduccion:
-        elementos_para_siguientes.append(r.getBase())
-    #Hacemos un orden de prioridad de los elementos para calcular los siguientes
-    nueva_lista = []
-    for r in reglasProduccion:
-        if r.getProduccion()[0].islower():
-            #Es un terminal, se sugiere empezar por estos
-            nueva_lista.append(r)
-            
-        
-    
-    
-    elementos_para_siguientes = list(set(elementos_para_siguientes)) #Eliminamos los repetidos
-    print("Elementos para siguientes: ", elementos_para_siguientes)    
-    
-    for elemento_evaluado in elementos_para_siguientes: #el elemento que estamos evaluando para obtener sus siguientes
-        for i, regla in enumerate(reglasProduccion):
-            index = -1
-            if i>= 0 and regla.getBase() in [s.getBase() for s in lista_siguientes]:
-                index = i #Se va a trabajar sobre esta posicion
-            else:
-                sig = Siguientes(regla.getBase())#Se crea un nuevo elemento
-                lista_siguientes.append(sig)
-                index = len(lista_siguientes) - 1 #Se va a trabajar sobre esta posicion
-
-            for elemento in regla.getProduccion():
-                bandera_elemento_evaluado_encontrado = False
-                if elemento == simbolos_inicial and regla.getBase() == elemento_evaluado: #Primer caso (A -> A)
-                    lista_siguientes[index].addSiguientes('$')
-
+                if simbolo_inicial == elemento_evaluado and regla.getBase() == elemento_evaluado: #Caso 1 (A -> A)
+                    bandera_existe = False
+                    for s in lista_siguientes[index].getSiguientes():
+                        if s == '$':
+                            bandera_existe = True
+                    if bandera_existe == False:
+                            lista_siguientes[index].addSiguientes('$')
                 else: #Armado de la beta y la alfa, caso dos y tres
                     alfa = []
                     beta = []
-
                     if elemento == elemento_evaluado:
                         bandera_elemento_evaluado_encontrado = True
-                    
                     if bandera_elemento_evaluado_encontrado == False:
-                        alfa.append(elemento) #Todo lo que esta antes 
-                    
+                        alfa.append(elemento) #Todo lo que esta antes
                     if bandera_elemento_evaluado_encontrado == True and elemento != elemento_evaluado:
                         beta.append(elemento)
-            
-            #Una vez obtenidos alfa y beta, evaluamos los casos dos y tres
-            bandera_epsilon_encontrado_beta = False
-            if bandera_elemento_evaluado_encontrado == True and beta != []: #Caso dos, no evaluamos alfa porque no la ocupamos            
-                #primero = transformarPrimero(beta[0]) #Se manda el elemento que vamos a transformar en siguientes
-                #if primero.find('e') != -1: #Si encontró epsilón se va a descartar       
-                #    for elemento in primero:
-                #        if elemento == 'e':
-                #            bandera_epsilon_encontrado_beta = True
-                #        else:
-                #            lista_siguientes[index].addSiguientes(elemento)
-                pass       
-            elif bandera_elemento_evaluado_encontrado == True and beta !=[] and bandera_epsilon_encontrado_beta == True: #Caso tres
-                #Siguientes de la regla que estamos evaluando se vuelven parte de los siguientes del elemento que estamos evaluando
-               for k, s1 in enumerate(lista_siguientes):
-                   if k>=0 and regla.getBase() in [s.getBase() for s in lista_siguientes]:
-                        for s2 in lista_siguientes[k].getSiguientes():
-                            lista_siguientes[index].addSiguientes(s2) #Colocamos los siguientes de B en siguientes de A S(A) <= S(B)
-            
-            elif bandera_elemento_evaluado_encontrado == True and beta == []: 
-                for k, s1 in enumerate(lista_siguientes):
-                   if k>=0 and regla.getBase() in [s.getBase() for s in lista_siguientes]:
-                        for s2 in lista_siguientes[k].getSiguientes():
-                            lista_siguientes[index].addSiguientes(s2) #Colocamos los siguientes de B en siguientes de A S(A) <= S(B)
-                                    
-    print("Lista de siguientes: ")
+
+                if bandera_elemento_evaluado_encontrado == True: #Encontramos el elemento_evaluado en la produccion así que hay que checar
+                    bandera_epsilon_encontrado_beta = False
+                    if bandera_elemento_evaluado_encontrado == True and len(beta) != 0:#Caso dos, no evaluamos alfa porque no la ocupamos
+                        #Una vez obtenidos alfa y beta, evaluamos los casos dos y tres
+                        bandera_epsilon_encontrado_beta = False
+                        for e in beta:
+                             primeros_elemento = primeros(e)
+                             for p in primeros_elemento:
+                                 if p == 'λ':
+                                    bandera_epsilon_encontrado_beta = True
+                                 else:
+                                    bandera_existe = False
+                                    for s in lista_siguientes[index].getSiguientes():
+                                        if s == p:
+                                            bandera_existe = True
+                                    if bandera_existe == False:
+                                            lista_siguientes[index].addSiguientes(p)
+
+                if bandera_elemento_evaluado_encontrado == True and len(beta) != 0 and bandera_epsilon_encontrado_beta == True: #Caso tres
+                    #Siguientes de la regla que estamos evaluando se vuelven parte de los siguientes del elemento que estamos evaluando
+
+                    if regla.getBase() == elemento_evaluado:
+                        pass
+                    else:
+                        if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
+                            for i, s in enumerate(lista_siguientes):
+                                if s.getBase() == elemento:
+                                    index_enviar = i
+                            obtencionSiguientes(regla.getBase(), reglasProduccion, lista_siguientes,index_enviar,simbolo_inicial)
+                            for s in lista_siguientes:
+                                if s.getBase() == regla.getBase():
+                                    for s2 in s.getSiguientes():
+                                        bandera_existe = False
+                                        for s in lista_siguientes[index].getSiguientes():
+                                            if s == s2:
+                                                bandera_existe = True
+                                        if bandera_existe == False:
+                                                lista_siguientes[index].addSiguientes(s2)
+                                        
+                elif bandera_elemento_evaluado_encontrado == True and len(beta) == 0: #Caso tres parte dos
+                     #Colocamos los siguientes de B en siguientes de A S(A) <= S(B)
+                    if regla.getBase() == elemento_evaluado:
+                        pass
+                    else:
+                        if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
+                            for i, s in enumerate(lista_siguientes):
+                                if s.getBase() == elemento:
+                                    index_enviar = i
+                            obtencionSiguientes(regla.getBase(), reglasProduccion, lista_siguientes,index_enviar,simbolo_inicial)
+                        for s in lista_siguientes:
+                            if s.getBase() == regla.getBase():
+                                for s2 in s.getSiguientes():
+                                    bandera_existe = False
+                                    for s in lista_siguientes[index].getSiguientes():
+                                        if s == s2:
+                                            bandera_existe = True
+                                    if bandera_existe == False:
+                                            lista_siguientes[index].addSiguientes(s2)
+
+
+        
+def getSiguientes(elemento, lista_siguientes):
     for s in lista_siguientes:
-        print(s.getBase() + " -> " +"".join(s.getSiguientes()))
-        
-    
-    
+        if s.getBase() == elemento:
+            return s.getSiguientes()
+    return None
 
-#_____________________________________________________________________________________________________
-def desgloceElementosProduccion(reglasProduccion, listaReservadas): #Recibe una produccion
-    for regla in reglasProduccion:
-        #Procedemos a buscar si existen palabras reservadas en la produccion
-        for pReservada in listaReservadas:
-            if regla.produccion_cadena.find(pReservada) != -1:
-                #Si existe una palabra reservada en la produccion, la añadimos a la lista de elementos de la produccion
-                regla.addProduccion(pReservada)
-        
-        #En caso de que no contenga palabras reservadas se va a proceder a desglozar la produccion elemento a elemento
-        for elemento in regla.produccion_cadena:
-            regla.addProduccion(elemento)      
-        
-        print("Produccion:" )
-        for elemento in regla.produccion:
-            print(elemento)                  
-
-
+def SiguientesDadoSimbolo(elemento, lista_siguientes, reglasProduccion):
+    pass
 #__________________________________________________________________________________________________________
 def cargar_pReservadas(lineas):
     for linea in lineas:
@@ -154,7 +149,42 @@ def cargar_pReservadas(lineas):
 
 
 #__________________________________________________________________________________________________________
-#script
+def CargadoGramatica():
+    listaNoTerminales = []
+    listaTerminales = []
+    reglasProduccion = []
+    archivo2 = "gramatica2.txt"
+    with open(archivo2, 'r') as file:
+        lineas = file.readlines()
+    
+    index = 0;
+    for linea in lineas:
+        if index == 0:
+            #Desglocamos la linea para obtener los no terminales
+            print(linea)
+            linea = linea.replace("\n","")
+            listaNoTerminales = linea.split(" ")
+            #print(listaNoTerminales)
+        if index == 1:
+            #Desglocamos la linea para obtener los terminales
+            linea = linea.replace("\n","")
+            listaTerminales = linea.split(" ")
+            #print(listaTerminales)
+        if index > 1:
+            #procesamos las reglas
+            base = linea.split("->")[0].strip() #Se retorna el primer elemento
+            produccion = linea.split("->")[1].strip() #Se retorna lo que produce
+            produccion = produccion.replace("lamda","λ")
+            produccion = produccion.split(" ")
+            reglasProduccion.append(reglaProduccion(base))
+            for p in produccion:
+                reglasProduccion[index-2].addProduccion(p.strip('\n'))
+           
+        index += 1
+    
+    return reglasProduccion, listaNoTerminales, listaTerminales
+#SCRIPT____________________________________________________________________________________________________
+
 archivo_cargado = 'palabras_reservadas.txt'
 with open(archivo_cargado, 'r') as file:
     lineas = file.readlines()
@@ -163,25 +193,37 @@ lista_pReservadas = []
 cargar_pReservadas(lineas)
 
 
+reglasProduccion =[]
+listaNoTerminales = []
+listaTerminales = []
 
-#Desglozamos la regla que entre
-reglaproduccion = "A -> Aa;"
-base = reglaproduccion.split("->")[0].strip() #Se retorna el primer elemento
-produccion = reglaproduccion.split("->")[1].strip() #Se retorna lo que produce
+reglasProduccion, listaNoTerminales, listaTerminales =CargadoGramatica()
 
-#print("Regla de produccion: ", reglaproduccion)
-#print("Base: ", base)
-#print("produccion: ", produccion)
+print("No terminales: ", listaNoTerminales)
+print("Terminales: ", listaTerminales)
 
-reglasProduccion = []
-rp = reglaProduccion(base, produccion)
-reglasProduccion.append(rp)
+print("Gramatica cargada")
+for regla in reglasProduccion:
+    print(regla)
 
-reglaproduccion2 = "B -> bA;"
-base = reglaproduccion2.split("->")[0].strip() #Se retorna el primer elemento
-produccion = reglaproduccion2.split("->")[1].strip() #Se retorna lo que produce
-reglasProduccion.append(reglaProduccion(base, produccion))
+#Preparacion para obtener los siguientes
+simbolo_inicial = getSimboloInicial(reglasProduccion)
+
+#Inicializamos la lista de siguientes
+lista_siguientes = []
+for elemento in listaNoTerminales:
+    lista_siguientes.append(Siguientes(elemento))
 
 
-desgloceElementosProduccion(reglasProduccion, lista_pReservadas)
-obtencionSiguientes(reglasProduccion)
+            
+for elemento in listaNoTerminales:
+    for i, s in enumerate(lista_siguientes):
+        if s.getBase() == elemento:
+            index = i
+    obtencionSiguientes(elemento,reglasProduccion,lista_siguientes,index,simbolo_inicial)
+
+
+print (len(lista_siguientes))
+print("Lista de siguientes: ")
+for s in lista_siguientes:
+    print(s.getBase() + " -> " +"".join(s.getSiguientes()))

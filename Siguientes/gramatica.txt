@@ -3,7 +3,7 @@ S E L
 S->S ; S
 S->id := E
 S->print ( L )
-E->id
+E->id 
 E->num
 E->E + E
 E->( S , E )

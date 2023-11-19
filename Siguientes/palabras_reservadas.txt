@@ -1,5 +1,7 @@
 float
-int
 double
 char
 id
+num
+print
+int
