@@ -100,22 +100,3 @@ def getPrimeros(symbol):
 
 def quitar_duplicados(lista):
     return list(dict.fromkeys(lista))
-
-#Abre archivo gramatica.txt
-ruta="gramatica2.txt"#Ruta del archivo
-archivoGramatica=open(ruta,encoding="utf-8")#Usar esta codificacion para que lea lambda
-#Variables
-noTerminales=archivoGramatica.readline().split()
-terminales=archivoGramatica.readline().split()
-simboloInicial = noTerminales[0]
-
-reglasProduccion=calcularReglasP(archivoGramatica,noTerminales)
-#print(getProducciones("T"))
-primerosArray=[]
-#primerosArray=primeros("L")
-#hacer un ciclo para recorrer los no terminales y obtener sus primeros
-for i in noTerminales:#Esto debe salir en la interfaz gráfica
-    print("Primeros de ",i,":")
-    print(primeros(i))
-
-#print(primeros("L"))
