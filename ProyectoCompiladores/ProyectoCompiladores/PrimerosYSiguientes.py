@@ -200,10 +200,6 @@ def ImprimirResultados(Ventana,FrameResultados):
         lista.config(width=45,height=30,font=fuente)
         lista.pack()
         lista.insert(END,"-----Primeros:------")
-        print(type(reglasProduccion))
-        for regla in reglasProduccion:
-            print(regla)
-            print(type(regla))
         for i in noTerminales:#Esto debe salir en la interfaz gráfica
             regla="Primeros de "+i+": ["
             primerosText=primeros(i)
