@@ -61,114 +61,132 @@ def getSimboloInicial(reglasProduccion):
     print("Simbolo inicial: ", simbolos_inicial)
     return simbolos_inicial
 
-def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,index,simbolo_inicial): #Recibe un arreglo de reglas de producción    
+def getSiguientes(elemento, lista_siguientes):
+    for s in lista_siguientes:
+        if s.getBase() == elemento:
+            return s.getSiguientes()
+    return None
+
+
+def obtencionSiguientes(elemento_evaluado, reglasProducccion, lista_siguientes, index, simbolo_inicial):
     print("Elemento evaluado: ", elemento_evaluado)
     elemento_es_elemento_inicial = False
-    for regla in reglasProducccion:    
+
+    for regla in reglasProducccion:
         if index != -1:
             contador_de_elementos = 0
-            for elemento in regla.getProduccion(): 
+            for elemento in regla.getProduccion():
                 print("Elemento: ", elemento)
                 print("contador: ", contador_de_elementos)
+
                 if contador_de_elementos == 0:
                     elemento_es_elemento_inicial = True
-                    
-                bandera_elemento_evaluado_encontrado = False #Se va a buscar el elemento_evaluado en la produccion de la regla
 
-                #if simbolo_inicial == elemento_evaluado and regla.getBase() == elemento_evaluado: #Caso 1 (A -> A)
-                if simbolo_inicial == elemento and elemento_es_elemento_inicial == True and regla.getBase() == elemento_evaluado: 
+                bandera_elemento_evaluado_encontrado = False
+
+                if simbolo_inicial == elemento and elemento_es_elemento_inicial == True and regla.getBase() == elemento_evaluado:
                     bandera_existe = False
                     for s in lista_siguientes[index].getSiguientes():
                         if s == '$':
                             bandera_existe = True
                     if bandera_existe == False:
-                            lista_siguientes[index].addSiguientes('$')
-                 #Armado de la beta y la alfa, caso dos y tres
+                        lista_siguientes[index].addSiguientes('$')
+
                 alfa = []
                 beta = []
                 for e in regla.getProduccion():
                     if e == elemento_evaluado:
                         bandera_elemento_evaluado_encontrado = True
                     if bandera_elemento_evaluado_encontrado == False:
-                        alfa.append(e) #Todo lo que esta antes
+                        alfa.append(e)
                     if bandera_elemento_evaluado_encontrado == True and e != elemento_evaluado:
                         beta.append(e)
                 print("alfa: ", alfa)
                 print("beta: ", beta)
-                if bandera_elemento_evaluado_encontrado == True: #Encontramos el elemento_evaluado en la produccion así que hay que checar
+
+                if bandera_elemento_evaluado_encontrado == True:
                     bandera_epsilon_encontrado_beta = False
-                    if bandera_elemento_evaluado_encontrado == True and len(beta) != 0:#Caso dos, no evaluamos alfa porque no la ocupamos
-                        #Una vez obtenidos alfa y beta, evaluamos los casos dos y tres
+
+                    if bandera_elemento_evaluado_encontrado == True and len(beta) != 0:
                         print("Caso dos")
                         bandera_epsilon_encontrado_beta = False
                         contador = 0
+
                         for e in beta:
-                            #bandera_solo_una_vez = False
-                            #if e.islower() == True: #Es terminal
-                            #    bandera_solo_una_vez = True
-                                
-                            #while (bandera_solo_una_vez == True or e.islower() == False) and contador < len(beta) :
-                            while (e.islower() == False) and contador < len(beta) :
+                            while e.islower() == False and contador < len(beta):
                                 if e == "lamda":
                                     primeros_elemento = primeros('λ')
-                                primeros_elemento = primeros(e) 
+                                else:
+                                    primeros_elemento = primeros(e)
                                 print("Primeros de ", e, " : ", primeros_elemento)
+
                                 for p in primeros_elemento:
                                     if p == 'λ':
-                                       bandera_epsilon_encontrado_beta = True
+                                        bandera_epsilon_encontrado_beta = True
                                     else:
-                                       bandera_existe = False #Para que no se repitan los siguientes
-                                       for s in lista_siguientes[index].getSiguientes():
-                                           if s == p:
-                                               bandera_existe = True
-                                       if bandera_existe == False:
-                                               lista_siguientes[index].addSiguientes(p)
-                                               print("Agregando: ", p, "a ",lista_siguientes[index].getBase())
+                                        bandera_existe = False
+                                        for s in lista_siguientes[index].getSiguientes():
+                                            if s == p:
+                                                bandera_existe = True
+                                        if bandera_existe == False:
+                                            lista_siguientes[index].addSiguientes(p)
+
                                 contador += 1
 
-                if bandera_elemento_evaluado_encontrado == True and len(beta) != 0 and bandera_epsilon_encontrado_beta == True: #Caso tres
-                    #Siguientes de la regla que estamos evaluando se vuelven parte de los siguientes del elemento que estamos evaluando
-
-                    #if regla.getBase() == elemento_evaluado:
-                    #    pass
-                    #else:
-                        if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
-                            for i, s in enumerate(lista_siguientes):
-                                if s.getBase() == elemento and len(s.getSiguientes()) == 0:
-                                    index_enviar = i
-                                    obtencionSiguientes(regla.getBase(), reglasProduccion, lista_siguientes,index_enviar,simbolo_inicial)
-                                #Añadir a los siguientes de A los siguientes de B, porque ya estan
-                
+                    if bandera_elemento_evaluado_encontrado == True and len(beta) != 0 and bandera_epsilon_encontrado_beta == True:
+                        if regla.getBase() == elemento_evaluado:
                             for s in lista_siguientes:
-                                if s.getBase() == regla.getBase():
+                                if s.getBase() == elemento_evaluado:
                                     for s2 in s.getSiguientes():
-                                        bandera_existe = False  #Para que no se repitan los siguientes
+                                        bandera_existe = False
                                         for s in lista_siguientes[index].getSiguientes():
                                             if s == s2:
                                                 bandera_existe = True
                                         if bandera_existe == False:
+                                            lista_siguientes[index].addSiguientes(s2)
+                        else:
+                            if regla.getBase() in [s.getBase() for s in lista_siguientes]:
+                                for i, s in enumerate(lista_siguientes):
+                                    if s.getBase() == elemento and len(s.getSiguientes()) == 0:
+                                        index_enviar = i
+                                        obtencionSiguientes(regla.getBase(), reglasProducccion, lista_siguientes,
+                                                             index_enviar, simbolo_inicial)
+
+                                for s in lista_siguientes:
+                                    if s.getBase() == regla.getBase():
+                                        for s2 in s.getSiguientes():
+                                            bandera_existe = False
+                                            for s in lista_siguientes[index].getSiguientes():
+                                                if s == s2:
+                                                    bandera_existe = True
+                                            if bandera_existe == False:
                                                 lista_siguientes[index].addSiguientes(s2)
-                                        
-                elif bandera_elemento_evaluado_encontrado == True and len(beta) == 0: #Caso tres parte dos
-                     #Colocamos los siguientes de B en siguientes de A S(A) <= S(B)
-                    #if regla.getBase() == elemento_evaluado:
-                    #    pass
-                    #else:
-                        if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
+
+                if bandera_elemento_evaluado_encontrado == True and len(beta) == 0:
+                    if regla.getBase() == elemento_evaluado:
+                        pass
+                    else:
+                        if regla.getBase() in [s.getBase() for s in lista_siguientes]:
                             for i, s in enumerate(lista_siguientes):
                                 if s.getBase() == elemento and len(s.getSiguientes()) == 0:
                                     index_enviar = i
-                                    obtencionSiguientes(regla.getBase(), reglasProduccion, lista_siguientes,index_enviar,simbolo_inicial)
-                        for s in lista_siguientes:
-                            if s.getBase() == regla.getBase():
-                                for s2 in s.getSiguientes():
-                                    bandera_existe = False
-                                    for s in lista_siguientes[index].getSiguientes():
-                                        if s == s2:
-                                            bandera_existe = True
-                                    if bandera_existe == False:
+                                    obtencionSiguientes(regla.getBase(), reglasProducccion, lista_siguientes,
+                                                         index_enviar, simbolo_inicial)
+                            for s in lista_siguientes:
+                                if s.getBase() == regla.getBase():
+                                    for s2 in s.getSiguientes():
+                                        bandera_existe = False
+                                        for s in lista_siguientes[index].getSiguientes():
+                                            if s == s2:
+                                                bandera_existe = True
+                                        if bandera_existe == False:
                                             lista_siguientes[index].addSiguientes(s2)
                 contador_de_elementos += 1
+
+    #for s in lista_siguientes:
+    #    if s.getBase() == elemento_evaluado and len(s.getSiguientes()) == 0:
+    #        index_enviar = [i for i, x in enumerate(lista_siguientes) if x.getBase() == elemento_evaluado][0]
+    #        obtencionSiguientes(elemento_evaluado, reglasProducccion, lista_siguientes, index_enviar, simbolo_inicial)
 
         
 def getSiguientes(elemento, lista_siguientes):

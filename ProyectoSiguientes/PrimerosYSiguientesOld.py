@@ -68,36 +68,44 @@ def getProducciones(symbol):#Ya esta bien
 def ObtenerPrimeros(noTerminales,producciones):
     primerosP=[]
 
-def primeros(symbol):#Funcion recursiva que obtiene los primeros de un simbolo dado symbol
-    global terminales,noTerminales, primerosArray
-    if symbol in terminales or not symbol.isalpha() or symbol == "λ":#Si es terminal o lambda
-        print("obj=",symbol)
+def primeros(symbol, procesados=None):
+    global terminales, noTerminales, primerosArray
+
+    if procesados is None:
+        procesados = set()
+
+    if symbol in terminales or not symbol.isalpha() or symbol == "λ":
         return [symbol]
-    if getPrimeros(symbol) is not None:  # Ya se calcularon estos primeros
+
+    if getPrimeros(symbol) is not None:
         return getPrimeros(symbol)
+
+    if symbol in procesados:
+        return []
+
+    procesados.add(symbol)
+
     array1 = []
-    for produccion in getProducciones(symbol):#getProducciones(symbol) devuelve una lista de listas con las reglas de produccion
-        
+    for produccion in getProducciones(symbol):
         for a in produccion:
-            if a == symbol and a in noTerminales:
-                break  # Es el mismo no terminal
-            elif a.islower() or not a.isalpha():  # Es un terminal
-                aux = primeros(a)
-                array1.extend(aux)  # Agrega los primeros de 'a' al conjunto de primeros
+            if a.islower() or not a.isalpha():  # Es un terminal
+                aux = primeros(a, procesados.copy())
+                array1.extend(aux)
                 if "λ" in aux and "λ" not in array1:
                     array1.append("λ")
-                if "λ" not in aux:  # Si 'a' no deriva en λ, deja de procesar esta producción
+                if "λ" not in aux:
                     break
             else:  # Es un no terminal
-                aux = primeros(a)
-                array1.extend(aux)  # Agrega los primeros de 'a' al conjunto de primeros
-                if "λ" not in aux:  # Si 'a' no deriva en λ, deja de procesar esta producción
+                aux = primeros(a, procesados.copy())
+                array1.extend(aux)
+                if "λ" not in aux:
                     break
 
     primerosArray.append([symbol, array1])
-    nuevoArray=quitar_duplicados(array1)
-    return nuevoArray#Devuelve los primeros de symbol en forma de lista
-        
+    nuevoArray = quitar_duplicados(array1)
+    return nuevoArray
+
+
 def getPrimeros(symbol):
     global primerosArray
     for i in primerosArray:
@@ -145,8 +153,9 @@ def procesarCadenas(array):
 
 
 def get_Primeros(listaProducciones):
-    print("No terminales: ",noTerminales)
-    print("Terminales: ",terminales)
+    #print("No terminales: ",noTerminales)
+    #print("Terminales: ",terminales)
+    
     #for p in listaProducciones:
     #     for i in range(len(p[1])):
     #        pinterno = p[1][i]
@@ -161,14 +170,15 @@ def get_Primeros(listaProducciones):
     #            p[1][i] = pinterno  # Modifica el elemento original en listaProducciones
     #            print("Pinterno: ", pinterno, len(pinterno))
     #            
-    print("Lista de producciones de primeros",type(listaProducciones))
-    for i in listaProducciones:
-        print(i, type(i))
+    
+    #print("Lista de producciones de primeros",type(listaProducciones))
+    #for i in listaProducciones:
+    #    print(i, type(i))
     for i in noTerminales:#Esto debe salir en la interfaz gráfica
 
                 regla="Primeros de "+i+": [              "
                 primerosText=primeros(i)
                 #print("Primeros de ",i,":",primerosText)
                 aux=regla+procesarCadenas(primerosText)+"            ]\n\n"
-                print(aux)
+                #print(aux)
                 
