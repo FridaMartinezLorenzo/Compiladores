@@ -3,6 +3,11 @@ def Ir_a(conjuntoI , simboloAevaluar):
     J = [] #Declaramos la tupla que se va a retornar    
     
     for elemento in conjuntoI[1]:
+        if simboloAevaluar == '$':
+            J.append("Aceptacion")
+            return J
+        
+        
         print("elemento: ",elemento)
         base  = elemento[0] #Base de la regla de produccion
         estados = elemento[1] #Estados de la regla de produccion
@@ -10,6 +15,7 @@ def Ir_a(conjuntoI , simboloAevaluar):
         temporal = [] #Lista temporal para guardar los estados
         bandera_se_detecto_punto = bandera_se_encontro_simbolo =False
 
+        
         for estado in estados: #Obtenemos el listado de estado
             #Vamos a recorrer el punto de la produccion y copiamos en una variable temporal
                 if estado == simboloAevaluar:
@@ -36,7 +42,7 @@ def Ir_a(conjuntoI , simboloAevaluar):
 
 conjuntoI =           ['I0',  [       ['S', ['•', 'i', 'p'] ], ['E',['•','i','f']  ]      ]   ]     
 #print(conjuntoI)
-J = Ir_a(conjuntoI,'z')
+J = Ir_a(conjuntoI,'$')
 
 print(conjuntoI)
 print (J)
