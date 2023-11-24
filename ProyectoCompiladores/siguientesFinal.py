@@ -102,13 +102,17 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                         print("Caso dos")
                         bandera_epsilon_encontrado_beta = False
                         contador = 0
+                        
                         for e in beta:
                             bandera_solo_una_vez = False
-                            if e.islower() == True: #Es terminal
+                            if e.islower() or not e.isalpha(): #Es terminal
                                 bandera_solo_una_vez = True
                                 
-                            while (bandera_solo_una_vez == True or e.islower() == False) and contador < len(beta) :
+                            if bandera_solo_una_vez == True or contador < len(beta) :
+                                if e == "lamda":
+                                    e = "λ"
                                 primeros_elemento = primeros(e) 
+                                
                                 print("Primeros de ", e, " : ", primeros_elemento)
                                 for p in primeros_elemento:
                                     if p == 'λ':
@@ -116,19 +120,22 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                                     else:
                                        bandera_existe = False #Para que no se repitan los siguientes
                                        for s in lista_siguientes[index].getSiguientes():
-                                           if s == p:
+                                           if s == p and s != 'λ':
                                                bandera_existe = True
                                        if bandera_existe == False:
                                                lista_siguientes[index].addSiguientes(p)
                                                print("Agregando: ", p, "a ",lista_siguientes[index].getBase())
-                                contador += 1
+                            contador += 1
+                            if bandera_solo_una_vez == True:
+                                break
+                            
 
                 if bandera_elemento_evaluado_encontrado == True and len(beta) != 0 and bandera_epsilon_encontrado_beta == True: #Caso tres
                     #Siguientes de la regla que estamos evaluando se vuelven parte de los siguientes del elemento que estamos evaluando
 
-                    if regla.getBase() == elemento_evaluado:
-                        pass
-                    else:
+                   #if regla.getBase() == elemento_evaluado:
+                   #    pass
+                   #else:
                         if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
                             for i, s in enumerate(lista_siguientes):
                                 if s.getBase() == elemento:
@@ -146,9 +153,9 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                                         
                 elif bandera_elemento_evaluado_encontrado == True and len(beta) == 0: #Caso tres parte dos
                      #Colocamos los siguientes de B en siguientes de A S(A) <= S(B)
-                    if regla.getBase() == elemento_evaluado:
-                        pass
-                    else:
+                    #if regla.getBase() == elemento_evaluado:
+                    #    pass
+                    #else:
                         if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
                             for i, s in enumerate(lista_siguientes):
                                 if s.getBase() == elemento:
@@ -165,6 +172,7 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                                             lista_siguientes[index].addSiguientes(s2)
                 contador_de_elementos += 1
 
+   
         
 def getSiguientes(elemento, lista_siguientes):
     for s in lista_siguientes:

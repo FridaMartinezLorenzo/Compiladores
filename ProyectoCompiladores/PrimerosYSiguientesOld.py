@@ -171,9 +171,5 @@ def get_Primeros(listaProducciones):
                 primerosText=primeros(i)
                 #print("Primeros de ",i,":",primerosText)
                 aux=regla+procesarCadenas(primerosText)+"            ]"
-                print(aux)
+                #print(aux)
                 
-
-
-print("Primeros de L en primeros")
-print(primeros('L'))

@@ -83,11 +83,12 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                         bandera_epsilon_encontrado_beta = False
                         contador = 0
                         for e in beta:
-                            bandera_solo_una_vez = False
-                            if e.islower() == True: #Es terminal
-                                bandera_solo_una_vez = True
+                            #bandera_solo_una_vez = False
+                            #if e.islower() == True: #Es terminal
+                            #    bandera_solo_una_vez = True
                                 
-                            while (bandera_solo_una_vez == True or e.islower() == False) and contador < len(beta) :
+                            #while (bandera_solo_una_vez == True or e.islower() == False) and contador < len(beta) :
+                            while (e.islower() == False) and contador < len(beta) :
                                 primeros_elemento = primeros(e) 
                                 print("Primeros de ", e, " : ", primeros_elemento)
                                 for p in primeros_elemento:
@@ -106,14 +107,17 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                 if bandera_elemento_evaluado_encontrado == True and len(beta) != 0 and bandera_epsilon_encontrado_beta == True: #Caso tres
                     #Siguientes de la regla que estamos evaluando se vuelven parte de los siguientes del elemento que estamos evaluando
 
-                    if regla.getBase() == elemento_evaluado:
-                        pass
-                    else:
+                    #if regla.getBase() == elemento_evaluado:
+                    #    pass
+                    #else:
                         if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
                             for i, s in enumerate(lista_siguientes):
                                 if s.getBase() == elemento:
                                     index_enviar = i
-                                    obtencionSiguientes(regla.getBase(), reglasProduccion, lista_siguientes,index_enviar,simbolo_inicial)
+                                    if lista_siguientes[index_enviar].getSiguientes() != None:
+                                        obtencionSiguientes(regla.getBase(), reglasProduccion, lista_siguientes,index_enviar,simbolo_inicial)
+                                        
+                                        
                             for s in lista_siguientes:
                                 if s.getBase() == regla.getBase():
                                     for s2 in s.getSiguientes():
@@ -126,14 +130,15 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                                         
                 elif bandera_elemento_evaluado_encontrado == True and len(beta) == 0: #Caso tres parte dos
                      #Colocamos los siguientes de B en siguientes de A S(A) <= S(B)
-                    if regla.getBase() == elemento_evaluado:
-                        pass
-                    else:
+                    #if regla.getBase() == elemento_evaluado:
+                    #    pass
+                    #else:
                         if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
                             for i, s in enumerate(lista_siguientes):
                                 if s.getBase() == elemento:
                                     index_enviar = i
-                                    obtencionSiguientes(regla.getBase(), reglasProduccion, lista_siguientes,index_enviar,simbolo_inicial)
+                                    if lista_siguientes[index_enviar].getSiguientes != None:
+                                        obtencionSiguientes(regla.getBase(), reglasProduccion, lista_siguientes,index_enviar,simbolo_inicial)
                         for s in lista_siguientes:
                             if s.getBase() == regla.getBase():
                                 for s2 in s.getSiguientes():
