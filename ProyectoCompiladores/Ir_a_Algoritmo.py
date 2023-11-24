@@ -2,9 +2,8 @@
 def Ir_a(conjuntoI , simboloAevaluar):
     J = [] #Declaramos la tupla que se va a retornar
 
-    for elemento in conjuntoI:
-        print("elemento[1]:",elemento[1])
-        estados = elemento[1]
+    for i, elemento in enumerate(conjuntoI):
+        estados = elemento[i+1]
         base = estados[0] #Base de la regla de produccion
         estados = estados[1]
         temporal = [] #Lista temporal para guardar los estados
