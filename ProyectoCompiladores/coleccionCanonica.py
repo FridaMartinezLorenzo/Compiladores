@@ -55,7 +55,7 @@ terminales=[]
 primerosArray=[]
 reglasProduccion=[]
 reglasProduccion=calcularReglasP(archivoGramatica,noTerminales)
-print(reglasProduccion)
+#print(reglasProduccion)
 
 
 elemento_gramatica_aumentada = [simboloInicial + "'", [simboloInicial,"$"]]
