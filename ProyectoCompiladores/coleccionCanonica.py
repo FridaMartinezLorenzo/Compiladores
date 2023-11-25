@@ -103,7 +103,7 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
         #while ConjuntoC:
             conjunto_actual = ConjuntoC.pop(0)
             #lista_estados.append(conjunto_actual[0])
-        
+
             for simbolo_gramatical in lista_elementos_para_ir_a:
                     print("Simbolo gramatical: ", simbolo_gramatical)
                     print("Conjunto actual: ", conjunto_actual)
@@ -119,7 +119,7 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
                         print("Conjunto C con gregado: ", ConjuntoC)
         print("lista_estados_conjuntos: ", lista_estados_conjuntos)
         print("lista_estados: ", lista_estados)
-    
+        break;    
 
 
 
