@@ -5,21 +5,26 @@ def generar_estado(estado, produccion):
 
 
 def Ir_a(I, simboloAevaluar, reglas_prod):
+    print("Estamos trabajando en ir a")
     J = []  # Conjunto de elementos vacío
-    for elemento in I:
+    for elemento in I[1]:
+        print("elemento: ", elemento)
+        
         produccion = elemento[1]  # Obtener la producción de la regla
-
+        print("produccion: ", produccion)
         for i in range(len(produccion)-1): 
+            print("produccion[i]: ", produccion[i])
             if produccion[i] == '•' and produccion[i + 1] == simboloAevaluar:
                 # Intercambiar posición con el inmediato siguiente
                 nueva_produccion = produccion.copy()
                 nueva_produccion[i], nueva_produccion[i + 1] = nueva_produccion[i + 1], nueva_produccion[i]
-                J.append([elemento[0],nueva_produccion])
-
+                J.append([I[0],nueva_produccion])
     if len(J) == 0:
         return None
     retornoCerradura = cerradura(['I0',J],reglas_prod)
-    return retornoCerradura  # Supongo 'I0' como ejemplo, ajusta según tu lógica
+    print("retornoCerradura: ", retornoCerradura)
+    print("retornoCerradura[0][1]: ", retornoCerradura[0][1])
+    return retornoCerradura[0][1]  # Supongo 'I0' como ejemplo, ajusta según tu lógica
 
 
 
