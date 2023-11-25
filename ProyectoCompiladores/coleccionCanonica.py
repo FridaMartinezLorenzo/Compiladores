@@ -219,7 +219,7 @@ ConjuntoC = []
 ConjuntoC.append(aux_I)
 
 lista_estados_conjuntos = []
-lista_estados_conjuntos.append(ConjuntoC)
+lista_estados_conjuntos.append(aux_I)
 print("\n\nlista_estados_conjuntos: ", lista_estados_conjuntos)
 
 
