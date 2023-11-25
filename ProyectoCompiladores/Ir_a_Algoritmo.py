@@ -18,13 +18,12 @@ def Ir_a(I, simboloAevaluar, reglas_prod):
                 # Intercambiar posición con el inmediato siguiente
                 nueva_produccion = produccion.copy()
                 nueva_produccion[i], nueva_produccion[i + 1] = nueva_produccion[i + 1], nueva_produccion[i]
-                J.append([I[0],nueva_produccion])
+                J.append(nueva_produccion)
     if len(J) == 0:
         return None
     retornoCerradura = cerradura(['I0',J],reglas_prod)
     print("retornoCerradura: ", retornoCerradura)
-    print("retornoCerradura[0][1]: ", retornoCerradura[0][1])
-    return retornoCerradura[0][1]  # Supongo 'I0' como ejemplo, ajusta según tu lógica
+    return retornoCerradura  # Supongo 'I0' como ejemplo, ajusta según tu lógica
 
 
 

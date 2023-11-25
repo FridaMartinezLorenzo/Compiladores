@@ -63,10 +63,10 @@ def buscarEstado(estado, lista_estados):
 def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_estados, lista_elementos_para_ir_a, i):
     while (ConjuntoC):
         #Calculamos los no terminales sobre los cuales vamos a mandar a Ir_a al elemento del conjunto
-        for elemento in ConjuntoC: #Vamos a ir recorriendo  
+        for elemento in ConjuntoC[0]: #Vamos a ir recorriendo  
                     #print("elemento: ",elemento)
                     estado = elemento[0]
-                    #print("estado: ",estado)
+                    print("estado: ",estado)
                     #Recorremos el conjunto de producciones generadas por el estado
                     #Obtenemos los simbolos que vamos a evaluar en el ir_a, es decir los simbolos después del punto
                     #print("la regla esta en elemento[1]: ",elemento[1])
@@ -92,7 +92,7 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
 
                             #print("estado de la bandera: ", bandera_se_detecto_punto)
                     #del ConjuntoC[0]                
-
+        #break
         lista_elementos_para_ir_a  = list(set(lista_elementos_para_ir_a))
         print("Lista de elementos a mandar a Ir_a: ", lista_elementos_para_ir_a)
 
