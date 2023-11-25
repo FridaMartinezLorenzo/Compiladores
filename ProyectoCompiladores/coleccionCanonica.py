@@ -62,6 +62,7 @@ def buscarEstado(estado, lista_estados):
 
 def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_estados, lista_elementos_para_ir_a, i):
     while (ConjuntoC):
+        #Calculamos los no terminales sobre los cuales vamos a mandar a Ir_a al elemento del conjunto
         for elemento in ConjuntoC: #Vamos a ir recorriendo  
                     #print("elemento: ",elemento)
                     estado = elemento[0]
