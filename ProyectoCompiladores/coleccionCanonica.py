@@ -88,7 +88,8 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
                                     #print("Se detecto punto")
 
                            if bandera_se_detecto_punto:
-                                return None #Si se detecto punto en la ultima posición de la regla, no se puede hacer ir_a (No es necesario)
+                                pass
+                                #return None #Si se detecto punto en la ultima posición de la regla, no se puede hacer ir_a (No es necesario)
 
                             #print("estado de la bandera: ", bandera_se_detecto_punto)
                     #del ConjuntoC[0]                
@@ -116,6 +117,7 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
                         lista_estados_conjuntos.append(nuevo_estado)
 
                         ConjuntoC.append(nuevo_estado)
+                        print("Conjunto C con gregado: ", ConjuntoC)
         print("lista_estados_conjuntos: ", lista_estados_conjuntos)
         print("lista_estados: ", lista_estados)
     
