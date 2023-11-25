@@ -62,40 +62,39 @@ def buscarEstado(estado, lista_estados):
 
 def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_estados, lista_elementos_para_ir_a, i):
     while (ConjuntoC):
+        lista_elementos_para_ir_a = []
         #Calculamos los no terminales sobre los cuales vamos a mandar a Ir_a al elemento del conjunto
+        print("Conjunto C[0]: ", ConjuntoC)
         for elemento in ConjuntoC[0]: #Vamos a ir recorriendo  
                     #print("elemento: ",elemento)
                     estado = elemento[0]
                     print("estado: ",estado)
                     #Recorremos el conjunto de producciones generadas por el estado
                     #Obtenemos los simbolos que vamos a evaluar en el ir_a, es decir los simbolos después del punto
-                    #print("la regla esta en elemento[1]: ",elemento[1])
 
 
                     bandera_se_detecto_punto = False
                     print(" thisss elemento: ", elemento)
-                    for reglas in elemento[1]:
-                           print("reglas: ", reglas)
-                           for e in reglas:
-                                #print("\nelemento de la producción de la regla:", e)
+                    for elementoProducido in elemento :
+                           
+                           for lista_e in elementoProducido:
+                                if len(lista_e) > 1:
+                                    for e in lista_e:
+                                        print("\nelemento de la producción de la regla:", e)
 
-                                if bandera_se_detecto_punto:
-                                    lista_elementos_para_ir_a.append(e)
-                                    bandera_se_detecto_punto = False
+                                        if bandera_se_detecto_punto:
+                                            lista_elementos_para_ir_a.append(e)
+                                            bandera_se_detecto_punto = False
 
-                                if e == '•':
-                                    bandera_se_detecto_punto = True
-                                    #print("Se detecto punto")
+                                        if e == '•':
+                                            bandera_se_detecto_punto = True
+                                            #print("Se detecto punto")
 
-                           if bandera_se_detecto_punto:
-                                pass
                                 #return None #Si se detecto punto en la ultima posición de la regla, no se puede hacer ir_a (No es necesario)
 
-                            #print("estado de la bandera: ", bandera_se_detecto_punto)
-                    #del ConjuntoC[0]                
-        #break
         lista_elementos_para_ir_a  = list(set(lista_elementos_para_ir_a))
         print("Lista de elementos a mandar a Ir_a: ", lista_elementos_para_ir_a)
+        
 
         numero_estados = len(ConjuntoC)
         print("numero de estados: ", numero_estados)
@@ -104,7 +103,7 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
         #while ConjuntoC:
             conjunto_actual = ConjuntoC.pop(0)
             #lista_estados.append(conjunto_actual[0])
-
+        
             for simbolo_gramatical in lista_elementos_para_ir_a:
                     print("Simbolo gramatical: ", simbolo_gramatical)
                     print("Conjunto actual: ", conjunto_actual)
@@ -121,61 +120,6 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
         print("lista_estados_conjuntos: ", lista_estados_conjuntos)
         print("lista_estados: ", lista_estados)
     
-'''
-def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_estados, lista_elementos_para_ir_a,i):
-    while (len(ConjuntoC) > 0):
-        for elemento in ConjuntoC: #Vamos a ir recorriendo  
-                #print("elemento: ",elemento)
-                estado = elemento[0]
-                #print("estado: ",estado)
-                #Recorremos el conjunto de producciones generadas por el estado
-                #Obtenemos los simbolos que vamos a evaluar en el ir_a, es decir los simbolos después del punto
-                #print("la regla esta en elemento[1]: ",elemento[1])
-
-
-                bandera_se_detecto_punto = False
-                print(" thisss elemento: ", elemento)
-                for reglas in elemento[1]:
-                       print("reglas: ", reglas)
-                       for e in reglas[1]:
-                            #print("\nelemento de la producción de la regla:", e)
-    
-                            if bandera_se_detecto_punto:
-                                lista_elementos_para_ir_a.append(e)
-                                bandera_se_detecto_punto = False
-    
-                            if e == '•':
-                                bandera_se_detecto_punto = True
-                                #print("Se detecto punto")
-
-                       if bandera_se_detecto_punto:
-                            return None #Si se detecto punto en la ultima posición de la regla, no se puede hacer ir_a (No es necesario)
-
-                        #print("estado de la bandera: ", bandera_se_detecto_punto)
-                #del ConjuntoC[0]                
-
-        lista_elementos_para_ir_a  = list(set(lista_elementos_para_ir_a))
-        print("Lista de elementos a mandar a Ir_a: ", lista_elementos_para_ir_a)
-
-        numero_estados = len(ConjuntoC)
-        print("numero de estados: ", numero_estados)
-        conta = 0
-        while (conta < numero_estados):
-            for elemento in lista_elementos_para_ir_a:
-                resultado_Ir_a = Ir_a(ConjuntoC[0], elemento, reglasProduccion)
-                i+=1
-                if resultado_Ir_a != None:
-                    resultado_Ir_a[0] = 'I' + str(i)
-                    lista_estados.append(resultado_Ir_a[0])
-                    print("resultado_Ir_a: ", resultado_Ir_a)
-                    #if resultado_Ir_a != None:
-                    lista_estados_conjuntos.append([resultado_Ir_a])
-                    ConjuntoC.append([resultado_Ir_a])
-            conta+=1
-
-        print("Len ConjuntoC: ", len(ConjuntoC))
-        del ConjuntoC[0]
-'''
 
 
 
