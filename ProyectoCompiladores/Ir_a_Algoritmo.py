@@ -4,13 +4,13 @@ def generar_estado(estado, produccion):
     return [estado, [produccion]]
 
 
-def Ir_a(I, simboloAevaluar, reglas_prod):
+def Ir_a(I, simboloAevaluar, reglas_prod, nuevo_elemento_canonica):
     if len(I) == 0:
         return None
     
     if simboloAevaluar == '$':
-        #return ["Aceptacion"]
-        return None
+        return "Aceptacion"
+        #return None
     
     print("Estamos trabajando en ir a")
     J = []  # Conjunto de elementos vacío
@@ -29,11 +29,12 @@ def Ir_a(I, simboloAevaluar, reglas_prod):
                 J.append(new)
     if len(J) == 0:
         return None
-    print("J: ", ['I0',[base,J]])
+    nuevo_elemento_canonica.setEnviadoACerradura(J)
     retornoCerradura = cerradura(['I0',J],reglas_prod)
     print("retornoCerradura: ", retornoCerradura)
     return retornoCerradura  # Supongo 'I0' como ejemplo, ajusta según tu lógica
-
+    #print("Ir a J: ", J)
+    #return J
 
 
 '''
