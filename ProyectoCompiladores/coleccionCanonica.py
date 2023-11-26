@@ -53,13 +53,61 @@ def convertirLista(Conjunto):
         Conjunto[i] = list(elemento)
 
 
-def buscarEstado(estado, lista_estados):
-    for est in lista_estados:
-        if est == estado:
-            return True
-    return False    
+def buscarEstado(lista_estados_conjuntos, conjunto_ir_a):
+    bandera_se_encontro_estado = False
+    for elemento_lista_conjuntos in lista_estados_conjuntos:
+            print("elemento_lista_conjuntos", elemento_lista_conjuntos)
+            print("elemento_lista_conjunto[1]",elemento_lista_conjuntos[1])
+            print("conjunto_ir_a",conjunto_ir_a)
+            if conjunto_ir_a == elemento_lista_conjuntos[1]:
+                print("Ya se encontró este estado")
+                bandera_se_encontro_estado = True
+    return bandera_se_encontro_estado
+
+def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_estados, lista_elementos_para_ir_a, enumeracion_estados):
+    contador = 0
+    while ConjuntoC:
+        conjunto_actual = ConjuntoC.pop(0)
+        print("conjunto_actual POP: ", conjunto_actual)
+        lista_estados.append(conjunto_actual)
+
+        print("conjunto_actual[1]: ", conjunto_actual[1])
+        for reglas in conjunto_actual[1]:
+            print("reglas[1]: ", reglas[1])
+            regla = reglas[1]
+            for i in range(len(regla)): 
+                print("regla[i]: ", regla[i])
+                if regla[len(regla)-1] == '•' :
+                    conjunto_ir_a = None
+                
+                elif regla[i] == '•' and regla[i+1] != None:
+                    conjunto_ir_a = Ir_a(conjunto_actual, regla[i+1], reglasProduccion)
+
+                    bandera_se_encontro_estado = False
+                    bandera_se_encontro_estado = buscarEstado(lista_estados_conjuntos, conjunto_ir_a)
 
 
+            #Evaluamos si la bandera de busqueda de estado            
+                
+            #if auxiliar_conjunto_ir_a not in lista_estados_conjuntos and conjunto_ir_a != None:
+            if bandera_se_encontro_estado == False:
+                if (conjunto_ir_a != None):
+                    enumeracion_estados += 1
+                    nuevo_estado = ['I' + str(enumeracion_estados), conjunto_ir_a]
+                    lista_estados.append(nuevo_estado)
+                    lista_estados_conjuntos.append(nuevo_estado)
+                    ConjuntoC.append(nuevo_estado)
+                    print("Conjunto C con gregado: ", ConjuntoC)
+            if bandera_se_encontro_estado == True:
+                    print("Ya se encontró este estado")
+                    bandera_se_encontro_estado = False
+       # contador += 1
+       # if contador == 4:
+       #     break
+                
+                
+                    
+'''
 def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_estados, lista_elementos_para_ir_a, i):
     while (ConjuntoC):
         lista_elementos_para_ir_a = []
@@ -98,10 +146,10 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
 
         numero_estados = len(ConjuntoC)
         print("numero de estados: ", numero_estados)
-
+        
         if len(lista_elementos_para_ir_a) != 0:
-        #while ConjuntoC:
             conjunto_actual = ConjuntoC.pop(0)
+           
             #lista_estados.append(conjunto_actual[0])
 
             for simbolo_gramatical in lista_elementos_para_ir_a:
@@ -116,6 +164,7 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
                         print("elemento_lista_conjuntos", elemento_lista_conjuntos)
                         
                         print("elemento_lista_conjunto[1]",elemento_lista_conjuntos[1])
+                        print("conjunto_ir_a",conjunto_ir_a)
                         if conjunto_ir_a == elemento_lista_conjuntos[1]:
                             print("Ya se encontró este estado")
                             bandera_se_encontro_estado = True
@@ -136,8 +185,10 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
                         print("Conjunto C con gregado: ", ConjuntoC)
         print("lista_estados_conjuntos: ", lista_estados_conjuntos)
         print("lista_estados: ", lista_estados)
+        
         #break;    
 
+'''
 
 
 ##############################################################################################################
@@ -188,7 +239,8 @@ coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_es
 
 print("\n\nlista_estados_conjuntos: ", lista_estados_conjuntos)
 
-
+for estado in lista_estados_conjuntos:
+    print("Estado: ", estado)
 '''
 while (len(conjuntos_C) > 0):
     for elemento in conjuntos_C: #Vamos a ir recorriendo 

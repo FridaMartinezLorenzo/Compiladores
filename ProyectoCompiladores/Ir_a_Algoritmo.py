@@ -8,11 +8,14 @@ def Ir_a(I, simboloAevaluar, reglas_prod):
     if len(I) == 0:
         return None
     
+    if simboloAevaluar == '$':
+        return ["Aceptacion"]
+    
     print("Estamos trabajando en ir a")
     J = []  # Conjunto de elementos vacío
     for elemento in I[1]:
         print("elemento: ", elemento)
-        
+        base = elemento[0]  # Obtener el símbolo base de la regla
         produccion = elemento[1]  # Obtener la producción de la regla
         print("produccion: ", produccion)
         for i in range(len(produccion)-1): 
@@ -21,9 +24,11 @@ def Ir_a(I, simboloAevaluar, reglas_prod):
                 # Intercambiar posición con el inmediato siguiente
                 nueva_produccion = produccion.copy()
                 nueva_produccion[i], nueva_produccion[i + 1] = nueva_produccion[i + 1], nueva_produccion[i]
-                J.append(nueva_produccion)
+                new =[base,nueva_produccion]
+                J.append(new)
     if len(J) == 0:
         return None
+    print("J: ", ['I0',[base,J]])
     retornoCerradura = cerradura(['I0',J],reglas_prod)
     print("retornoCerradura: ", retornoCerradura)
     return retornoCerradura  # Supongo 'I0' como ejemplo, ajusta según tu lógica
