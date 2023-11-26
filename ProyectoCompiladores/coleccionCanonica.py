@@ -108,13 +108,11 @@ def buscarEstado(lista_estados_conjuntos, conjunto_ir_a):
             return index
     return -1  # Retorna -1 si no se encontró el estado
 
-def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_estados, lista_elementos_para_ir_a, enumeracion_estados):
+def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_elementos_para_ir_a, enumeracion_estados):
     listaCanonica = []
     
     while ConjuntoC:
         conjunto_actual = ConjuntoC.pop(0)
-        print("conjunto_actual POP: ", conjunto_actual)
-        lista_estados.append(conjunto_actual)
 
         print("conjunto_actual[1]: ", conjunto_actual[1])
         for reglas in conjunto_actual[1]:
@@ -171,7 +169,7 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
 ##############################################################################################################
 #Abre archivo gramatica.txt
 
-ruta="gramatica1.txt"
+ruta="gramatica.txt"
 archivoGramatica=open(ruta,encoding="utf-8")#Usar esta codificacion para que lea lambda
 ##Variables
 noTerminales=archivoGramatica.readline().split()
@@ -217,7 +215,6 @@ print("lista_posociones_reglas: ",lista_posociones_reglas)
 aux = []
 for posicion in lista_posociones_reglas:
     aux.append(gramatica_aumentada[posicion]) 
-
 print("aux: ",aux)
 
 #ConjuntoC = cerradura(['I0', [gramatica_aumentada[0]]],reglasProduccion)
@@ -254,14 +251,13 @@ for index, elemento in enumerate(ConjuntoC):
 #Declaramos los otros dos estados
 
 lista_elementos_para_ir_a = [] 
-lista_estados = []
 
     
 print("\n\nlista_estados_conjuntos: ", lista_estados_conjuntos)
 
 
 
-ResultadosCanonica = coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_estados, lista_elementos_para_ir_a,i)
+ResultadosCanonica = coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_elementos_para_ir_a,i)
 
 for estado in lista_estados_conjuntos:
     print("Estado: ", estado)
