@@ -100,15 +100,12 @@ def convertirLista(Conjunto):
 
 def buscarEstado(lista_estados_conjuntos, conjunto_ir_a):
     for index, elemento_lista_conjuntos in enumerate(lista_estados_conjuntos):
-        print("elemento_lista_conjuntos", elemento_lista_conjuntos)
-        print("elemento_lista_conjunto[1]", elemento_lista_conjuntos[1])
-        print("conjunto_ir_a", conjunto_ir_a)
         if conjunto_ir_a == elemento_lista_conjuntos[1]:
             print("Ya se encontró este estado en el índice:", index)
             return index
     return -1  # Retorna -1 si no se encontró el estado
 
-def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_elementos_para_ir_a, enumeracion_estados):
+def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, enumeracion_estados):
     listaCanonica = []
     
     while ConjuntoC:
@@ -116,12 +113,10 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
 
         print("conjunto_actual[1]: ", conjunto_actual[1])
         for reglas in conjunto_actual[1]:
-            print("reglas[1]: ", reglas[1])
             regla = reglas[1]
             bandera_se_encontro_estado = -1
             conjunto_ir_a = []
             for i in range(len(regla)): 
-                print("regla[i]: ", regla[i])
                 if regla[len(regla)-1] == '•' :
                     conjunto_ir_a = None
                 
@@ -147,11 +142,9 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
                     #Insertamos en la informacion para la tabla
                     nuevo_elemento_canonica.setEstado(nuevo_estado)
                     listaCanonica.append(nuevo_elemento_canonica)
-                    print("nuevo_elemento_canonica: ", nuevo_elemento_canonica)
                     #Guardamos la recopilacion de todos los estados
                     lista_estados_conjuntos.append(nuevo_estado)
                     ConjuntoC.append(nuevo_estado)
-                    print("Conjunto C con gregado: ", ConjuntoC)
                     
                 if (conjunto_ir_a == "Aceptacion"):
                     listaCanonica.append(nuevo_elemento_canonica)
@@ -183,6 +176,8 @@ reglasProduccion=calcularReglasP(archivoGramatica,noTerminales)
 #print(reglasProduccion)
 
 
+
+#Empieza el programa de colección canónica _________________________________________________________________
 elemento_gramatica_aumentada = [simboloInicial + "'", [simboloInicial,"$"]]
 
 #Aumentar gramatica
@@ -190,8 +185,7 @@ reglasProduccion.insert(0,elemento_gramatica_aumentada)
 gramatica_aumentada = agregarPunto(reglasProduccion)
 print("\n\nGramatica aumentada: ",gramatica_aumentada)
 
-#Quitamos las reglas lambda
-reglasProduccion = [regla for regla in reglasProduccion if regla[1] != ['λ']]
+reglasProduccion = [regla for regla in reglasProduccion if regla[1] != ['λ']]  #Quitamos las reglas lambda
 # Imprimir las reglas después de eliminar las reglas lambda
 print("Reglas después de eliminar reglas lambda:")
 for regla in reglasProduccion:
@@ -215,18 +209,10 @@ print("lista_posociones_reglas: ",lista_posociones_reglas)
 aux = []
 for posicion in lista_posociones_reglas:
     aux.append(gramatica_aumentada[posicion]) 
-print("aux: ",aux)
 
-#ConjuntoC = cerradura(['I0', [gramatica_aumentada[0]]],reglasProduccion)
-print("\n\nConjunto C: ",ConjuntoC)
-convertirLista(ConjuntoC)
+i = 0  #Inicializamos el contador de estados, se incrementa cada vez que se crea un nuevo estado
+aux_I = [   'I'+ str(i)  , aux      ] #Creamos el primer estado, el resultante de la cerradura
 
-
-i = 0
-aux_I = [   'I'+ str(i)  , aux      ]
-print("\n\naux_I: ", aux_I)
-
-#ConjuntoC = [   'I'+ str(i)  , aux      ]
 ConjuntoC.clear()
 ConjuntoC.append(aux_I)
 
@@ -248,16 +234,9 @@ for index, elemento in enumerate(ConjuntoC):
     for e_index, e in enumerate(elemento[1]):
         ConjuntoC[index][1][e_index] = list(e)
 
-#Declaramos los otros dos estados
 
-lista_elementos_para_ir_a = [] 
-
-    
 print("\n\nlista_estados_conjuntos: ", lista_estados_conjuntos)
-
-
-
-ResultadosCanonica = coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, lista_elementos_para_ir_a,i)
+ResultadosCanonica = coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos,i)
 
 for estado in lista_estados_conjuntos:
     print("Estado: ", estado)
