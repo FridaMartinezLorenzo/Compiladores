@@ -9,7 +9,8 @@ def Ir_a(I, simboloAevaluar, reglas_prod):
         return None
     
     if simboloAevaluar == '$':
-        return ["Aceptacion"]
+        #return ["Aceptacion"]
+        return None
     
     print("Estamos trabajando en ir a")
     J = []  # Conjunto de elementos vacío

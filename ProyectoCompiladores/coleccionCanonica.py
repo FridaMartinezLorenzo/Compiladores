@@ -2,6 +2,11 @@
 from Ir_a_Algoritmo import *
 from cerradura import *
 
+class TablaColeccionCanonica:
+    pass
+
+
+
 #Funcion reciclada de primeros
 def calcularReglasP(archivo,listaNoTerminales):
     listaProducciones=[]#contiene las tuplas de las producciones
