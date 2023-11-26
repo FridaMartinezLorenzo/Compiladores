@@ -109,17 +109,34 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, list
                     print("Conjunto actual: ", conjunto_actual)
                     conjunto_ir_a = Ir_a(conjunto_actual, simbolo_gramatical, reglasProduccion)
                     print("\nConjunto ir_a: ", conjunto_ir_a)
-                    if conjunto_ir_a not in lista_estados_conjuntos and conjunto_ir_a != None:
-                        i += 1
-                        nuevo_estado = ['I' + str(i), conjunto_ir_a]
-                        lista_estados.append(nuevo_estado)
-                        lista_estados_conjuntos.append(nuevo_estado)
+                    
+                    #Vamos a evaluar sino es un estado ya existente
+                    bandera_se_encontro_estado = False
+                    for elemento_lista_conjuntos in lista_estados_conjuntos:
+                        print("elemento_lista_conjuntos", elemento_lista_conjuntos)
+                        
+                        print("elemento_lista_conjunto[1]",elemento_lista_conjuntos[1])
+                        if conjunto_ir_a == elemento_lista_conjuntos[1]:
+                            print("Ya se encontró este estado")
+                            bandera_se_encontro_estado = True
+            
+                                
+                    #Evaluamos si la bandera de busqueda de estado            
+                    if bandera_se_encontro_estado == True:
+                        print("Ya se encontró este estado")
+                        bandera_se_encontro_estado = False
+                    else: #auxiliar_conjunto_ir_a not in lista_estados_conjuntos and conjunto_ir_a != None:
+                        if (conjunto_ir_a != None):
+                            i += 1
+                            nuevo_estado = ['I' + str(i), conjunto_ir_a]
+                            lista_estados.append(nuevo_estado)
+                            lista_estados_conjuntos.append(nuevo_estado)
 
                         ConjuntoC.append(nuevo_estado)
                         print("Conjunto C con gregado: ", ConjuntoC)
         print("lista_estados_conjuntos: ", lista_estados_conjuntos)
         print("lista_estados: ", lista_estados)
-        break;    
+        #break;    
 
 
 
