@@ -1,10 +1,9 @@
-S V V' T
-nint int char float λ
-
-S -> T V ;
-V -> id V'
-V' -> [ nint ] V'
-V' -> λ
-T -> int
-T -> char
-T -> float
+S V H T
+nint int char float id [ ]
+S->T V ;
+V->id H
+H->[ nint ] H
+H->λ
+T->int
+T->char
+T->float

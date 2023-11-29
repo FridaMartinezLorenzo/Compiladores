@@ -79,6 +79,10 @@ def calcularReglasP(archivo,listaNoTerminales,ruta):
         producciones = (reglaP[0], cadena)
         listaProducciones.append(producciones)
 
+
+    for i, elemento in enumerate(listaProducciones):
+        for j, elemento2 in enumerate(elemento[1]):
+            listaProducciones[i][1][j] = elemento2.replace(" ", "")
     return listaProducciones
 
 def agregarPunto(listaProducciones):

@@ -97,6 +97,7 @@ def primeros(symbol):#Funcion recursiva que obtiene los primeros de un simbolo d
     nuevoArray=quitar_duplicados(array1)
     return nuevoArray#Devuelve los primeros de symbol en forma de lista
         
+        
 def getPrimeros(symbol):
     global primerosArray
     for i in primerosArray:

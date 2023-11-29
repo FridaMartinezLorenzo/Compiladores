@@ -75,7 +75,6 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                     
                 bandera_elemento_evaluado_encontrado = False #Se va a buscar el elemento_evaluado en la produccion de la regla
 
-                #if simbolo_inicial == elemento_evaluado and regla.getBase() == elemento_evaluado: #Caso 1 (A -> A)
                 if simbolo_inicial == elemento and elemento_es_elemento_inicial == True and regla.getBase() == elemento_evaluado: 
                     bandera_existe = False
                     for s in lista_siguientes[index].getSiguientes():
@@ -83,7 +82,7 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                             bandera_existe = True
                     if bandera_existe == False:
                             lista_siguientes[index].addSiguientes('$')
-                 #Armado de la beta y la alfa, caso dos y tres
+                #Armado de la beta y la alfa, caso dos y tres
                 alfa = []
                 beta = []
                 for e in regla.getProduccion():
@@ -92,7 +91,7 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                     if bandera_elemento_evaluado_encontrado == False:
                         alfa.append(e) #Todo lo que esta antes
                     if bandera_elemento_evaluado_encontrado == True and e != elemento_evaluado:
-                        beta.append(e)
+                        beta.append(e) #Todo lo que está después
                 print("alfa: ", alfa)
                 print("beta: ", beta)
                 if bandera_elemento_evaluado_encontrado == True: #Encontramos el elemento_evaluado en la produccion así que hay que checar
@@ -103,12 +102,15 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                         bandera_epsilon_encontrado_beta = False
                         contador = 0
                         
+                        bandera_solo_una_vez = False
+                        primer_elemento_beta = beta[0]
                         for e in beta:
-                            bandera_solo_una_vez = False
-                            if e.islower() or not e.isalpha(): #Es terminal
+                            print("e", e, "primer_elemento_beta: " ,primer_elemento_beta)
+                            if (not e.isalpha() or e.islower) and e == primer_elemento_beta: #Es terminal
                                 bandera_solo_una_vez = True
-                                
-                            if bandera_solo_una_vez == True or contador < len(beta) :
+                            
+                            print("bandera_solo_una_vez: ", bandera_solo_una_vez)
+                            if (bandera_solo_una_vez == True and contador<1) or  (bandera_solo_una_vez == False  and e.isupper() and contador < (len(beta)-1)):
                                 if e == "lamda":
                                     e = "λ"
                                 primeros_elemento = primeros(e) 
@@ -126,8 +128,8 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                                                lista_siguientes[index].addSiguientes(p)
                                                print("Agregando: ", p, "a ",lista_siguientes[index].getBase())
                             contador += 1
-                            if bandera_solo_una_vez == True:
-                                break
+                            #if bandera_solo_una_vez == True:
+                            #    break
                             
 
                 if bandera_elemento_evaluado_encontrado == True and len(beta) != 0 and bandera_epsilon_encontrado_beta == True: #Caso tres
@@ -211,7 +213,6 @@ def CargadoGramatica():
             produccion = produccion.replace("λ","lamda")
             print("produccion: ", produccion)
             
-            #produccion = produccion.replace("lamda","λ")
             produccion = produccion.split(" ")
             reglasProduccion.append(reglaProduccion(base))
             for p in produccion:
