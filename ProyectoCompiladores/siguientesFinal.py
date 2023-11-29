@@ -128,16 +128,13 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                                                lista_siguientes[index].addSiguientes(p)
                                                print("Agregando: ", p, "a ",lista_siguientes[index].getBase())
                             contador += 1
-                            #if bandera_solo_una_vez == True:
-                            #    break
+                           
                             
 
                 if bandera_elemento_evaluado_encontrado == True and len(beta) != 0 and bandera_epsilon_encontrado_beta == True: #Caso tres
                     #Siguientes de la regla que estamos evaluando se vuelven parte de los siguientes del elemento que estamos evaluando
 
-                   #if regla.getBase() == elemento_evaluado:
-                   #    pass
-                   #else:
+                   
                         if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
                             for i, s in enumerate(lista_siguientes):
                                 if s.getBase() == elemento:
@@ -155,9 +152,7 @@ def obtencionSiguientes(elemento_evaluado,reglasProducccion,lista_siguientes,ind
                                         
                 elif bandera_elemento_evaluado_encontrado == True and len(beta) == 0: #Caso tres parte dos
                      #Colocamos los siguientes de B en siguientes de A S(A) <= S(B)
-                    #if regla.getBase() == elemento_evaluado:
-                    #    pass
-                    #else:
+                  
                         if  regla.getBase() in [s.getBase() for s in lista_siguientes]:
                             for i, s in enumerate(lista_siguientes):
                                 if s.getBase() == elemento:
