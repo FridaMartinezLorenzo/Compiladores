@@ -266,7 +266,6 @@ def ImprimirResultados(Ventana,FrameResultados):
         lista_siguientes.append(Siguientes(elemento))
     for elemento in listaNoTerminales:
         for i, s in enumerate(lista_siguientes):
-            #if s.getBase() == elemento and len(s.getSiguientes()) == 0:
             if s.getBase() == elemento :
                 index = i
         obtencionSiguientes(elemento,reglasProduccion,lista_siguientes,index,simbolo_inicial)
@@ -309,6 +308,35 @@ def abrirArchivo(Ventana,frameGramatica):
         lineas = file.readlines()
     abrirArchivoInterno(direccionArchivo,lineas)
     ImprimirGramatica(frameGramatica,direccionArchivo)
+    
+def AbrirArchivoInternoSiguientes():
+    global direccionArchivoSiguientes
+    username=getpass.getuser()
+    ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
+
+    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("texto","*.txt"),))
+    with open(direccionArchivo, 'r', encoding="utf-8") as file:
+        lineas = file.readlines()
+    abrirArchivoInterno(direccionArchivo,lineas)
+    listaNoTerminales = []
+    listaTerminales = []
+    reglasProduccion = []
+    reglasProduccion, listaNoTerminales, listaTerminales =CargadoGramatica()
+    simbolo_inicial = getSimboloInicial(reglasProduccion)
+    lista_siguientes = []
+    for elemento in listaNoTerminales:
+        lista_siguientes.append(Siguientes(elemento))
+    for elemento in listaNoTerminales:
+        for i, s in enumerate(lista_siguientes):
+            if s.getBase() == elemento :
+                index = i
+            obtencionSiguientes(elemento,reglasProduccion,lista_siguientes,index,simbolo_inicial)
+    print (len(lista_siguientes))
+    print("Lista de siguientes: ")
+
+    for s in lista_siguientes:
+        aux=s.getBase() + " -> " +"".join(s.getSiguientes())
+        print(aux)    
 
 def ImprimirGramatica(FrameGramatica,ruta_proyecto):
     global lista1
