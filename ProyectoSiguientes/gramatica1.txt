@@ -1,7 +1,0 @@
-D L T
-, int float id ;
-D->T id L ;
-L->, id L
-L->λ
-T->int
-T->float
