@@ -151,12 +151,31 @@ def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Pr
     font1=("Times New Roman",11)
     columnas_titulos = ['id', 'valor', 'funcion']
     columna=1
-    for simbolo in Prog_lista_simbolos:
-        print(simbolo)
-
     
-    hacerSeguimientodelValor(Prog_lista_simbolos,Prog_lista_tokens)
     detectarFuncion_tSimbolos(Prog_lista_simbolos,Prog_lista_tokens)
+    hacerSeguimientodelValor(Prog_lista_simbolos,Prog_lista_tokens)
+    
+    #Se debe eliminar los simbolos después del primero que este asociado a la misma funcion
+    contador_id =0 #contador_id es cuantas veces aparece un id asociado al mismo simbolo
+    contador_posiciones = 0 #posicion del simbolo a eliminar en la lista
+    for simbolo in Prog_lista_simbolos:
+        contador_id = 0#contador_id es cuantas veces aparece un id asociado al mismo simbolo
+        for s in Prog_lista_simbolos:
+            print("s.get_identificador()",s.get_identificador())
+            print("contador_posciones",contador_posiciones)
+            print("contador_id",contador_id)
+            if s.get_identificador() == simbolo.get_identificador() and s.get_funcion() == simbolo.get_funcion():
+                contador_id += 1
+                if contador_id > 1: #hay mas de un id asociado al mismo simbolo
+                    print("Entro al caso de repeticion contador_id y contador posiciones",contador_id, "",contador_posiciones)
+                    Prog_lista_simbolos.pop(contador_posiciones)
+                    contador_id = 0
+            contador_posiciones += 1
+            
+        contador_posiciones = 0 #reiniciamos cada que es un nuevo simbolo
+    
+        
+        
     for titulo in columnas_titulos:
         col=Label(tabla,text=titulo,width=20,borderwidth=1, relief="solid",font=font1)
         col.grid(row=0,column=columna)
@@ -240,6 +259,7 @@ def abrirArchivo(lexWindow, lineas_entrada):
             lineas_entrada.extend(archivo.readlines())  # Extender la lista con las nuevas líneas
             lineas_aux = lineas_entrada
             for n in range(0, len(lineas_entrada)):     # Revisa si hay comentarios y los elimina
+                nueva_cad = ""
                 if flag_coment == False:                        # Si no hay un comentario multilínea activo...
                     if (re.search(r'(//.*)|(/\*.*?\*/)', lineas_aux[n]) is not None):   # Si es un comentario de línea o multilínea que cierra en la misma línea...
                         lineas_entrada[n] = re.sub(r'(//.*)|(/\*.*?\*/)', '', lineas_aux[n])
@@ -252,6 +272,9 @@ def abrirArchivo(lexWindow, lineas_entrada):
                         flag_coment = False
                     else:                                                           # Si aún no se cierra el comentario multilínea...
                         lineas_entrada[n] = ''
+
+                while ("\t" in lineas_entrada[n]):
+                    lineas_entrada[n] = re.sub(r"\t", " ", lineas_entrada[n])
                     
             print(direccionArchivo)
     except Exception as e:
@@ -404,15 +427,18 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     posSimb += char                 # Agrega el símbolo encontrado a simbPos
                     posNum = ""
                     aux = ""
-                elif (posNum == "" and aux != char and (char != "$" or char != "_")):   # Si no hay número posible, pero aux no está vacío...
+                elif (posNum == "" and aux != char and char != "_"):   # Si no hay número posible, pero aux no está vacío...
                     id_aux = ""
-                    for letra in aux:               # Crea otra cadena auxiliar donde almacena los caracteres antes del símbolo
-                        if (not letra in lista_simbolos):
-                            id_aux += letra
-                    tokenList.append(element_TokenTable(id_aux, "id", nline))       # Agrega el ID de aux
+                    for i in range(0, len(aux)-1):
+                        id_aux = id_aux + aux[i]    # Crea una cadena sin el último símbolo recién leido
+                    flag_found_id = es_id(id_aux, nline, tokenList)
+                    if flag_found_id is True:
+                        #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                        symbolList_prog.append(element_SymbolTable(id_aux, "null", "null"))
+                        flag_found_id = False
+                    else:
+                        errorList_prog.append(element_ErrorTable(id_aux, "ERROR", nline))
                     posSimb += char                 # Agrega el símbolo encontrado a simbPos
-                    if (not BuscarSimbolo_ts(id_aux, symbolList_prog)):    # No existe aún el ID en la tabla
-                            symbolList_prog.append(element_SymbolTable(id_aux, "null", "null"))
                     aux = ""
                 elif (posNum == ""):                # Si no hay números posibles almacenados
                     posSimb += char
@@ -467,8 +493,8 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     print("Evaluación de id")   # Busca si es un id
                     flag_found_id = es_id(aux, nline, tokenList)
                     if flag_found_id is True:
-                        if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
-                            symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
+                        #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                        symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
                         flag_found_id = False
                     elif (len(aux)>0):
                         errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
@@ -477,6 +503,25 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                 pass
         if posSimb != "":
             tokenList.append(element_TokenTable(posSimb, posSimb, nline))
+        if posNum != "":
+            if "." in posNum:
+                tokenList.append(element_TokenTable(posNum, "nfloat", nline))
+            else:
+                tokenList.append(element_TokenTable(posNum, "nint", nline))
+        if aux != "":
+            flag_found1 = word_search(aux, nline, tokenList)
+            if (flag_found1 == True):
+                flag_found1 = False
+                aux=""
+            else:
+                flag_found_id = es_id(aux, nline, tokenList)
+                if flag_found_id is True:
+                    #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                    symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
+                    flag_found_id = False
+                else:
+                    errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
+
                     
 def contar_llaves(tokens):
     print("Contando llaves...")
@@ -503,7 +548,7 @@ def contar_llaves(tokens):
                     
 def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
     print("Detectando funciones...")
-
+    flag_solo_un_id = False
     identificador_principal = None
     for i, token in enumerate(tokenList_prog):
         if token.get_token() == "id" or token.get_token() == "main":
@@ -535,8 +580,12 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
             elif identificador_principal is not None:  #Es un id dentro de una función del nombre contenido por idenficador_principal
                 print("Es un id dentro de una funcion")
                 for simbolo in symbolList_prog:
-                    if simbolo.get_identificador() == token.get_lexema():
-                        simbolo.set_funcion(identificador_principal)
+                    if simbolo.get_identificador() == token.get_lexema() and simbolo.get_funcion() == "null":
+                        if flag_solo_un_id == False: #Solo puede afectar a un simbolo, un id
+                            flag_solo_un_id = True
+                            simbolo.set_funcion(identificador_principal)
+                flag_solo_un_id = False  
+
         
                         
         
@@ -547,26 +596,35 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
 
 def hacerSeguimientodelValor(symbolList_prog,tokenList_prog):
     for i, token in enumerate(tokenList_prog):
-        if token.get_lexema() == "=":
-            if i > 0 and tokenList_prog[i - 1].get_lexema() in [s.get_identificador() for s in symbolList_prog]:
-                # Encontramos un símbolo seguido por un "=" y hay un token antes de "=" que es un identificador válido
-                identificador = tokenList_prog[i - 1].get_lexema()
-                index_igual = i 
+            if token.get_token() == 'main': #Es la función principal
+                identificador_principal = 'main'
+                pass
+                        
+            elif (i > 0 and tokenList_prog[i - 1].get_token() in [td for td in lista_tipo_datos] and tokenList_prog[i + 1].get_token() =='(') : #hay un tipo de retorno antes del id así que es una función
+                print("Identificador de función")
+                identificador_principal = tokenList_prog[i].get_lexema() 
+            
+        
+            elif token.get_lexema() == "=":
+                if i > 0 and tokenList_prog[i - 1].get_lexema() in [s.get_identificador() for s in symbolList_prog]:
+                    # Encontramos un símbolo seguido por un "=" y hay un token antes de "=" que es un identificador válido
+                    identificador = tokenList_prog[i - 1].get_lexema()
+                    index_igual = i 
 
-                while i < len(tokenList_prog) and tokenList_prog[i].get_lexema() != ";":
-                    i += 1
+                    while i < len(tokenList_prog) and tokenList_prog[i].get_lexema() != ";":
+                        i += 1
 
-                index_punto_coma = i
+                    index_punto_coma = i
 
-                if index_punto_coma is not None:
-                    print("index_igual:", index_igual)
-                    print("index_punto_coma:", index_punto_coma)
-                    valor_token_siguiente = " ".join(token.get_lexema() for token in tokenList_prog[index_igual + 1 : index_punto_coma])
+                    if index_punto_coma is not None:
+                        print("index_igual:", index_igual)
+                        print("index_punto_coma:", index_punto_coma)
+                        valor_token_siguiente = " ".join(token.get_lexema() for token in tokenList_prog[index_igual + 1 : index_punto_coma])
 
-                for simbolo in symbolList_prog:
-                    if simbolo.get_identificador() == identificador:
-                        simbolo.set_valor(valor_token_siguiente)
-                        break
+                    for simbolo in symbolList_prog:
+                        if simbolo.get_identificador() == identificador and simbolo.get_funcion() == identificador_principal:
+                            simbolo.set_valor(valor_token_siguiente)
+                            break
 
     for simbolo in symbolList_prog:
         print(simbolo)
@@ -609,7 +667,7 @@ def es_float_re(cadena):
     return False
     
 def es_id(cadena, nline, tokenList):
-    prueba = re.match('([a-zA-Z][a-zA-Z0-9$_]*)|([_$]+[a-zA-Z0-9]+[a-zA-Z0-9$_]*)', cadena)
+    prueba = re.match('(^[a-zA-Z][a-zA-Z0-9_]*$)|(^[_]+[a-zA-Z0-9]+[a-zA-Z0-9_]*$)', cadena)
     if prueba is not None:
         tokenList.append(element_TokenTable(cadena, "id", nline))
         return True     # Encontró un nombre que empieza por letra, y contiene letras, números, $ ó _
