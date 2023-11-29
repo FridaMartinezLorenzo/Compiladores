@@ -205,9 +205,11 @@ def main(ruta):
         #print("\n\nConjuntoC: ",ConjuntoC)
     #Vamos a buscar la regla asociada a la devuelta para agregarla a C con el punto añadido
     lista_posociones_reglas = []
-    #Vamos a buscar la regla asociada a la devuelta para agregarla a C con el punto añadido
+
     for i, regla in enumerate(gramatica_aumentada):
+        #print("regla: ",regla)
         for j, elemento in enumerate(ConjuntoC):
+            #print("elemento DEL CONJUNTO c: ",elemento)
             if elemento == list(regla): 
                 lista_posociones_reglas.append(i)
     print("lista_posociones_reglas: ",lista_posociones_reglas)
@@ -241,8 +243,11 @@ def main(ruta):
             ConjuntoC[index][1][e_index] = list(e)
 
 
+    #print("\n\nlista_estados_conjuntos: ", lista_estados_conjuntos)
     ResultadosCanonica = coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos,i)
 
+    #for estado in lista_estados_conjuntos:
+    #    print("Estado: ", estado)
 
     Estado_Inicial = TablaColeccionCanonica()
     Estado_Inicial.setEstado(lista_estados_conjuntos[0])
@@ -250,6 +255,8 @@ def main(ruta):
     ResultadosCanonica.insert(0,Estado_Inicial)
 
     #print("\n\nResultadosCanonica: _______________________________________________________________________________________ ")
+    #for elemento in ResultadosCanonica:
+    #    print(elemento)
     return ResultadosCanonica#regresa el resultado de la coleccion canonica
 
 
