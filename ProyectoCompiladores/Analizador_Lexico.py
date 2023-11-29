@@ -15,13 +15,12 @@ def Analizador_Lexico():
     lexWindow=Toplevel()
     lexWindow.state("zoomed")
     lexWindow.title("Analizador Lexico")
-    lexWindow.iconbitmap("Compiler.ico")
     lexWindow.config(bg="#363062")
     lineas_entrada = []
     Prog_lista_tokens = []
     Prog_lista_simbolos = []
     Prog_lista_errores = []
-    
+
     archivoL=Label(lexWindow,text="Selecciona un archivo .java",width=30,font=font1)
     archivoL.place(x=20,y=25)
 
@@ -243,6 +242,7 @@ def MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores):
 
 
             i+=1
+        #canvas.config(scrollregion=canvas.bbox("all"))
     else:
         lexWindow.grab_set()
         lexWindow.grab_release()    
@@ -259,6 +259,7 @@ def abrirArchivo(lexWindow, lineas_entrada):
             lineas_entrada.extend(archivo.readlines())  # Extender la lista con las nuevas líneas
             lineas_aux = lineas_entrada
             for n in range(0, len(lineas_entrada)):     # Revisa si hay comentarios y los elimina
+                nueva_cad = ""
                 if flag_coment == False:                        # Si no hay un comentario multilínea activo...
                     if (re.search(r'(//.*)|(/\*.*?\*/)', lineas_aux[n]) is not None):   # Si es un comentario de línea o multilínea que cierra en la misma línea...
                         lineas_entrada[n] = re.sub(r'(//.*)|(/\*.*?\*/)', '', lineas_aux[n])
@@ -271,6 +272,9 @@ def abrirArchivo(lexWindow, lineas_entrada):
                         flag_coment = False
                     else:                                                           # Si aún no se cierra el comentario multilínea...
                         lineas_entrada[n] = ''
+
+                while ("\t" in lineas_entrada[n]):
+                    lineas_entrada[n] = re.sub(r"\t", " ", lineas_entrada[n])
                     
             print(direccionArchivo)
     except Exception as e:
@@ -423,15 +427,18 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     posSimb += char                 # Agrega el símbolo encontrado a simbPos
                     posNum = ""
                     aux = ""
-                elif (posNum == "" and aux != char and (char != "$" or char != "_")):   # Si no hay número posible, pero aux no está vacío...
+                elif (posNum == "" and aux != char and char != "_"):   # Si no hay número posible, pero aux no está vacío...
                     id_aux = ""
-                    for letra in aux:               # Crea otra cadena auxiliar donde almacena los caracteres antes del símbolo
-                        if (not letra in lista_simbolos):
-                            id_aux += letra
-                    tokenList.append(element_TokenTable(id_aux, "id", nline))       # Agrega el ID de aux
+                    for i in range(0, len(aux)-1):
+                        id_aux = id_aux + aux[i]    # Crea una cadena sin el último símbolo recién leido
+                    flag_found_id = es_id(id_aux, nline, tokenList)
+                    if flag_found_id is True:
+                        #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                        symbolList_prog.append(element_SymbolTable(id_aux, "null", "null"))
+                        flag_found_id = False
+                    else:
+                        errorList_prog.append(element_ErrorTable(id_aux, "ERROR", nline))
                     posSimb += char                 # Agrega el símbolo encontrado a simbPos
-                    #if (not BuscarSimbolo_ts(id_aux, symbolList_prog)):    # No existe aún el ID en la tabla
-                    symbolList_prog.append(element_SymbolTable(id_aux, "null", "null"))
                     aux = ""
                 elif (posNum == ""):                # Si no hay números posibles almacenados
                     posSimb += char
@@ -496,6 +503,25 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                 pass
         if posSimb != "":
             tokenList.append(element_TokenTable(posSimb, posSimb, nline))
+        if posNum != "":
+            if "." in posNum:
+                tokenList.append(element_TokenTable(posNum, "nfloat", nline))
+            else:
+                tokenList.append(element_TokenTable(posNum, "nint", nline))
+        if aux != "":
+            flag_found1 = word_search(aux, nline, tokenList)
+            if (flag_found1 == True):
+                flag_found1 = False
+                aux=""
+            else:
+                flag_found_id = es_id(aux, nline, tokenList)
+                if flag_found_id is True:
+                    #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                    symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
+                    flag_found_id = False
+                else:
+                    errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
+
                     
 def contar_llaves(tokens):
     print("Contando llaves...")
@@ -641,7 +667,7 @@ def es_float_re(cadena):
     return False
     
 def es_id(cadena, nline, tokenList):
-    prueba = re.match('([a-zA-Z][a-zA-Z0-9$_]*)|([_$]+[a-zA-Z0-9]+[a-zA-Z0-9$_]*)', cadena)
+    prueba = re.match('(^[a-zA-Z][a-zA-Z0-9_]*$)|(^[_]+[a-zA-Z0-9]+[a-zA-Z0-9_]*$)', cadena)
     if prueba is not None:
         tokenList.append(element_TokenTable(cadena, "id", nline))
         return True     # Encontró un nombre que empieza por letra, y contiene letras, números, $ ó _
