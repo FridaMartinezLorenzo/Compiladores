@@ -137,11 +137,11 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, enum
             bandera_no_se_ha_calculado_transicion = -1
             for i in range(len(regla)): 
                 print("Regla para ir a", regla)
-                if regla[len(regla)-1] == '•' :
+                if regla[len(regla)-1] == '•' : #En caso de que se quiera visualizar el punto solo en la parte del listado canónica
                     #print("Se detecta la produccion lambda")
-                    #nuevo_elemento_canonica.setEnviadoACerradura(produccion)  
+                    #nuevo_elemento_canonica = TablaColeccionCanonica()
+                    #nuevo_elemento_canonica.setEnviadoACerradura(regla)  
                     #listaCanonica.append(nuevo_elemento_canonica)
-                 
                     conjunto_ir_a = None
             
                     
@@ -235,8 +235,6 @@ def main(ruta):
     gramatica_aumentada = agregarPunto(reglasProduccion)
     print("\n\nGramatica aumentada: ",gramatica_aumentada)
 
-    #reglasProduccion = [regla for regla in reglasProduccion if regla[1] != ['λ']]  #Quitamos las reglas lambda
-    
     
     #Vamos a buscar la regla asociada a la devuelta para agregarla a C con el punto añadido
     lista_posociones_reglas = []
