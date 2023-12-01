@@ -23,13 +23,7 @@ def Ir_a(I, simboloAevaluar, reglas_prod, nuevo_elemento_canonica):
             print("produccion[i]: ", produccion[i])
             print("produccion", produccion)
             print("len(produccion)", len(produccion))
-            if produccion[i] == '•' and len(produccion) == 1:
-               print("Se detecta la produccion lambda")
-               nuevo_elemento_canonica.setEnviadoACerradura(produccion)  
-               retornoCerradura = cerradura(['I0',produccion],reglas_prod)  
-               #print("retornoCerradura: ", retornoCerradura)
-               return retornoCerradura  
-            
+           
             if produccion[i] == '•' and produccion[i + 1] == simboloAevaluar:  # Intercambiar posición con el inmediato siguiente
                 nueva_produccion = produccion.copy()
                 nueva_produccion[i], nueva_produccion[i + 1] = nueva_produccion[i + 1], nueva_produccion[i]

@@ -138,7 +138,14 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, enum
             for i in range(len(regla)): 
                 print("Regla para ir a", regla)
                 if regla[len(regla)-1] == '•' :
+                    #print("Se detecta la produccion lambda")
+                    #nuevo_elemento_canonica.setEnviadoACerradura(produccion)  
+                    #listaCanonica.append(nuevo_elemento_canonica)
+                 
                     conjunto_ir_a = None
+            
+                    
+                    
                 #if regla[i] == '•' and regla[i+1] != None and regla[i+1] != 'λ':
                 elif regla[i] == '•' and regla[i+1] != None:
                     print ("regla [i+1]" ,regla[i+1] )
