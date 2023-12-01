@@ -137,14 +137,18 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, enum
             bandera_no_se_ha_calculado_transicion = -1
             for i in range(len(regla)): 
                 print("Regla para ir a", regla)
-                if regla[len(regla)-1] == '•' : #En caso de que se quiera visualizar el punto solo en la parte del listado canónica
-                    #print("Se detecta la produccion lambda")
-                    #nuevo_elemento_canonica = TablaColeccionCanonica()
-                    #nuevo_elemento_canonica.setEnviadoACerradura(regla)  
-                    #listaCanonica.append(nuevo_elemento_canonica)
-                    conjunto_ir_a = None
+                print("regla para ir a:", regla[0]," longitud: ", len(regla))
+                
+
+                if regla[0] == '•' and len(regla) == 1:
+                    print("Se detecta la produccion lambda")
+                    nuevo_elemento_canonica = TablaColeccionCanonica()
+                    nuevo_elemento_canonica.setEnviadoACerradura(reglas)  
+                    listaCanonica.append(nuevo_elemento_canonica)
             
                     
+                if regla[len(regla)-1] == '•' : #En caso de que se quiera visualizar el punto solo en la parte del listado canónica
+                    conjunto_ir_a = None
                     
                 #if regla[i] == '•' and regla[i+1] != None and regla[i+1] != 'λ':
                 elif regla[i] == '•' and regla[i+1] != None:
