@@ -1,5 +1,5 @@
-S F X E P T A V H R W
-id ; , class { } ( ) public private protected float int string char void double nint [ ]
+S F X E P T A V H R W L C
+id ; , class { } ( ) public private protected float int string char void double nint nfloat [ ] =
 S->F F
 F->λ
 F->E class id { X }
@@ -25,5 +25,10 @@ A->λ
 V->id H
 H->[ nint ] H
 H->λ
-W->T id ; W
+W->T id L ; W
 W->λ
+L->, id L
+L->= C
+L->λ
+C->nint
+C->nfloat
