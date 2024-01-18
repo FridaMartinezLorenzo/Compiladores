@@ -1,9 +1,15 @@
-S F X E
+S F X E P T
 id ; , class { } ( ) public private protected float int void double
 S->F
 F->E class id { X }
+F->E T id ( P ) { X }
 X->λ
 E->public
 E->private
 E->protected
 E->λ
+P->λ
+T->float
+T->int
+T->void
+T->double

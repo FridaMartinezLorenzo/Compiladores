@@ -4,6 +4,7 @@ from tkinter import ttk
 from lexico import *
 from TablaAnalisisSintactico import *
 from PrimerosYSiguientes import mainPyS
+#Aun no tiene la modificacion de la regla de lambda
 def analisisSintactico():
     VentanaPrincipal =Toplevel()
     VentanaPrincipal.title("Analisis sintactico LR")
@@ -110,6 +111,7 @@ def imprimirResultados(Ventana):
     ventanaResultados.grab_release()
 
     
+
 def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
     Ventana.grab_set()
     tabla=Frame(Ventana,width=900,height=600)
@@ -177,15 +179,21 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 labelRegla=Label(tabla,text=str(regla[0])+"->"+str(regla[1]),width=20,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
                 tama=len(regla[1].split(' ')) #calculamos el tamaño de β
-                tama=tama*2 
+                reglasinL=regla[1].split(' ')
+                if(reglasinL[0]=='λ'):
+                    tama=0
+                else:
+                    tama=tama*2 
+                print("tamaño de beta:",tama)
+                print("ctm")
                 for k in range(0,tama):
                     pila.pop()  #pop 2*|β| símbolos
                 print("contenido de la pila despues de eliminar:",pila)
                 pila.append(regla[0])   #push A
                 print("contenido de la pila despues de agregar A:",pila)
-                simbIra=buscarSimbolo(simbolos,pila[len(pila)-1]) 
+                simbIra=buscarSimbolo(simbolos,pila[len(pila)-1])
                 #s=Ir_a[j,A]
-                s=buscarAccion(variable,pila[len(pila)-2]+2,simbIra) 
+                s=buscarAccion(variable,pila[len(pila)-2]+2,simbIra)
                 #push s
                 pila.append(s)
                 print("contenido de la pila despues de agregar s:",pila)
