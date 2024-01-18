@@ -18,7 +18,7 @@ def sublexico():
     combo.set(arr[0])
 
 def opcionesSintactico():
-    arr=["Primeros y siguientes","Colección canónica","Tabla Analisis Sintactico","Análisis Sintáctico LR"]
+    arr=["Primeros y siguientes","Colección canónica","Tabla Analisis Sintactico","Análisis Sintáctico LR", "Analizador Sintactico"]
     combo = ttk.Combobox(root, values=arr,width=23,height=15,font=font1,state="readonly")
     combo.place(x=790,y=350)
     syntaxButton.config(text="Buscar",command=lambda:DesplegarAlgoritmoSintactico(combo.get()))
