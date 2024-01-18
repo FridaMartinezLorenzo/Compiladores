@@ -29,7 +29,7 @@ A->λ
 V->id H
 H->[ nint ] H
 H->λ
-W->T id L ; W
+W->E T id L ; W
 W->λ
 L->, id L
 L->= C
