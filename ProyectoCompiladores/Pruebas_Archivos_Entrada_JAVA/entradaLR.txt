@@ -1,16 +1,29 @@
-S F X E P T
-id ; , class { } ( ) public private protected float int void double
-S->F
-F->E class id { F }
-F->E T id ( P ) { X }
+S F X E P T A V H R W
+id ; , class { } ( ) public private protected float int string char void double nint [ ]
+S->F F
 F->λ
+F->E class id { X }
+X->E T id ( P ) { W }
 X->λ
 E->public
 E->private
 E->protected
 E->λ
 P->λ
+P->T R id
+R->[ nint ]
+R->[ ]
+R->λ
 T->float
 T->int
 T->void
 T->double
+T->char
+T->string
+A->T V
+A->λ
+V->id H
+H->[ nint ] H
+H->λ
+W->T id ; W
+W->λ

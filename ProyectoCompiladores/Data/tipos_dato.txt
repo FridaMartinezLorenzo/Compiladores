@@ -7,3 +7,4 @@ long
 int
 char
 String
+string

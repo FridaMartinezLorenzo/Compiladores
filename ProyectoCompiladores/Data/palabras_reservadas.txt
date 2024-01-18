@@ -40,7 +40,6 @@ while
 true
 false
 main
-args
 System
 out
 println

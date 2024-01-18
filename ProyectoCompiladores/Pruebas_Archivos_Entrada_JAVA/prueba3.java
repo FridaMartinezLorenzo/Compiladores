@@ -1,4 +1,5 @@
 public class prueba3 {
-    int suma( ) {
+    int suma(string[] args) {
+       
     }
 }
