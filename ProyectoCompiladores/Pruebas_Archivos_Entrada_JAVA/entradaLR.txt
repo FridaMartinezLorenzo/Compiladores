@@ -2,7 +2,7 @@ S F X E P T A V H R W L C D U
 id ; , class { } ( ) public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false
 S->D F D
 F->λ
-D->class id { X X }
+D->class id { X W X }
 D->λ
 F->E class id { X X }
 X->E U T id ( P ) { W }
@@ -25,6 +25,7 @@ T->double
 T->char
 T->string
 T->boolean
+T->λ
 A->T V
 A->λ
 V->id H
