@@ -1,10 +1,10 @@
 S F X E P T A V H R W L C D U
-id ; , class { } ( ) public private protected float int string char void double nint nfloat [ ] = static
+id ; , class { } ( ) public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false
 S->D F D
 F->λ
-D->class id { X }
+D->class id { X X }
 D->λ
-F->E class id { X }
+F->E class id { X X }
 X->E U T id ( P ) { W }
 X->λ
 U->static
@@ -15,7 +15,7 @@ E->protected
 E->λ
 P->λ
 P->T R id
-R->[ nint ]
+R->[ nint ] R
 R->[ ]
 R->λ
 T->float
@@ -24,6 +24,7 @@ T->void
 T->double
 T->char
 T->string
+T->boolean
 A->T V
 A->λ
 V->id H
@@ -35,4 +36,8 @@ L->, id L
 L->= C L
 L->λ
 C->nint
+C->varcadena
+C->literalcar
 C->nfloat
+C->true
+C->false

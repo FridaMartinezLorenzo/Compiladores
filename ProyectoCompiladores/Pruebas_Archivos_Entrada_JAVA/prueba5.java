@@ -1,4 +1,4 @@
-public class prueba4 {
+public class prueba5 {
     public static void main(string[] args) {
        int x, y;
        float z = 1.1, k;
@@ -9,8 +9,15 @@ public class prueba4 {
        boolean b = true;
        public static int count = 0;
     }
-    public void Animal(){
-       int age;
-    }
 
+}
+
+class Animal{
+    public static int count = 0;
+    public Animal(){
+        count++;
+    }
+    public static int getCount(){
+        int count;
+    }
 }
