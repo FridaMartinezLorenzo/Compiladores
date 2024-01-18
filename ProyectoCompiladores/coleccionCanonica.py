@@ -127,7 +127,7 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, enum
     
     while ConjuntoC:
         conjunto_actual = ConjuntoC.pop(0)
-        print("conjunto_actual[1]: ", conjunto_actual[1])
+        #print("conjunto_actual[1]: ", conjunto_actual[1])
         caracteresEvaluados = []
         
         conjunto_ir_a = []
@@ -136,14 +136,15 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, enum
             bandera_se_encontro_estado = -1
             bandera_no_se_ha_calculado_transicion = -1
             for i in range(len(regla)): 
-                print("Regla para ir a", regla)
-                print("regla para ir a:", regla[0]," longitud: ", len(regla))
+                #print("Regla para ir a", regla)
+                #print("regla para ir a:", regla[0]," longitud: ", len(regla))
                 
 
                 if regla[0] == '•' and len(regla) == 1:
-                    print("Se detecta la produccion lambda")
+                    #print("Se detecta la produccion lambda")
                     nuevo_elemento_canonica = TablaColeccionCanonica()
-                    nuevo_elemento_canonica.setEnviadoACerradura(reglas)  
+                    nuevo_elemento_canonica.setEnviadoACerradura([reglas])
+                    nuevo_elemento_canonica.setEstado(conjunto_actual[0])
                     listaCanonica.append(nuevo_elemento_canonica)
             
                     
@@ -152,8 +153,8 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, enum
                     
                 #if regla[i] == '•' and regla[i+1] != None and regla[i+1] != 'λ':
                 elif regla[i] == '•' and regla[i+1] != None:
-                    print ("regla [i+1]" ,regla[i+1] )
-                    print(caracteresEvaluados)
+                    #print ("regla [i+1]" ,regla[i+1] )
+                    #print(caracteresEvaluados)
                     if regla[i+1] not in caracteresEvaluados:
                         #Creamos el objeto que contiene la informacion sobre el proceso que se esta haciendo
                         nuevo_elemento_canonica = TablaColeccionCanonica()
@@ -165,7 +166,7 @@ def coleccionCanonica(ConjuntoC, reglasProduccion, lista_estados_conjuntos, enum
                         
                         #Llamamos  ala funcion Ir_a que internamente llama a la funcion cerradura
                         conjunto_ir_a = Ir_a(conjunto_actual, simbolo_evaluar_ir_a, reglasProduccion, nuevo_elemento_canonica)
-                        print("Conjunto ir a para quitar lamda", conjunto_ir_a )
+                        #print("Conjunto ir a para quitar lamda", conjunto_ir_a )
                         if conjunto_ir_a != None:
                             quitarLambda(conjunto_ir_a)
                         bandera_se_encontro_estado = -1
@@ -224,20 +225,20 @@ def main(ruta):
     elemento_gramatica_aumentada = [simboloInicial + "'", [simboloInicial,"$"]]
     elemento_gramatica_aumentada_aux = [simboloInicial + "'", [simboloInicial,"$"]] 
     elemento_gramatica_aumentada_aux[1].insert(0, '•')    
-    print("elemento_gramatica_aumentada_aux: ",elemento_gramatica_aumentada_aux)         
-    print("Enviado:",['I0',[elemento_gramatica_aumentada_aux]])
-    print(reglasProduccion)
+    #print("elemento_gramatica_aumentada_aux: ",elemento_gramatica_aumentada_aux)         
+    #print("Enviado:",['I0',[elemento_gramatica_aumentada_aux]])
+    #print(reglasProduccion)
     ConjuntoC = cerradura(['I0',[elemento_gramatica_aumentada_aux]],reglasProduccion)
-    print("\n\nConjuntoC: ",ConjuntoC)
+    #print("\n\nConjuntoC: ",ConjuntoC)
     
     quitarLambda(ConjuntoC)
-    print("\n\nConjuntoC post quitado de lambda: ",ConjuntoC)
+    #print("\n\nConjuntoC post quitado de lambda: ",ConjuntoC)
     
     
     #Aumentar gramatica
     reglasProduccion.insert(0,elemento_gramatica_aumentada)
     gramatica_aumentada = agregarPunto(reglasProduccion)
-    print("\n\nGramatica aumentada: ",gramatica_aumentada)
+    #print("\n\nGramatica aumentada: ",gramatica_aumentada)
 
     
     #Vamos a buscar la regla asociada a la devuelta para agregarla a C con el punto añadido
@@ -249,7 +250,7 @@ def main(ruta):
             #print("elemento DEL CONJUNTO c: ",elemento)
             if elemento == list(regla): 
                 lista_posociones_reglas.append(i)
-    print("lista_posociones_reglas: ",lista_posociones_reglas)
+    #print("lista_posociones_reglas: ",lista_posociones_reglas)
     
     aux = []
     for posicion in lista_posociones_reglas:

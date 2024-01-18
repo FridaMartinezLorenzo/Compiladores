@@ -43,7 +43,7 @@ def abrirArchivo(Ventana,frameGramatica):
     archivoGramatica=open(direccionArchivo,encoding="utf-8")
 
     simboloInicial=archivoGramatica.readline().split()
-    print(simboloInicial)
+    #print(simboloInicial)
     Inicial=simboloInicial[0]
     listaGramatica.insert(END,"-----Gramática extendida-----")
     listaGramatica.insert(END,Inicial+"'"+"->"+Inicial+"$")
@@ -64,7 +64,7 @@ def ImprimirCanonicos(Ventana,Frame):
     Ventana.grab_set()
     if direccionArchivo!="": 
         ruta=direccionArchivo
-        print("ruta==",ruta)
+        #print("ruta==",ruta)
    
         fuente=("Times New Roman",12)
         listaCanonicos=Listbox(Frame)
@@ -75,7 +75,7 @@ def ImprimirCanonicos(Ventana,Frame):
         flag=0
         #print("tipo de resultado",type(ResultadosCanonica[0]))
         for elemento in ResultadosCanonica:#elemento es un objeto de la clase tablaColeccionCanonica
-            print(elemento)
+            #print(elemento)
             if flag==0:
                 listaCanonicos.insert(END,"Cerradura= "+str(elemento.getEnviadoACerradura()))
                 listaCanonicos.insert(END,"Estado="+str(elemento.getEstado()))    

@@ -1,9 +1,7 @@
-S V H T
-nint int char float id [ ]
-S->T V ;
-V->id H
-H->[ nint ] H
-H->λ
-T->int
-T->char
-T->float
+S L V
+( ) id ,
+S->( L )
+S->id
+L->S V
+V->, S V
+V->λ
