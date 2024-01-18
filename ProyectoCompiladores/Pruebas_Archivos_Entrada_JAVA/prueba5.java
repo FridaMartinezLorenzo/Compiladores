@@ -12,12 +12,3 @@ public class prueba5 {
 
 }
 
-class Animal{
-    public static int count = 0;
-    public Animal(){
-        //count++;
-    }
-    //public static int getCount(){
-    //    int count;
-    //}
-}
