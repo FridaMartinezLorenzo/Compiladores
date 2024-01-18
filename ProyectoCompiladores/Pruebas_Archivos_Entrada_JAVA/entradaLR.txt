@@ -1,10 +1,14 @@
-S F X E P T A V H R W L C
-id ; , class { } ( ) public private protected float int string char void double nint nfloat [ ] =
-S->F F
+S F X E P T A V H R W L C D U
+id ; , class { } ( ) public private protected float int string char void double nint nfloat [ ] = static
+S->D F D
 F->λ
+D->class id { X }
+D->λ
 F->E class id { X }
-X->E T id ( P ) { W }
+X->E U T id ( P ) { W }
 X->λ
+U->static
+U->λ
 E->public
 E->private
 E->protected

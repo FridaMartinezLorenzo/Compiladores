@@ -39,7 +39,6 @@ volatile
 while
 true
 false
-main
 System
 out
 println
