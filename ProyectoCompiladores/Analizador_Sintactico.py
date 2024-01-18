@@ -18,9 +18,9 @@ def encabezado(VentanaPrincipal):
     font2=("Times New Roman",20)
     archivoLabel=Label(VentanaPrincipal,text="Seleccionar Archivo:",font=font1,width=20,background="#363062",foreground="white")
     archivoLabel.place(x=60,y=30)
-    archivoButton=Button(VentanaPrincipal,text="Cargar gramatica",width=20,command=lambda:abrirArchivo(VentanaPrincipal),bg="#F99417",font=font1)
+    archivoButton=Button(VentanaPrincipal,text="Abrir archivo",width=20,command=lambda:abrirArchivo(VentanaPrincipal),bg="#F99417",font=font1)
     archivoButton.place(x=300,y=20)
-    tokenButton=Button(VentanaPrincipal,text="Abrir archivo",width=20,bg="#F99417",font=font1,command=lambda:abrirArchivo1(VentanaPrincipal))
+    tokenButton=Button(VentanaPrincipal,text="Seleccionar tira de tokens",width=20,bg="#F99417",font=font1,command=lambda:abrirArchivo1(VentanaPrincipal))
     tokenButton.place(x=300,y=100)
     ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:imprimirResultados(VentanaPrincipal))
     ImprimirResultad0s.place(x=500,y=60)
@@ -191,8 +191,11 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 print("contenido de la pila despues de agregar A:",pila)
                 simbIra=buscarSimbolo(simbolos,pila[len(pila)-1])
                 #s=Ir_a[j,A]
-                s=buscarAccion(variable,pila[len(pila)-2]+2,simbIra)
+                es=int(pila[len(pila)-2])+2
+                print(es)
+                s=buscarAccion(variable,es,simbIra)
                 #push s
+                print(s)
                 pila.append(s)
                 print("contenido de la pila despues de agregar s:",pila)
                 print("tira de tokens despues de la reduccion:",tira)  
@@ -270,6 +273,3 @@ def limpiar(ventana):
 
 direccionArchivo2=""
 tiraTokens=""
-
-
-    
