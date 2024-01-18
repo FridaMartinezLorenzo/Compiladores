@@ -32,7 +32,7 @@ H->λ
 W->E U T id L ; W
 W->λ
 L->, id L
-L->= C
+L->= C L
 L->λ
 C->nint
 C->nfloat
