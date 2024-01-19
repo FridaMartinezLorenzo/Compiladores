@@ -8,6 +8,8 @@ public class prueba4 {
        string s = "hola";
        boolean b = true;
        public static int count = 0;
+       system.out.println("Hola mundo");
+       printf("Hola mundo");
     }
     public void Animal(){
        int age;
