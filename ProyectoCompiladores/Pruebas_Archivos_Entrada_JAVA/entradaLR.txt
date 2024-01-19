@@ -38,6 +38,7 @@ W->if ( Q ) { W } W
 W->if ( Q ) { W } else { W } W
 W->for ( T id = C ; Q ; id masmas ) { W } W
 W->for ( T id = C ; Q ; id menosmenos ) { W } W
+W->while ( Q ) { W } W
 W->λ
 W->return C ; W
 W->return id ; W

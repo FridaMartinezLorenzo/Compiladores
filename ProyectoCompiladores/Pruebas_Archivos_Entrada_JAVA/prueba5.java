@@ -17,6 +17,9 @@ public class prueba5 {
        }
        for(int i = 0; i < 10; i++){
        }
+       while (a < 10) {
+        
+       }
     }
 
 }
