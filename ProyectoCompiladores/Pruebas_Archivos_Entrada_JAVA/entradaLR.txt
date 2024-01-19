@@ -1,5 +1,5 @@
-S F X E P T A V H R W L C D U G
-id ; , class { } ( ) public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system . out println printf
+S F X E P T A V H R W L C D U G O
+id ; , class { } ( ) public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system . out println printf + * / %  
 S->D F D
 F->λ
 D->class id { X X }
@@ -32,9 +32,17 @@ H->[ nint ] H
 H->λ
 W->E U T id L ; W
 W->G ( varcadena ) ; W
+W->id L ; W
 W->λ
 L->, id L
 L->= C L
+L->= id O id L
+L->= id O C L
+L->= C O C L
+O->+
+O->*
+O->/
+O->%
 L->λ
 C->nint
 C->varcadena

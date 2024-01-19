@@ -8,6 +8,7 @@ public class prueba5 {
        string s = "hola";
        boolean b = true;
        public static int count = 0;
+       a = a+1;
     }
 
 }
