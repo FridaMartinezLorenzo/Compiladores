@@ -60,7 +60,25 @@ def abrirArchivo1(Ventana):
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
     direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
     tiraTokens = ObtenerTiraTokensExterna(direccionArchivo)
-    print("Tira de tokens recibida en el lexico:\n", tiraTokens)
+    #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
+    tiraTokens = tiraTokens.replace("<","menorque")
+    tiraTokens = tiraTokens.replace(">","mayorque")
+    tiraTokens = tiraTokens.replace("==","igualigual")
+    tiraTokens = tiraTokens.replace(">=","mayorigual")
+    tiraTokens = tiraTokens.replace("<=","menorigual")
+    tiraTokens = tiraTokens.replace("!=","diferente")
+    tiraTokens = tiraTokens.replace("&&","and")
+    tiraTokens = tiraTokens.replace("||","or")
+    tiraTokens = tiraTokens.replace("++","masmas")
+    tiraTokens = tiraTokens.replace("--","menosmenos")
+    tiraTokens = tiraTokens.replace("+=","masigual")
+    tiraTokens = tiraTokens.replace("-=","menosigual")
+    tiraTokens = tiraTokens.replace("*=","porigual")
+    tiraTokens = tiraTokens.replace("/=","entredosigual")
+    tiraTokens = tiraTokens.replace("%=","modigual")
+    tiraTokens = tiraTokens.replace("-", "resta")
+    tiraTokens = tiraTokens.replace("String", "string")
+    tiraTokens("Tira de tokens recibida en el lexico:\n", tiraTokens)
 
 
 def imprimirResultados(Ventana):

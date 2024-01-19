@@ -9,6 +9,14 @@ public class prueba5 {
        boolean b = true;
        public static int count = 0;
        a = a+1;
+       a = a+b;
+       int k = 1+3;
+       int j = a+b;
+       int l = a*8;
+       if(a == 1){
+       }
+       for(int i = 0; i < 10; i++){
+       }
     }
 
 }

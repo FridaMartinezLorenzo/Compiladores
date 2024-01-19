@@ -5,7 +5,6 @@ public class prueba3 {
        float z = 1.1;
        int a = 1;
     }
-
 }
 class Animal {
 
