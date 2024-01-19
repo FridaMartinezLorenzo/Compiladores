@@ -93,6 +93,7 @@ def imprimirResultados(Ventana):
     frameResultados.place(x=60,y=100)
     ventana2=Toplevel()
     frame2=Frame(ventana2,width=300,height=600)
+    
     #Esto es lo que hay que arreglar
     datos,reglas=ImprimirResultados2(ventana2,frame2,direccionArchivo2)
     ventana2.destroy()
@@ -125,13 +126,45 @@ def imprimirResultados(Ventana):
     print("funcion")
     TablaLr(variable,arreglosimbolos,tira,arreGramatica,Ventana)
     ventanaResultados.grab_release()
-
+    
     
 
 def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
     Ventana.grab_set()
     tabla=Frame(Ventana,width=900,height=600)
     tabla.place(x=300,y=150)
+    canvas=Canvas(Ventana,width=900,height=600)
+    canvas.place(x=300,y=150)
+
+    def on_arrow_key(event):
+            if event.keysym == "Left":
+                canvas.xview_scroll(-1, "units")
+            elif event.keysym == "Right":
+                canvas.xview_scroll(1, "units")
+            #canvas.config(scrollregion=canvas.bbox("all"))    
+
+    def on_arrow_key_v(event):
+         if event.keysym == "Up":
+             canvas.yview_scroll(-1, "units")
+         elif event.keysym == "Down":
+             canvas.yview_scroll(1, "units")
+         #canvas.config(scrollregion=canvas.bbox("all"))
+    
+    scrollbar=ttk.Scrollbar(canvas, orient="vertical", command=canvas.yview)
+    scrollbar.set(0.0, 1.0)
+    scrollbar.place(x=5, y=50, height=300)
+
+    horizontal_scrollbar = ttk.Scrollbar(canvas, orient="horizontal", command=canvas.xview)
+    horizontal_scrollbar.set(0.0,1.0)
+    horizontal_scrollbar.place(x=0,y=0,width=300)
+
+    tabla=Frame(canvas,width=1470,height=300)
+    canvas.create_window((100, 50), window=tabla, anchor=NW)
+    canvas.configure(yscrollcommand=scrollbar.set,xscrollcommand=horizontal_scrollbar.set)
+    canvas.bind_all("<KeyPress-Left>", on_arrow_key)
+    canvas.bind_all("<KeyPress-Right>", on_arrow_key)
+    canvas.bind_all("<KeyPress-Up>", on_arrow_key_v)
+    canvas.bind_all("<KeyPress-Down>", on_arrow_key_v)
     contadorFila=0
     pila=[]
     accion=[]

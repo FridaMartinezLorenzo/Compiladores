@@ -34,6 +34,8 @@ public class prueba5 {
             
             break;
        }
+
+       return a;
     }
 
 }
