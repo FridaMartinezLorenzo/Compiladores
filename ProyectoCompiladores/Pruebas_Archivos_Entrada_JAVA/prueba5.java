@@ -18,7 +18,21 @@ public class prueba5 {
        for(int i = 0; i < 10; i++){
        }
        while (a < 10) {
+       }
+       do {
+       } while (a < 10);
+
+       switch (a) {
+        case 1:
+            
+            break;
         
+        case 2:
+            
+            break;
+        default:
+            
+            break;
        }
     }
 

@@ -1,5 +1,5 @@
-S F X E P T A V H R W L C D U G O Z Q
-id ; , class { } ( ) public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system . out . println printf + * / % if else igualigual mayorigual menorigual diferente and or masmas menosmenos masigual menosigual porigual entredosigual modigual resta menorque mayorque for return while do break 
+S F X E P T A V H R W L C D U G O Z Q B
+id ; , class { } ( ) public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system out . println printf + * / % if else igualigual mayorigual menorigual diferente and or masmas menosmenos masigual menosigual porigual entredosigual modigual resta menorque mayorque for return while do break switch case default :
 S->D F D
 F->λ
 D->class id { X X }
@@ -39,6 +39,11 @@ W->if ( Q ) { W } else { W } W
 W->for ( T id = C ; Q ; id masmas ) { W } W
 W->for ( T id = C ; Q ; id menosmenos ) { W } W
 W->while ( Q ) { W } W
+W->do { W } while ( Q ) ; W
+W->switch ( id ) { B } W
+B->case C : W B
+B->default : W
+W->break ; W
 W->λ
 W->return C ; W
 W->return id ; W
