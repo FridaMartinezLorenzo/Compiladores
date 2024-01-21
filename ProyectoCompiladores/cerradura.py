@@ -73,10 +73,3 @@ print ("cerradura(I5):", cerradura(conjuntoParaI5, reglas_prod))
 
 
 '''
-
-'''
-reglas_prod = [('S', ['T', 'V', ';']), ('V', ['id', 'H']), ('H', ['[', 'nint', ']', 'H']), ('H', ['λ']), ('T', ['int']), ('T', ['char']), ('T', ['float'])]
-conjunto0 = ['I0', [ ["S'", ['•', 'S', '$'] ] ] ]
-
-print("cerradura:", cerradura(conjunto0, reglas_prod))
-'''

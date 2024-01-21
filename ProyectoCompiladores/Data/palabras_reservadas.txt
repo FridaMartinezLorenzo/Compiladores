@@ -30,6 +30,7 @@ strictfp
 super
 switch
 synchronized
+system
 this
 throw
 throws
@@ -39,8 +40,8 @@ volatile
 while
 true
 false
-main
-args
 System
 out
 println
+printf
+@Overwrite

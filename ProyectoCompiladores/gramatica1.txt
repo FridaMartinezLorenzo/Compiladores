@@ -1,7 +1,8 @@
-D L T
-, int float id ;
-D->T id L ;
-L->, id L
-L->λ
-T->int
-T->float
+E T F
++ * ( ) id
+E->E + T
+E->T
+T->T * F
+T->F
+F->( E )
+F->id

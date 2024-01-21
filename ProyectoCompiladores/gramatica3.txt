@@ -1,7 +1,7 @@
 S E L
-; : = ( ) id num + ,
+; : = print ( ) id num + ,
 S->S ; S
-S->id := E
+S->id : = E
 S->print ( L )
 E->id
 E->num
