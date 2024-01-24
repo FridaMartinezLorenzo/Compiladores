@@ -1,0 +1,13 @@
+IDEA PARA ACCIONES SEMANTICAS:
+
+# Ejemplo: {T.v:=T.v*F.v}
+class result_acc_semant:
+  def __init__(self, base, atrib, accion):
+    self.base = base        # T
+    self.atrib = atrib      # v
+    self.accion = accion    # T.v*F.v
+
+  def get...
+
+  def set...
+

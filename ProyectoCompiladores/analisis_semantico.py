@@ -51,7 +51,10 @@ def abrirArchivo(Ventana):
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    direccionArchivo2= "Pruebas_Archivos_Entrada_JAVA/entradaLR.txt"
+
+    # Cambiar para que acepte cualquier gramática que se le indique
+    # direccionArchivo2= "Pruebas_Archivos_Entrada_JAVA/entradaLR.txt"
+    direccionArchivo2 = filedialog.askopenfilename(initialdir=ruta_proyecto, title="Cargar Gramática", filetypes=(("txt", "*.txt"),))
     cargarGramatica(Ventana,direccionArchivo2)
 
 def abrirArchivo1(Ventana):
@@ -59,7 +62,7 @@ def abrirArchivo1(Ventana):
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
+    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("txt", "*.txt"),))
     tiraTokens = ObtenerTiraTokensExternaObj(direccionArchivo)
 
     # Cambiar esto para que tiraTokens funcione con objetos y no cadena
@@ -82,7 +85,7 @@ def abrirArchivo1(Ventana):
         tok.set_tipo(tok.get_tipo().replace("%=","modigual"))
         tok.set_tipo(tok.get_tipo().replace("-", "resta"))
         tok.set_tipo(tok.get_tipo().replace("String", "string"))
-    tiraTokens("Tira de tokens recibida en el léxico:\n", tiraTokens)
+    print("Tira de tokens recibida en el léxico:\n", tiraTokens)
 
 def imprimirResultados(Ventana):
     global tiraTokens
@@ -122,18 +125,21 @@ def imprimirResultados(Ventana):
     arreGramatica=[]
     Gramatica=list(filter(lambda x: x is not None and x != "", Gramatica)) #aqui se quitan los elementos vacios de la lista
 
-    #Editar para que acepte una tercera sección de traducciones
+    #Editar para que acepte una tercera sección para las traducciones
+    arreAcciones = []
     for grama in Gramatica:
         grama=grama.split("->")
         tuplaGrama=(grama[0],grama[1])
         arreGramatica.append(tuplaGrama)
+        arreAcciones.append(grama[2])
     print("Gramatica:",arreGramatica)
     print("simbolos:",arreglosimbolos)
+    print("Acciones:",arreAcciones)
     print("funcion")
-    TablaLr(variable,arreglosimbolos,tiraTokens,arreGramatica,Ventana)
+    TablaLr(variable,arreglosimbolos,tiraTokens,arreGramatica,Ventana,arreAcciones)
     ventanaResultados.grab_release()
 
-def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
+def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
     Ventana.grab_set()
     tabla=Frame(Ventana,width=900,height=600)
     tabla.place(x=300,y=150)
@@ -178,8 +184,8 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
     labelTextPila.grid(row=contadorFila,column=0)
     labelTextTira=Label(tabla,text="Entrada",width=30,font=font1,borderwidth=2,relief="solid")
     labelTextTira.grid(row=contadorFila,column=1)
-    labelTextSalida=Label(tabla,text="Salida",width=40,font=font1,borderwidth=2,relief="solid")
-    labelTextSalida.grid(row=contadorFila,column=2,columnspan=2)
+    labelTextSalida=Label(tabla,text="Salida",width=100,font=font1,borderwidth=2,relief="solid")
+    labelTextSalida.grid(row=contadorFila,column=2,columnspan=3)
     contadorFila+=1
 
     # Cambiar esto para que tira funcione con objetos y no con cadena
@@ -204,8 +210,10 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 print("salida:",accion) #imprimimos la accion de desplazamiento o reduccion
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
-                labelRegla=Label(tabla,text=" ",width=20,font=font1,borderwidth=2,relief="solid")
+                labelRegla=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
+                labelAccion=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
+                labelAccion.grid(row=contadorFila,column=4)
                 pila.append(a)
                 estadoAgregar=int(accion[1:])
                 pila.append(estadoAgregar)
@@ -216,8 +224,10 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 print("salida:",accion) #imprimimos la accion de desplazamiento o reduccion
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
-                labelRegla=Label(tabla,text=" ",width=20,font=font1,borderwidth=2,relief="solid")
+                labelRegla=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
+                labelAccion=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
+                labelAccion.grid(row=contadorFila,column=4)
                 pila.append(a)
                 estadoAgregar=int(accion)
                 pila.append(estadoAgregar)
@@ -231,8 +241,10 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 labelSalida.grid(row=contadorFila,column=2)
                 #imprimir la producción A→β
                 print("Regla:",regla)
-                labelRegla=Label(tabla,text=str(regla[0])+"->"+str(regla[1]),width=20,font=font1,borderwidth=2,relief="solid")
+                labelRegla=Label(tabla,text=str(regla[0])+"->"+str(regla[1]),width=40,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
+                labelAccion=Label(tabla,text=arreAcciones[pos-1],width=40,font=font1,borderwidth=2,relief="solid")
+                labelAccion.grid(row=contadorFila,column=4)
                 tama=len(regla[1].split(' ')) #calculamos el tamaño de β
                 reglasinL=regla[1].split(' ')
                 if(reglasinL[0]=='λ'):
@@ -260,8 +272,10 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 print("Aceptado")
                 labelRegla=Label(tabla,text="Aceptacion",width=20,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=2)
-                label2=Label(tabla,text=" ",width=20,font=font1,borderwidth=2,relief="solid")
+                label2=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
                 label2.grid(row=contadorFila,column=3)
+                labelAccion=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
+                labelAccion.grid(row=contadorFila,column=4)
             elif(accion==''):
                 print("Error de sintaxis")
                 break
