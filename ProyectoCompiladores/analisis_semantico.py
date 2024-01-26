@@ -5,6 +5,34 @@ from lexico import *
 from Analizador_Lexico import *
 from TablaAnalisisSintactico import *
 from PrimerosYSiguientes import mainPyS
+import re
+
+class result_acc:
+    def __init__(self, base, atrib, val):
+        self.base = base
+        self.atrib = atrib
+        self.val = val
+    
+    def get_base(self):
+        return self.base
+    
+    def get_atrib(self):
+        return self.atrib
+    
+    def get_val(self):
+        return self.val
+    
+    def set_base(self, base):
+        self.base = base
+
+    def set_atrib(self, atrib):
+        self.atrib = atrib
+
+    def set_val(self, val):
+        self.val = val
+
+    def __str__(self):
+        return str(self.base) + "." + str(self.atrib) + ":=" + str(self.val)
 
 def analizadorSemantico():
     VentanaPrincipal =Toplevel()
@@ -141,9 +169,9 @@ def imprimirResultados(Ventana):
 
 def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
     Ventana.grab_set()
-    tabla=Frame(Ventana,width=900,height=600)
+    tabla=Frame(Ventana,width=1200,height=600)
     tabla.place(x=300,y=150)
-    canvas=Canvas(Ventana,width=900,height=600)
+    canvas=Canvas(Ventana,width=1200,height=600)
     canvas.place(x=300,y=150)
 
     def on_arrow_key(event):
@@ -187,6 +215,7 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
     labelTextSalida=Label(tabla,text="Salida",width=100,font=font1,borderwidth=2,relief="solid")
     labelTextSalida.grid(row=contadorFila,column=2,columnspan=3)
     contadorFila+=1
+    results_acc = []
 
     # Cambiar esto para que tira funcione con objetos y no con cadena
     while((len(tira)>0) & (accion!='Aceptacion') & (accion!='')):
@@ -237,13 +266,32 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 print("es una reduccion")
                 pos=int(accion[1:])
                 regla=arreGramatica[pos-1]
+
+                acc_seman = arreAcciones[pos-1]
+                # Procesamiento de la acción semántica
+                cad = re.sub(r"^\s*{", "", acc_seman)
+                cad = re.sub(r"}\s*$", "", cad)  # Se eliminan las llaves de los laterales
+                print("cad:", cad)
+
+                partes = cad.split()        # Lista de las acciones/palabras entre las llaves
+                for pos in range(0, len(partes)):      # Procesar cada instrucción por separado
+                    base = re.sub(r"\..*$", "", partes[pos]).strip()
+                    print("Base:", base)
+                    atrib = re.sub(r":=.*$", "", re.sub(r"^.*?\.", "", partes[pos])).strip()
+                    print("Atributo:",atrib)
+                    val = re.sub(r"^.*:=", "", partes[pos]).strip()
+                    print("Acción:", val)
+                    # Para este punto la acción ya debe estar separada en base, atributo y valor
+                    postVal = obtenerValor(val, results_acc, pila)
+                    results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
+
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
                 #imprimir la producción A→β
                 print("Regla:",regla)
                 labelRegla=Label(tabla,text=str(regla[0])+"->"+str(regla[1]),width=40,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
-                labelAccion=Label(tabla,text=arreAcciones[pos-1],width=40,font=font1,borderwidth=2,relief="solid")
+                labelAccion=Label(tabla,text=acc_seman,width=40,font=font1,borderwidth=2,relief="solid")
                 labelAccion.grid(row=contadorFila,column=4)
                 tama=len(regla[1].split(' ')) #calculamos el tamaño de β
                 reglasinL=regla[1].split(' ')
@@ -267,14 +315,16 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 print(s)
                 pila.append(s)
                 print("contenido de la pila despues de agregar s:",pila)
-                print("tira de tokens despues de la reduccion:",tira)  
+                print("tira de tokens despues de la reduccion:",tira)
+
+            
             elif(accion=='Aceptacion'):
                 print("Aceptado")
                 labelRegla=Label(tabla,text="Aceptacion",width=20,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=2)
                 label2=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
                 label2.grid(row=contadorFila,column=3)
-                labelAccion=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
+                labelAccion=Label(tabla,text="Resultado: "+str(results_acc[len(results_acc)-1]),width=40,font=font1,borderwidth=2,relief="solid")
                 labelAccion.grid(row=contadorFila,column=4)
             elif(accion==''):
                 print("Error de sintaxis")
@@ -290,6 +340,94 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
             label2.grid(row=contadorFila,column=3)
             break
         contadorFila+=1
+
+def obtenerValor(accion, results_acc, pila):
+    print("Entra a función")
+    print(accion)
+    band = False
+
+    prueba_simb = re.split(r"\+", accion, 1)
+    if (len(prueba_simb) > 1):
+        # Hay una suma en la acción
+        print("Entró a suma")
+        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
+        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
+        # Se usa recursividad para calcular el valor del segundo segmento
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
+        for i in range(len(results_acc)-1, -1, -1):         # Busca en la lista de resultados anteriores
+            if (band is False):                                 # Si aún no se encuentra...
+                if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):     # Si la base y el atributo coinciden...
+                    val1 = results_acc[i].get_val()       # Asignar resultado
+                    results_acc.pop(i)                          # Eliminar el elemento utilizado
+                    band = True                                 # Indicar que se ha encontrado el símbolo
+        return int(val1) + int(val2)
+
+    prueba_simb = re.split(r"-", accion, 1)
+    if (len(prueba_simb) > 1):
+        # Hay una resta en la acción
+        print("Entró a resta")
+        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
+        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
+        # Se usa recursividad para calcular el valor del segundo segmento
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
+        for i in range(len(results_acc)-1, -1, -1):         # Busca en la lista de resultados anteriores
+            if (band is False):                                 # Si aún no se encuentra...
+                if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):     # Si la base y el atributo coinciden...
+                    val1 = results_acc[i].get_val()       # Asignar resultado
+                    results_acc.pop(i)                          # Eliminar el elemento utilizado
+                    band = True                                 # Indicar que se ha encontrado el símbolo
+        return int(val1) - int(val2)
+
+    prueba_simb = re.split(r"\*", accion, 1)
+    if (len(prueba_simb) > 1):
+        # Hay una multiplicación en la acción
+        print("Entró a multiplicación")
+        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
+        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
+        # Se usa recursividad para calcular el valor del segundo segmento
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
+        for i in range(len(results_acc)-1, -1, -1):         # Busca en la lista de resultados anteriores
+            if (band is False):                                 # Si aún no se encuentra...
+                if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):     # Si la base y el atributo coinciden...
+                    val1 = results_acc[i].get_val()       # Asignar resultado
+                    results_acc.pop(i)                          # Eliminar el elemento utilizado
+                    band = True                                 # Indicar que se ha encontrado el símbolo
+        return int(val1) * int(val2)
+
+    prueba_simb = re.split(r"/", accion, 1)
+    if (len(prueba_simb) > 1):
+        # Hay una división en la acción
+        print("Entró a división")
+        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
+        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
+        # Se usa recursividad para calcular el valor del segundo segmento
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
+        for i in range(len(results_acc)-1, -1, -1):         # Busca en la lista de resultados anteriores
+            if (band is False):                                 # Si aún no se encuentra...
+                if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):     # Si la base y el atributo coinciden...
+                    val1 = results_acc[i].get_val()       # Asignar resultado
+                    results_acc.pop(i)                          # Eliminar el elemento utilizado
+                    band = True                                 # Indicar que se ha encontrado el símbolo
+        return int(val1) / int(val2)
+
+    # No hay operación, se debe almacenar un valor
+    print("No hay operador")
+    prueba_simb = re.split(r"\.", accion, 1)
+    if (prueba_simb[0] == "nint"):          # Si lo que se busca es un nint...
+        for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+            print(pila[i])
+            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nint"):    # Si el tipo es el buscado...
+                print("Se encontró int")
+                return pila[i].get_val()         # Obtiene el valor de la variable nint
+    else:
+        for i in range(len(results_acc)-1, -1, -1): # Se recorre la pila de resultados
+            if (results_acc[i].get_base()==prueba_simb[0] and results_acc[i].get_atrib()==prueba_simb[1]):  # Si la base y el atributo coinciden...
+                print(results_acc[i].get_base())
+                print(results_acc[i].get_atrib())
+                print(results_acc[i].get_val())
+                return results_acc.pop(i).get_val()               # Asignar el valor almacenado y eliminar resultado de la pila
+        
+        return ""
 
 def pilaError(esperaba):
     cont=0

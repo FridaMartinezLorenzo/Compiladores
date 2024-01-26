@@ -215,7 +215,7 @@ class token_tipo_val:
         self.val = val
 
     def __str__(self):
-        return self.tipo + " " + str(self.val)
+        return self.tipo + ".val = " + str(self.val)
     
 # Obtener tira de tokens con objetos token_tipo_val(tipo:token, val:lexema)
 def ObtenerTiraTokensExternaObj(direccionArchivo):
