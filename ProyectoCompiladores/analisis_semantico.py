@@ -297,11 +297,12 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                     print("Instrucción:", cad_aux)
 
                 fase_if = 0
+                se_cumple = False
                 for pos in range(0, len(partes)):      # Procesar cada instrucción por separado
                     if (fase_if==0):                        # Proceso normal
-                        #if (partes[pos] == "if"):               # Si detecta un if
-                        #    fase_if = 1
-                        #else:
+                        if (partes[pos] == "if"):               # Si detecta un if
+                            fase_if = 1
+                        else:
                             base = re.sub(r"\..*$", "", partes[pos]).strip()
                             print("Base:", base)
                             atrib = re.sub(r":=.*$", "", re.sub(r"^.*?\.", "", partes[pos])).strip()
@@ -311,13 +312,35 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                             # Para este punto la acción ya debe estar separada en base, atributo y valor
                             postVal = obtenerValor(val, results_acc, pila)
                             results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
-                    #elif (fase_if==1):                      # Detecta la condición
-
-                    #elif (fase_if==2):
-
-                    #elif (fase_if==3):
-                    
-                    #elif (fase_if==4):
+                    elif (fase_if==1):                      # Detecta la condición
+                        se_cumple = obtenerCondicion(partes[pos], results_acc, pila)
+                        fase_if = 2
+                    elif (fase_if==2):
+                        if (se_cumple is True):
+                            base = re.sub(r"\..*$", "", partes[pos]).strip()
+                            print("Base:", base)
+                            atrib = re.sub(r":=.*$", "", re.sub(r"^.*?\.", "", partes[pos])).strip()
+                            print("Atributo:",atrib)
+                            val = re.sub(r"^.*:=", "", partes[pos]).strip()
+                            print("Acción:", val)
+                            # Para este punto la acción ya debe estar separada en base, atributo y valor
+                            postVal = obtenerValor(val, results_acc, pila)
+                            results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
+                        fase_if = 3
+                    elif (fase_if==3):
+                        fase_if = 4
+                    elif (fase_if==4):
+                        if (se_cumple is False):
+                            base = re.sub(r"\..*$", "", partes[pos]).strip()
+                            print("Base:", base)
+                            atrib = re.sub(r":=.*$", "", re.sub(r"^.*?\.", "", partes[pos])).strip()
+                            print("Atributo:",atrib)
+                            val = re.sub(r"^.*:=", "", partes[pos]).strip()
+                            print("Acción:", val)
+                            # Para este punto la acción ya debe estar separada en base, atributo y valor
+                            postVal = obtenerValor(val, results_acc, pila)
+                            results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
+                        fase_if = 0
 
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
@@ -450,6 +473,12 @@ def obtenerValor(accion, results_acc, pila):
                 return pila[i].get_val()         # Obtiene el valor de la variable id
 
     else:
+        try:
+            prueba_int = int(accion)
+            return prueba_int
+        except:
+            print("No es entero")
+
         prueba_simb = re.search(r'^".*?"$', accion)
         if (prueba_simb is not None):
             print("Se asigna una cadena")
@@ -468,7 +497,42 @@ def obtenerValor(accion, results_acc, pila):
                     print(results_acc[i].get_val())
                     return results_acc.pop(i).get_val()               # Asignar el valor almacenado y eliminar resultado de la pila
         
+            print("*** No se encontró valor para asociar ***")
             return None                 # Por defecto se devuelve None si no se encuentra el valor buscado
+        
+def obtenerCondicion(cond, results_acc, pila):
+    print("Entra a condición")
+    print(cond)
+
+    prueba_op = re.split(r"!=", cond, 1)         # Busca una negación
+    if (len(prueba_op) > 1):
+        print("Entró a negación")
+        # Se usa recursividad para calcular el valor de ambas expresiones
+        exp2 = obtenerValor(prueba_op[1], results_acc, pila)
+        exp1 = obtenerValor(prueba_op[0], results_acc, pila)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
+        if (exp1 != exp2):
+            print("La condición se cumple")
+            return True
+        else:
+            print("La condición no se cumple")
+            return False
+    
+    prueba_op = re.split(r"==", cond, 1)        # Busca una afirmación
+    if (len(prueba_op) > 1):
+        print("Entró a afirmación")
+        # Se usa recursividad para calcular el valor de ambas expresiones
+        exp2 = obtenerValor(prueba_op[1], results_acc, pila)
+        exp1 = obtenerValor(prueba_op[0], results_acc, pila)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
+        if (exp1 == exp2):
+            print("La condición se cumple")
+            return True
+        else:
+            print("La condición no se cumple")
+            return False
 
 def pilaError(esperaba):
     cont=0
