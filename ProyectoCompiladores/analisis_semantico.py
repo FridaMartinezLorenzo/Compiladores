@@ -273,7 +273,29 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 cad = re.sub(r"}\s*$", "", cad)  # Se eliminan las llaves de los laterales
                 print("cad:", cad)
 
-                partes = cad.split()        # Lista de las acciones/palabras entre las llaves
+                partes = []
+                cad_aux = ""
+                flag_cad = False
+                for car in cad:         # Revisar caracter por caracter en busca de espacios que no estén en cadenas
+                    if (flag_cad is True):
+                        if (car == '"'):
+                            flag_cad = False
+                        cad_aux = cad_aux + car
+                    else:
+                        if (car == ' '):
+                            if (cad_aux != ""):
+                                partes.append(cad_aux)
+                                print("Instrucción:", cad_aux)
+                            cad_aux = ""
+                        else:
+                            if (car == '"'):
+                                flag_cad = True
+                            cad_aux = cad_aux + car
+                
+                if (cad_aux != ""):
+                    partes.append(cad_aux)
+                    print("Instrucción:", cad_aux)
+
                 for pos in range(0, len(partes)):      # Procesar cada instrucción por separado
                     base = re.sub(r"\..*$", "", partes[pos]).strip()
                     print("Base:", base)
@@ -346,6 +368,70 @@ def obtenerValor(accion, results_acc, pila):
     print(accion)
     band = False
 
+    prueba_simb = re.split(r"\|\|", accion, 1)
+    if (len(prueba_simb) > 1):
+        print("[0]:", prueba_simb[0])
+        print("[1]:", prueba_simb[1])
+        # Hay una concatenación en la acción
+        print("Entró a concatenación")
+        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
+        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
+        # Se usa recursividad para calcular el valor del segundo segmento
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
+
+        print("Evaluando", prueba_simb[0])
+        if (prueba_base0 == "nint"):          # Si lo que se busca es un nfloat...
+            for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+                if (band is False):
+                    print(pila[i])
+                    if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nint"):    # Si el tipo es el buscado...
+                        print("Se encontró int")
+                        val1 = pila[i].get_val()         # Obtiene el valor de la variable nint
+                        band = True
+                
+        elif (prueba_base0 == "nfloat"):          # Si lo que se busca es un nint...
+            for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+                if (band is False):
+                    print(pila[i])
+                    if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nfloat"):    # Si el tipo es el buscado...
+                        print("Se encontró float")
+                        val1 = pila[i].get_val()         # Obtiene el valor de la variable nfloat
+                        band = True
+                
+        elif (prueba_base0 == "id"):          # Si lo que se busca es un id...
+            for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+                if (band is False):
+                    print(pila[i])
+                    if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "id"):    # Si el tipo es el buscado...
+                        print("Se encontró id")
+                        val1 = pila[i].get_val()         # Obtiene el valor de la variable id
+                        band = True
+    
+        else:
+            prueba_com = re.search(r'^".*?"$', prueba_simb[0])
+            if (prueba_com is not None):
+                print("Se asigna una cadena")
+                result = re.sub(r'^\s*"', "", prueba_base0)
+                result = re.sub(r'"\s*$', "", result)
+                print(result)
+                val1 = result
+    
+            else:
+                # prueba_simb = re.split(r"\.", prueba_simb[0], 1)
+                for i in range(len(results_acc)-1, -1, -1): # Se recorre la pila de resultados
+                    if (band is False):
+                        if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):  # Si la base y el atributo coinciden...}
+                            print("Se encontró el valor de la pila de resultados")
+                            print(results_acc[i].get_base())
+                            print(results_acc[i].get_atrib())
+                            print(results_acc[i].get_val())
+                            val1 = results_acc.pop(i).get_val()               # Asignar el valor almacenado y eliminar resultado de la pila
+                            band = True
+
+        print("val1:", val1)
+        print("Se devolverá:", str(val1)+str(val2))
+        return str(val1) + str(val2)
+
     prueba_simb = re.split(r"\+", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una suma en la acción
@@ -413,21 +499,47 @@ def obtenerValor(accion, results_acc, pila):
     # No hay operación, se debe almacenar un valor
     print("No hay operador")
     prueba_simb = re.split(r"\.", accion, 1)
-    if (prueba_simb[0] == "nint"):          # Si lo que se busca es un nint...
+    if (prueba_simb[0] == "nint"):          # Si lo que se busca es un nfloat...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
             print(pila[i])
             if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nint"):    # Si el tipo es el buscado...
                 print("Se encontró int")
                 return pila[i].get_val()         # Obtiene el valor de la variable nint
+            
+    elif (prueba_simb[0] == "nfloat"):          # Si lo que se busca es un nint...
+        for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+            print(pila[i])
+            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nfloat"):    # Si el tipo es el buscado...
+                print("Se encontró float")
+                return pila[i].get_val()         # Obtiene el valor de la variable nfloat
+            
+    elif (prueba_simb[0] == "id"):          # Si lo que se busca es un id...
+        for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+            print(pila[i])
+            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nint"):    # Si el tipo es el buscado...
+                print("Se encontró id")
+                return pila[i].get_val()         # Obtiene el valor de la variable id
+
     else:
-        for i in range(len(results_acc)-1, -1, -1): # Se recorre la pila de resultados
-            if (results_acc[i].get_base()==prueba_simb[0] and results_acc[i].get_atrib()==prueba_simb[1]):  # Si la base y el atributo coinciden...
-                print(results_acc[i].get_base())
-                print(results_acc[i].get_atrib())
-                print(results_acc[i].get_val())
-                return results_acc.pop(i).get_val()               # Asignar el valor almacenado y eliminar resultado de la pila
+        prueba_simb = re.search(r'^".*?"$', accion)
+        if (prueba_simb is not None):
+            print("Se asigna una cadena")
+            result = re.sub(r'^\s*"', "", accion)
+            result = re.sub(r'"\s*$', "", result)
+            print(result)
+            return result
+
+        else:
+            prueba_simb = re.split(r"\.", accion, 1)
+            for i in range(len(results_acc)-1, -1, -1): # Se recorre la pila de resultados
+                if (results_acc[i].get_base()==prueba_simb[0] and results_acc[i].get_atrib()==prueba_simb[1]):  # Si la base y el atributo coinciden...}
+                    print("Se encontró el valor de la pila de resultados")
+                    print(results_acc[i].get_base())
+                    print(results_acc[i].get_atrib())
+                    print(results_acc[i].get_val())
+                    return results_acc.pop(i).get_val()               # Asignar el valor almacenado y eliminar resultado de la pila
         
-        return ""
+            return None
 
 def pilaError(esperaba):
     cont=0
