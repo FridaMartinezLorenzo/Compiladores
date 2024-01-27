@@ -296,16 +296,28 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                     partes.append(cad_aux)
                     print("Instrucción:", cad_aux)
 
+                fase_if = 0
                 for pos in range(0, len(partes)):      # Procesar cada instrucción por separado
-                    base = re.sub(r"\..*$", "", partes[pos]).strip()
-                    print("Base:", base)
-                    atrib = re.sub(r":=.*$", "", re.sub(r"^.*?\.", "", partes[pos])).strip()
-                    print("Atributo:",atrib)
-                    val = re.sub(r"^.*:=", "", partes[pos]).strip()
-                    print("Acción:", val)
-                    # Para este punto la acción ya debe estar separada en base, atributo y valor
-                    postVal = obtenerValor(val, results_acc, pila)
-                    results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
+                    if (fase_if==0):                        # Proceso normal
+                        #if (partes[pos] == "if"):               # Si detecta un if
+                        #    fase_if = 1
+                        #else:
+                            base = re.sub(r"\..*$", "", partes[pos]).strip()
+                            print("Base:", base)
+                            atrib = re.sub(r":=.*$", "", re.sub(r"^.*?\.", "", partes[pos])).strip()
+                            print("Atributo:",atrib)
+                            val = re.sub(r"^.*:=", "", partes[pos]).strip()
+                            print("Acción:", val)
+                            # Para este punto la acción ya debe estar separada en base, atributo y valor
+                            postVal = obtenerValor(val, results_acc, pila)
+                            results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
+                    #elif (fase_if==1):                      # Detecta la condición
+
+                    #elif (fase_if==2):
+
+                    #elif (fase_if==3):
+                    
+                    #elif (fase_if==4):
 
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
@@ -370,133 +382,50 @@ def obtenerValor(accion, results_acc, pila):
 
     prueba_simb = re.split(r"\|\|", accion, 1)
     if (len(prueba_simb) > 1):
-        print("[0]:", prueba_simb[0])
-        print("[1]:", prueba_simb[1])
         # Hay una concatenación en la acción
         print("Entró a concatenación")
-        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
-        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
         # Se usa recursividad para calcular el valor del segundo segmento
         val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-
-        print("Evaluando", prueba_simb[0])
-        if (prueba_base0 == "nint"):          # Si lo que se busca es un nfloat...
-            for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
-                if (band is False):
-                    print(pila[i])
-                    if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nint"):    # Si el tipo es el buscado...
-                        print("Se encontró int")
-                        val1 = pila[i].get_val()         # Obtiene el valor de la variable nint
-                        band = True
-                
-        elif (prueba_base0 == "nfloat"):          # Si lo que se busca es un nint...
-            for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
-                if (band is False):
-                    print(pila[i])
-                    if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nfloat"):    # Si el tipo es el buscado...
-                        print("Se encontró float")
-                        val1 = pila[i].get_val()         # Obtiene el valor de la variable nfloat
-                        band = True
-                
-        elif (prueba_base0 == "id"):          # Si lo que se busca es un id...
-            for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
-                if (band is False):
-                    print(pila[i])
-                    if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "id"):    # Si el tipo es el buscado...
-                        print("Se encontró id")
-                        val1 = pila[i].get_val()         # Obtiene el valor de la variable id
-                        band = True
-    
-        else:
-            prueba_com = re.search(r'^".*?"$', prueba_simb[0])
-            if (prueba_com is not None):
-                print("Se asigna una cadena")
-                result = re.sub(r'^\s*"', "", prueba_base0)
-                result = re.sub(r'"\s*$', "", result)
-                print(result)
-                val1 = result
-    
-            else:
-                # prueba_simb = re.split(r"\.", prueba_simb[0], 1)
-                for i in range(len(results_acc)-1, -1, -1): # Se recorre la pila de resultados
-                    if (band is False):
-                        if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):  # Si la base y el atributo coinciden...}
-                            print("Se encontró el valor de la pila de resultados")
-                            print(results_acc[i].get_base())
-                            print(results_acc[i].get_atrib())
-                            print(results_acc[i].get_val())
-                            val1 = results_acc.pop(i).get_val()               # Asignar el valor almacenado y eliminar resultado de la pila
-                            band = True
-
-        print("val1:", val1)
-        print("Se devolverá:", str(val1)+str(val2))
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
         return str(val1) + str(val2)
 
     prueba_simb = re.split(r"\+", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una suma en la acción
         print("Entró a suma")
-        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
-        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
         # Se usa recursividad para calcular el valor del segundo segmento
         val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-        for i in range(len(results_acc)-1, -1, -1):         # Busca en la lista de resultados anteriores
-            if (band is False):                                 # Si aún no se encuentra...
-                if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):     # Si la base y el atributo coinciden...
-                    val1 = results_acc[i].get_val()       # Asignar resultado
-                    results_acc.pop(i)                          # Eliminar el elemento utilizado
-                    band = True                                 # Indicar que se ha encontrado el símbolo
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
         return int(val1) + int(val2)
 
     prueba_simb = re.split(r"-", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una resta en la acción
         print("Entró a resta")
-        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
-        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
         # Se usa recursividad para calcular el valor del segundo segmento
         val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-        for i in range(len(results_acc)-1, -1, -1):         # Busca en la lista de resultados anteriores
-            if (band is False):                                 # Si aún no se encuentra...
-                if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):     # Si la base y el atributo coinciden...
-                    val1 = results_acc[i].get_val()       # Asignar resultado
-                    results_acc.pop(i)                          # Eliminar el elemento utilizado
-                    band = True                                 # Indicar que se ha encontrado el símbolo
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
         return int(val1) - int(val2)
 
     prueba_simb = re.split(r"\*", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una multiplicación en la acción
         print("Entró a multiplicación")
-        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
-        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
         # Se usa recursividad para calcular el valor del segundo segmento
         val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-        for i in range(len(results_acc)-1, -1, -1):         # Busca en la lista de resultados anteriores
-            if (band is False):                                 # Si aún no se encuentra...
-                if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):     # Si la base y el atributo coinciden...
-                    val1 = results_acc[i].get_val()       # Asignar resultado
-                    results_acc.pop(i)                          # Eliminar el elemento utilizado
-                    band = True                                 # Indicar que se ha encontrado el símbolo
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
         return int(val1) * int(val2)
 
     prueba_simb = re.split(r"/", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una división en la acción
         print("Entró a división")
-        prueba_base0 = re.sub(r"\..*$", "", prueba_simb[0]).strip()
-        prueba_atrib0 = re.sub(r"^.*?\.", "", prueba_simb[0]).strip()
         # Se usa recursividad para calcular el valor del segundo segmento
         val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-        for i in range(len(results_acc)-1, -1, -1):         # Busca en la lista de resultados anteriores
-            if (band is False):                                 # Si aún no se encuentra...
-                if (results_acc[i].get_base()==prueba_base0 and results_acc[i].get_atrib()==prueba_atrib0):     # Si la base y el atributo coinciden...
-                    val1 = results_acc[i].get_val()       # Asignar resultado
-                    results_acc.pop(i)                          # Eliminar el elemento utilizado
-                    band = True                                 # Indicar que se ha encontrado el símbolo
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
         return int(val1) / int(val2)
 
-    # No hay operación, se debe almacenar un valor
+    # No hay operación, se debe almacenar un valor (Caso base)
     print("No hay operador")
     prueba_simb = re.split(r"\.", accion, 1)
     if (prueba_simb[0] == "nint"):          # Si lo que se busca es un nfloat...
@@ -516,7 +445,7 @@ def obtenerValor(accion, results_acc, pila):
     elif (prueba_simb[0] == "id"):          # Si lo que se busca es un id...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
             print(pila[i])
-            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nint"):    # Si el tipo es el buscado...
+            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "id"):    # Si el tipo es el buscado...
                 print("Se encontró id")
                 return pila[i].get_val()         # Obtiene el valor de la variable id
 
@@ -539,7 +468,7 @@ def obtenerValor(accion, results_acc, pila):
                     print(results_acc[i].get_val())
                     return results_acc.pop(i).get_val()               # Asignar el valor almacenado y eliminar resultado de la pila
         
-            return None
+            return None                 # Por defecto se devuelve None si no se encuentra el valor buscado
 
 def pilaError(esperaba):
     cont=0
