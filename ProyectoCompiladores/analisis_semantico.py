@@ -310,7 +310,7 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                             val = re.sub(r"^.*:=", "", partes[pos]).strip()
                             print("Acción:", val)
                             # Para este punto la acción ya debe estar separada en base, atributo y valor
-                            postVal = obtenerValor(val, results_acc, pila)
+                            postVal = obtenerValor(val, results_acc, pila, False)
                             results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
                     elif (fase_if==1):                      # Detecta la condición
                         se_cumple = obtenerCondicion(partes[pos], results_acc, pila)
@@ -324,7 +324,7 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                             val = re.sub(r"^.*:=", "", partes[pos]).strip()
                             print("Acción:", val)
                             # Para este punto la acción ya debe estar separada en base, atributo y valor
-                            postVal = obtenerValor(val, results_acc, pila)
+                            postVal = obtenerValor(val, results_acc, pila, False)
                             results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
                         fase_if = 3
                     elif (fase_if==3):
@@ -338,9 +338,14 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                             val = re.sub(r"^.*:=", "", partes[pos]).strip()
                             print("Acción:", val)
                             # Para este punto la acción ya debe estar separada en base, atributo y valor
-                            postVal = obtenerValor(val, results_acc, pila)
+                            postVal = obtenerValor(val, results_acc, pila, False)
                             results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
                         fase_if = 0
+
+                # Imprimir la lista de resultados para verificar
+                print("--- Resultados hasta ahora ---")
+                for i in range(len(results_acc)-1, -1, -1):
+                    print(str(results_acc[i]))
 
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
@@ -391,14 +396,16 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
             esperaba=[]
             esperaba=buscarSeEsperaba(entero,variable,simbolos)
             print("se esperaba: ",esperaba)
-            labelError=Label(tabla,text="se esperaba: "+pilaError(esperaba),width=20,font=font1,borderwidth=2,relief="solid")
+            labelError=Label(tabla,text="se esperaba: "+pilaError(esperaba),width=40,font=font1,borderwidth=2,relief="solid")
             labelError.grid(row=contadorFila,column=2)
-            label2=Label(tabla,text=" ",width=20,font=font1,borderwidth=2,relief="solid")
+            label2=Label(tabla,text=" ",width=30,font=font1,borderwidth=2,relief="solid")
             label2.grid(row=contadorFila,column=3)
+            label3=Label(tabla,text=" ",width=30,font=font1,borderwidth=2,relief="solid")
+            label3.grid(row=contadorFila,column=4)
             break
         contadorFila+=1
 
-def obtenerValor(accion, results_acc, pila):
+def obtenerValor(accion, results_acc, pila, esCond):
     print("Entra a función")
     print(accion)
     band = False
@@ -408,8 +415,8 @@ def obtenerValor(accion, results_acc, pila):
         # Hay una concatenación en la acción
         print("Entró a concatenación")
         # Se usa recursividad para calcular el valor del segundo segmento
-        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return str(val1) + str(val2)
 
     prueba_simb = re.split(r"\+", accion, 1)
@@ -417,8 +424,8 @@ def obtenerValor(accion, results_acc, pila):
         # Hay una suma en la acción
         print("Entró a suma")
         # Se usa recursividad para calcular el valor del segundo segmento
-        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return int(val1) + int(val2)
 
     prueba_simb = re.split(r"-", accion, 1)
@@ -426,8 +433,8 @@ def obtenerValor(accion, results_acc, pila):
         # Hay una resta en la acción
         print("Entró a resta")
         # Se usa recursividad para calcular el valor del segundo segmento
-        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return int(val1) - int(val2)
 
     prueba_simb = re.split(r"\*", accion, 1)
@@ -435,8 +442,8 @@ def obtenerValor(accion, results_acc, pila):
         # Hay una multiplicación en la acción
         print("Entró a multiplicación")
         # Se usa recursividad para calcular el valor del segundo segmento
-        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return int(val1) * int(val2)
 
     prueba_simb = re.split(r"/", accion, 1)
@@ -444,8 +451,8 @@ def obtenerValor(accion, results_acc, pila):
         # Hay una división en la acción
         print("Entró a división")
         # Se usa recursividad para calcular el valor del segundo segmento
-        val2 = obtenerValor(prueba_simb[1], results_acc, pila)
-        val1 = obtenerValor(prueba_simb[0], results_acc, pila)
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return int(val1) / int(val2)
 
     # No hay operación, se debe almacenar un valor (Caso base)
@@ -495,7 +502,10 @@ def obtenerValor(accion, results_acc, pila):
                     print(results_acc[i].get_base())
                     print(results_acc[i].get_atrib())
                     print(results_acc[i].get_val())
-                    return results_acc.pop(i).get_val()               # Asignar el valor almacenado y eliminar resultado de la pila
+                    result = results_acc[i].get_val()
+                    if (esCond is False):           # Si la acción debe ser ejecutada (no es comparación)
+                        results_acc.pop(i)               # Asignar el valor almacenado y eliminar resultado de la pila
+                    return result
         
             print("*** No se encontró valor para asociar ***")
             return None                 # Por defecto se devuelve None si no se encuentra el valor buscado
@@ -508,8 +518,8 @@ def obtenerCondicion(cond, results_acc, pila):
     if (len(prueba_op) > 1):
         print("Entró a negación")
         # Se usa recursividad para calcular el valor de ambas expresiones
-        exp2 = obtenerValor(prueba_op[1], results_acc, pila)
-        exp1 = obtenerValor(prueba_op[0], results_acc, pila)
+        exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
+        exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
         print("exp1:", exp1)
         print("exp2:", exp2)
         if (exp1 != exp2):
@@ -523,8 +533,8 @@ def obtenerCondicion(cond, results_acc, pila):
     if (len(prueba_op) > 1):
         print("Entró a afirmación")
         # Se usa recursividad para calcular el valor de ambas expresiones
-        exp2 = obtenerValor(prueba_op[1], results_acc, pila)
-        exp1 = obtenerValor(prueba_op[0], results_acc, pila)
+        exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
+        exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
         print("exp1:", exp1)
         print("exp2:", exp2)
         if (exp1 == exp2):
