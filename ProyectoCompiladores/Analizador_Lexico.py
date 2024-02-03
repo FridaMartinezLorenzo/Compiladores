@@ -195,7 +195,77 @@ def ObtenerTiraTokensExterna(direccionArchivo):
     print("Tira de tokens: ", tiraTokens1)
     
     return tiraTokens1
+
+# Clase para tokens con tipo de dato y valor, para el análisis semántico
+class token_tipo_val:
+    def __init__(self, tipo, val):
+        self.tipo = tipo
+        self.val = val
+
+    def get_tipo(self):
+        return self.tipo
+
+    def get_val(self):
+        return self.val
+    
+    def set_tipo(self, tipo):
+        self.tipo = tipo
+
+    def set_val(self, val):
+        self.val = val
+
+    def __str__(self):
+        return self.tipo + ".val = " + str(self.val)
+    
+# Obtener tira de tokens con objetos token_tipo_val(tipo:token, val:lexema)
+def ObtenerTiraTokensExternaObj(direccionArchivo):
+    lineas_entrada = []
+    flag_coment = False
+    lineas_aux = []
+    try:
+        with open(direccionArchivo, 'r') as archivo:
+            # Modificar directamente la lista lineas_entrada
+            lineas_entrada.clear()  # Limpiar la lista actual
+            lineas_entrada.extend(archivo.readlines())  # Extender la lista con las nuevas líneas
+            lineas_aux = lineas_entrada
+            for n in range(0, len(lineas_entrada)):     # Revisa si hay comentarios y los elimina
+                nueva_cad = ""
+                if flag_coment == False:                        # Si no hay un comentario multilínea activo...
+                    if (re.search(r'(//.*)|(/\*.*?\*/)', lineas_aux[n]) is not None):   # Si es un comentario de línea o multilínea que cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'(//.*)|(/\*.*?\*/)', '', lineas_aux[n])
+                    if (re.search(r'/\*.*', lineas_aux[n]) is not None):           # Si es un comentario multilínea que no cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'/\*.*', '', lineas_aux[n])
+                        flag_coment = True
+                else:                                           # Si hay un comentario multilínea activo...
+                    if (re.search(r'.*\*/', lineas_aux[n]) is not None):            # Si se encuentra el cierre del comentario multilínea...
+                        lineas_entrada[n] = re.sub(r'.*\*/', '', lineas_aux[n])
+                        flag_coment = False
+                    else:                                                           # Si aún no se cierra el comentario multilínea...
+                        lineas_entrada[n] = ''
+
+                while ("\t" in lineas_entrada[n]):
+                    lineas_entrada[n] = re.sub(r"\t", " ", lineas_entrada[n])
+                    
+            print(direccionArchivo)
+    except Exception as e:
+        print(f"Error al abrir el archivo: {e}")
         
+    lista_Tokens = []
+    listaSimbolos_programa = []
+    lista_errores = []
+    file_breakdown(lineas_entrada, lista_Tokens, listaSimbolos_programa,lista_errores) 
+    #Procedemos a convertir la lista de tokens a una lista de objetos
+    tiraTokens1 = []
+    for token_aux in lista_Tokens:
+        objTokenAux = token_tipo_val(token_aux.get_token(), token_aux.get_lexema())
+        tiraTokens1.append(objTokenAux)
+
+    # Añade el $ al final de la cadena de tokens
+    tiraTokens1.append(token_tipo_val("$", "$"))
+    #Imprimimos la tira de tokens
+    print("Tira de tokens: ", tiraTokens1)
+    
+    return tiraTokens1
     
 
 def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Prog_lista_tokens):

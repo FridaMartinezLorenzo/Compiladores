@@ -3,6 +3,7 @@ from tkinter import filedialog
 from tkinter import ttk
 from lexico import *
 from sintactico import *
+from analisis_semantico import *
 root=Tk()
 root.title("Compilador")#Titulo de ventana
 root.iconbitmap("Compiler.ico")#Icono del programa
@@ -32,7 +33,7 @@ lexicoButton.place(x=522,y=300)
 syntaxButton=Button(root,text="Analizador sintáctico",width=22,bg="#F99417"  ,font=font1,command=opcionesSintactico)#Aqui agregar comando para abrir la ventana de primeros y sig
 syntaxButton.place(x=790,y=300)
 
-semanticoButton=Button(root,text="Analizador semántico",width=22,bg="#F99417"   ,font=font1, state=DISABLED )
+semanticoButton=Button(root,text="Analizador semántico",width=22,bg="#F99417"   ,font=font1, command=analizadorSemantico )
 semanticoButton.place(x=1060,y=300)
 
 root.mainloop()
