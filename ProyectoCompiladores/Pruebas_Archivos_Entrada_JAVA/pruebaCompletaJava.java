@@ -1,5 +1,5 @@
 public class pruebaCompletaJava {
-    public static void main(string[] args) {
+    public static void main(string[][] args) {
         // Declaraciones de varios tipos de variables
         int a, b, j;
         float calif, pot, suma = 0.0f, sueldo, nsueldo;
