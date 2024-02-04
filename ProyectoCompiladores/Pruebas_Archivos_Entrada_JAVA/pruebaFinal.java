@@ -6,6 +6,8 @@ public class pruebaFinal {
         int a, b;
         /* Comentario
            de bloque */
+        float c;
+        int an;
         int[] vec = new int[10];
         int[][] vec1 = new int[10][10];
         int [] ar;
@@ -18,6 +20,9 @@ public class pruebaFinal {
         
         System.out.print("Ingrese una cadena: ");
         String cadena = scanner.nextLine();
+
+        System.out.print("Ingrese un número flotante: ", c, an);
+        System.out.print("Ingrese un número flotante: ", 2.01f); 
         }
 
         int suma(int i, int f, float p) {
