@@ -44,9 +44,13 @@ H->λ
 Y->[ nint ] Y
 Y->λ
 W->scanner id = new scanner ( system . id ) ; W
-W->G ( varcadena R ) ; W
-R->, id R
-R->, C R
+W->G ( R varcadena R ) ; W
+R->id + R
+R->C + R
+R->id
+R->C
+R->+ id R
+R->+ C R
 W->id L ; W
 W->if ( Q ) { W } W
 W->if ( Q ) { W } else { W } W

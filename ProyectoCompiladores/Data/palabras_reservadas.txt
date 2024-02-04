@@ -52,6 +52,5 @@ false
 System
 out
 println
-print
 printf
 @Overwrite

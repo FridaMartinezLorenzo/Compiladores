@@ -15,14 +15,18 @@ public class pruebaFinal {
         Scanner lectura = new Scanner(System.in);
 
 
-        System.out.print("Ingrese un número entero: ");
+        System.out.println("Ingrese un número entero: ");
         int numeroEntero = scanner.nextInt();
         
-        System.out.print("Ingrese una cadena: ");
+        System.out.println("Ingrese una cadena: ");
         String cadena = scanner.nextLine();
 
-        System.out.print("Ingrese un número flotante: ", c, an);
-        System.out.print("Ingrese un número flotante: ", 2.01f); 
+        System.out.println("Ingrese un número flotante: "+ c +an);
+        System.out.println("Ingrese un número flotante: "+ 2.01f); 
+        System.out.println(a + " el numero es ");
+
+
+        //a = scanner.nextInt();
         }
 
         int suma(int i, int f, float p) {
