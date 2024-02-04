@@ -614,7 +614,12 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                         posNum = ""
 
                 #print("Evaluacion de palabra reservada")    # Busca si es una palabra reservada
+                #lastIndex = len (tokenList) - 1;    
+                #if aux in lista_pReservadas and aux  == 'in' and tokenList[lastIndex].get_token() != '.':
+                #    pass
+                #else:
                 flag_found1 = word_search(aux, nline, tokenList)
+                
                 #print("flag_found1: ",flag_found1)
                 if (flag_found1 == True):
                     flag_found1 = False
@@ -690,7 +695,7 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
             
             ##print("token[i-1].get_token():", tokenList_prog[i - 1].get_token())
             ##print("token[i+1].get_token():", tokenList_prog[i + 1].get_token()) 
-             #Procedemos a identificar si es una clase
+            #Procedemos a identificar si es una clase
             elif (i > 0 and tokenList_prog[i - 1].get_token() == 'class' and tokenList_prog[i + 1].get_token() =='{') :
                 #print("Identificador de clase")
                 identificador_clase = tokenList_prog[i].get_lexema() 

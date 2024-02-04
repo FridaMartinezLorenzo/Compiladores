@@ -19,12 +19,18 @@ import
 interface
 native
 new
+nextInt
+nextFloat
+nextDouble
+nextBoolean
+nextLine
 package
 private
 protected
 public
 return
 Scanner
+scanner
 java
 util
 short
@@ -46,5 +52,6 @@ false
 System
 out
 println
+print
 printf
 @Overwrite

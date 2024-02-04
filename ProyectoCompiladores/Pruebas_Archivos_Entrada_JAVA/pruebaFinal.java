@@ -10,5 +10,16 @@ public class pruebaFinal {
         int[][] vec1 = new int[10][10];
         int [] ar;
         float[] vecFloat = {2.3f, 5.0f, 3.1f};
+        Scanner lectura = new Scanner(System.in);
+
+
+        System.out.print("Ingrese un número entero: ");
+        int numeroEntero = scanner.nextInt();
+        //
+        //System.out.print("Ingrese un número decimal: ");
+        //double numeroDecimal = scanner.nextDouble();
+        //
+        //System.out.print("Ingrese una cadena: ");
+        //String cadena = scanner.nextLine();
         }
 }
