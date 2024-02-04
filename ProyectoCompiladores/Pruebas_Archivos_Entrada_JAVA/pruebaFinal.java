@@ -19,4 +19,11 @@ public class pruebaFinal {
         System.out.print("Ingrese una cadena: ");
         String cadena = scanner.nextLine();
         }
+
+        int suma(int i, int f, float p) {
+                int x, y;
+                float z = 1.1f;
+                int a = 1;
+                return a;
+             }
 }
