@@ -85,7 +85,7 @@ def imprimirResultados(Ventana):
     for var in variable:
         contenido=variable[var]
         cont=contenido.cget("text")
-        print("clave:",var,"contenido:",cont)
+        #print("clave:",var,"contenido:",cont)
     #print("simbolos:",simbolos)
     #print("estados:",estados)
     tira=tiraTokens.split(" ")
@@ -185,7 +185,6 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 else:
                     tama=tama*2 
                 print("tamaño de beta:",tama)
-                print("ctm")
                 for k in range(0,tama):
                     pila.pop()  #pop 2*|β| símbolos
                 print("contenido de la pila despues de eliminar:",pila)

@@ -614,10 +614,16 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                         posNum = ""
 
                 #print("Evaluacion de palabra reservada")    # Busca si es una palabra reservada
-                flag_found1 = word_search(aux, nline, tokenList)
+                #lastIndex = len (tokenList) - 1;    
+                #if aux in lista_pReservadas and aux  == 'in' and tokenList[lastIndex].get_token() != '.':
+                #    pass
+                #else:
+                flag_found1 = word_search(aux, nline, tokenList, flag_chkLex)
+                
                 #print("flag_found1: ",flag_found1)
                 if (flag_found1 == True):
                     flag_found1 = False
+                    flag_chkLex = False
                     aux=""
                 elif flag_chkLex == True:       # Si se detecta un espacio, puede haber una palabra por revisar
                     #print("Evaluación de id")   # Busca si es un id
@@ -639,7 +645,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
             else:
                 tokenList.append(element_TokenTable(posNum, "nint", nline))
         if aux != "":
-            flag_found1 = word_search(aux, nline, tokenList)
+            flag_found1 = word_search(aux, nline, tokenList, flag_chkLex)
             if (flag_found1 == True):
                 flag_found1 = False
                 aux=""
@@ -690,7 +696,7 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
             
             ##print("token[i-1].get_token():", tokenList_prog[i - 1].get_token())
             ##print("token[i+1].get_token():", tokenList_prog[i + 1].get_token()) 
-             #Procedemos a identificar si es una clase
+            #Procedemos a identificar si es una clase
             elif (i > 0 and tokenList_prog[i - 1].get_token() == 'class' and tokenList_prog[i + 1].get_token() =='{') :
                 #print("Identificador de clase")
                 identificador_clase = tokenList_prog[i].get_lexema() 
@@ -772,10 +778,15 @@ def eliminar_duplicados(lista):
 
 
 
-def word_search(word, nline, tokenList):
-    if word in lista_pReservadas: 
-        tokenList.append(element_TokenTable(word, word, nline)) #Agregamos a la lista de tokens
-        return 1
+def word_search(word, nline, tokenList, haTerminado):
+    if (haTerminado is False):
+        if word in lista_pReservadas and word!="in" and word!="do" and word!="int":
+            tokenList.append(element_TokenTable(word, word, nline)) #Agregamos a la lista de tokens
+            return 1
+    else:
+        if word in lista_pReservadas:
+            tokenList.append(element_TokenTable(word, word, nline))
+            return 1
     return 0
     
 def es_numero(cadena):

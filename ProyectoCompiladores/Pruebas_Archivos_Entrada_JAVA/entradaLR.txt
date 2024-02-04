@@ -1,9 +1,11 @@
-S F X E P T A V H R W L C D U G O Z Q B
-id ; , class { } ( ) public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system out . println printf + * / % if else igualigual mayorigual menorigual diferente and or masmas menosmenos masigual menosigual porigual entredosigual modigual resta menorque mayorque for return while do break switch case default :
-S->D F D
-F->λ
+S F X E P T A V H R W L C D U G O Z Q B N Y I J K M
+id ; , class { } ( ) new nextint nextfloat nextdouble next nextboolean nextline print import java util scanner public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system out . println printf + * / % if else igualigual mayorigual menorigual diferente and or masmas menosmenos masigual menosigual porigual entredosigual modigual resta menorque mayorque for return while do break switch case default :
+S->N D F D
+N->import java . util . scanner ;
+N->λ
 D->class id { X X }
 D->λ
+F->λ
 F->E class id { X X }
 X->E U T id ( P ) { W }
 X->T id ( P ) { W }
@@ -15,7 +17,9 @@ E->private
 E->protected
 E->λ
 P->λ
-P->T R id
+P->T R id M
+M->, P
+M->λ
 R->[ nint ] R
 R->[ ]
 R->λ
@@ -28,10 +32,18 @@ T->string
 T->boolean
 A->T V
 A->λ
-V->id H
-H->[ nint ] H
+W->E U T V
+V->id L ; W
+V->H id ; W
+V->H id = new T Y ; W
+V->H id = { I } ; W
+I->C
+I->C , I
+H->[ ] H
 H->λ
-W->E U T id L ; W
+Y->[ nint ] Y
+Y->λ
+W->scanner id = new scanner ( system . id ) ; W
 W->G ( varcadena ) ; W
 W->id L ; W
 W->if ( Q ) { W } W
@@ -62,6 +74,12 @@ Z->mayorigual
 Z->menorigual
 Z->mayorque
 Z->menorque
+K->nextint
+K->nextfloat
+K->nextdouble
+K->nextboolean
+K->nextline
+L->= scanner . K ( )
 L->, id L
 L->= C L
 L->masigual C L
@@ -81,4 +99,5 @@ C->nfloat
 C->true
 C->false
 G->system . out . println
+G->system . out . print
 G->printf
