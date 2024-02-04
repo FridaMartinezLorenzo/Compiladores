@@ -1,10 +1,12 @@
-S F X E P T A V H R W L C D U G O Z Q B
-id ; , class { } ( ) public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system out . println printf + * / % if else igualigual mayorigual menorigual diferente and or masmas menosmenos masigual menosigual porigual entredosigual modigual resta menorque mayorque for return while do break switch case default :
-S->D F D
-F->λ
+S F X E P T A V H R W L C D U G O Z Q B N
+id ; , class { } ( ) import java util scanner public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system out . println printf + * / % if else igualigual mayorigual menorigual diferente and or masmas menosmenos masigual menosigual porigual entredosigual modigual resta menorque mayorque for return while do break switch case default :
+S-> N D F D
+N->import java . util . scanner ; N
+N->λ
 D->class id { X X }
 D->λ
 F->E class id { X X }
+F->λ
 X->E U T id ( P ) { W }
 X->T id ( P ) { W }
 X->λ

@@ -24,6 +24,9 @@ private
 protected
 public
 return
+Scanner
+java
+util
 short
 static
 strictfp

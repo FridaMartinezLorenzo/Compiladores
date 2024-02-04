@@ -78,7 +78,8 @@ def abrirArchivo1(Ventana):
     tiraTokens = tiraTokens.replace("%=","modigual")
     tiraTokens = tiraTokens.replace("-", "resta")
     tiraTokens = tiraTokens.replace("String", "string")
-    tiraTokens("Tira de tokens recibida en el lexico:\n", tiraTokens)
+    tiraTokens = tiraTokens.replace("Scanner", "scanner")
+    print("Tira de tokens recibida en el lexico:\n", tiraTokens)
 
 
 def imprimirResultados(Ventana):
@@ -102,7 +103,7 @@ def imprimirResultados(Ventana):
     for var in variable:
         contenido=variable[var]
         cont=contenido.cget("text")
-        print("clave:",var,"contenido:",cont)
+        #print("clave:",var,"contenido:",cont)
     #print("simbolos:",simbolos)
     #print("estados:",estados)
     tira=tiraTokens.split(" ")
@@ -144,11 +145,11 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
             #canvas.config(scrollregion=canvas.bbox("all"))    
 
     def on_arrow_key_v(event):
-         if event.keysym == "Up":
-             canvas.yview_scroll(-1, "units")
-         elif event.keysym == "Down":
-             canvas.yview_scroll(1, "units")
-         #canvas.config(scrollregion=canvas.bbox("all"))
+        if event.keysym == "Up":
+            canvas.yview_scroll(-1, "units")
+        elif event.keysym == "Down":
+            canvas.yview_scroll(1, "units")
+        #canvas.config(scrollregion=canvas.bbox("all"))
     
     scrollbar=ttk.Scrollbar(canvas, orient="vertical", command=canvas.yview)
     scrollbar.set(0.0, 1.0)
@@ -234,7 +235,6 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 else:
                     tama=tama*2 
                 print("tamaño de beta:",tama)
-                print("ctm")
                 for k in range(0,tama):
                     pila.pop()  #pop 2*|β| símbolos
                 print("contenido de la pila despues de eliminar:",pila)
