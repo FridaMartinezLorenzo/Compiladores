@@ -15,11 +15,8 @@ public class pruebaFinal {
 
         System.out.print("Ingrese un número entero: ");
         int numeroEntero = scanner.nextInt();
-        //
-        //System.out.print("Ingrese un número decimal: ");
-        //double numeroDecimal = scanner.nextDouble();
-        //
-        //System.out.print("Ingrese una cadena: ");
-        //String cadena = scanner.nextLine();
+        
+        System.out.print("Ingrese una cadena: ");
+        String cadena = scanner.nextLine();
         }
 }
