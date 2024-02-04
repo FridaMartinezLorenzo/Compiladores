@@ -79,6 +79,7 @@ def abrirArchivo1(Ventana):
     tiraTokens = tiraTokens.replace("-", "resta")
     tiraTokens = tiraTokens.replace("String", "string")
     tiraTokens = tiraTokens.replace("Scanner", "scanner")
+    tiraTokens = tiraTokens.replace("System", "system")
     print("Tira de tokens recibida en el lexico:\n", tiraTokens)
 
 
