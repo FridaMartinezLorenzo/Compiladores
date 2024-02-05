@@ -31,19 +31,19 @@ def Analizador_Lexico():
     canvas=Canvas(lexWindow,width=1500,height=900)
     canvas.place(x=0,y=120)
 
-    def on_arrow_key(event):
-            if event.keysym == "Left":
-                canvas.xview_scroll(-1, "units")
-            elif event.keysym == "Right":
-                canvas.xview_scroll(1, "units")
-            #canvas.config(scrollregion=canvas.bbox("all"))    
-
-    def on_arrow_key_v(event):
-         if event.keysym == "Up":
-             canvas.yview_scroll(-1, "units")
-         elif event.keysym == "Down":
-             canvas.yview_scroll(1, "units")
-         #canvas.config(scrollregion=canvas.bbox("all"))
+    #def on_arrow_key(event):
+    #        if event.keysym == "Left":
+    #            canvas.xview_scroll(-1, "units")
+    #        elif event.keysym == "Right":
+    #            canvas.xview_scroll(1, "units")
+    #        #canvas.config(scrollregion=canvas.bbox("all"))    
+#
+    #def on_arrow_key_v(event):
+    #     if event.keysym == "Up":
+    #         canvas.yview_scroll(-1, "units")
+    #     elif event.keysym == "Down":
+    #         canvas.yview_scroll(1, "units")
+    #     #canvas.config(scrollregion=canvas.bbox("all"))
     
     scrollbar=ttk.Scrollbar(canvas, orient="vertical", command=canvas.yview)
     scrollbar.set(0.0, 1.0)
@@ -79,10 +79,10 @@ def Analizador_Lexico():
     tabla.update_idletasks()
     #canvas.config(scrollregion=canvas.bbox("all"))
     canvas.bind("<MouseWheel>", on_mousewheel)
-    canvas.bind_all("<KeyPress-Left>", on_arrow_key)
-    canvas.bind_all("<KeyPress-Right>", on_arrow_key)
-    canvas.bind_all("<KeyPress-Up>", on_arrow_key_v)
-    canvas.bind_all("<KeyPress-Down>", on_arrow_key_v)
+    #canvas.bind_all("<KeyPress-Left>", on_arrow_key)
+    #canvas.bind_all("<KeyPress-Right>", on_arrow_key)
+    #canvas.bind_all("<KeyPress-Up>", on_arrow_key_v)
+    #canvas.bind_all("<KeyPress-Down>", on_arrow_key_v)
 
 def Analizador_Lexico1():
     font1=("Times New Roman",12)
@@ -149,10 +149,10 @@ def Analizador_Lexico1():
     tabla.update_idletasks()
     #canvas.config(scrollregion=canvas.bbox("all"))
     canvas.bind("<MouseWheel>", on_mousewheel)
-    canvas.bind_all("<KeyPress-Left>", on_arrow_key)
-    canvas.bind_all("<KeyPress-Right>", on_arrow_key)
-    canvas.bind_all("<KeyPress-Up>", on_arrow_key_v)
-    canvas.bind_all("<KeyPress-Down>", on_arrow_key_v)
+    #canvas.bind_all("<KeyPress-Left>", on_arrow_key)
+    #canvas.bind_all("<KeyPress-Right>", on_arrow_key)
+    #canvas.bind_all("<KeyPress-Up>", on_arrow_key_v)
+    #canvas.bind_all("<KeyPress-Down>", on_arrow_key_v)
 
 
 def cleanTable(tabla,arrLabels):
