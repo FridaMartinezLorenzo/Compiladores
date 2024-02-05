@@ -8,7 +8,6 @@ import Analizador_Lexico as AL
 import TablaAnalisisSintactico as TAS
 from PrimerosYSiguientes import mainPyS
 
-
 def analizadorSintacticoJava():
     VentanaPrincipal =Toplevel()
     VentanaPrincipal.title("Analizador sintáctico")
@@ -59,12 +58,13 @@ def abrirArchivo(Ventana):
 
 def abrirArchivo1(Ventana):
     global tiraTokens
-    global direccionArchivo
+    global direccionArchivo3
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
     direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
-    tiraTokens = ObtenerTiraTokensExterna(direccionArchivo)
+    direccionArchivo3=direccionArchivo
+    tiraTokens = AL.ObtenerTiraTokensExterna(direccionArchivo)
     #SUSTITUIMOS simbolos compuestos para que sean detectados
     #tiraTokens = tiraTokens.replace("<","menorque")
     #tiraTokens = tiraTokens.replace(">","mayorque")
@@ -94,6 +94,7 @@ def abrirArchivo1(Ventana):
 
 def imprimirLexico(Ventana):
     AL.Analizador_Lexico1()
+
 def imprimirResultados(Ventana):
     global tiraTokens
     global direccionArchivo2

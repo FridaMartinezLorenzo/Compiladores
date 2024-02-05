@@ -96,7 +96,7 @@ def Analizador_Lexico1():
     Prog_lista_simbolos = []
     Prog_lista_errores = []
 
-    abrirArchivo1(lexWindow,lineas_entrada,asin.direccionArchivo)
+    abrirArchivo1(lexWindow,lineas_entrada,asin.direccionArchivo3)
 
     canvas=Canvas(lexWindow,width=1500,height=900)
     canvas.place(x=0,y=120)
