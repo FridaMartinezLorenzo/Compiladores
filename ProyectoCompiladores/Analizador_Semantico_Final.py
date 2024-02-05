@@ -12,17 +12,6 @@ from Analizador_Semantico_Final import *
 from PrimerosYSiguientes import mainPyS
 import re
 
-def analizadorSemanticoDespliegue(opcion):
-    arr=["Analizador Semántico CLASE", "Analizador Semántico"]
-    if opcion==arr[0]:
-        analizadorSemantico()
-    elif opcion==arr[1]:
-        analizadorSemanticoFinal()
-    else:
-        messagebox.showerror("Error","Aún no existe esa opción")
-    return
-
-
 # Clase para guardar resultados de acciones semánticas
 # Ejemplo: T.trad:="Prueba" se guarda en una clase con base T, atributo trad, y valor Prueba
 class result_acc:
@@ -52,7 +41,7 @@ class result_acc:
     def __str__(self):
         return str(self.base) + "." + str(self.atrib) + ":=" + str(self.val)
 
-def analizadorSemantico():
+def analizadorSemanticoFinal():
     VentanaPrincipal =Toplevel()
     VentanaPrincipal.title("Analizador semántico")
     VentanaPrincipal.state("zoomed")
@@ -96,9 +85,7 @@ def abrirArchivo(Ventana):
     global direccionArchivo2
     Ventana.grab_set()
     username=getpass.getuser()
-    ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    # direccionArchivo2= "Pruebas_Archivos_Entrada_JAVA/entradaLR.txt"      Antes solo aceptaba una gramática, esto se tuvo que cambiar
-    direccionArchivo2 = filedialog.askopenfilename(initialdir=ruta_proyecto, title="Cargar Gramática", filetypes=(("txt", "*.txt"),))
+    direccionArchivo2= "Pruebas_Archivos_Entrada_JAVA/entradaLR.txt"     # Antes solo aceptaba una gramática, esto se tuvo que cambiar
     cargarGramatica(Ventana,direccionArchivo2)
 
 def abrirArchivo1(Ventana):
@@ -106,7 +93,7 @@ def abrirArchivo1(Ventana):
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("txt", "*.txt"),))
+    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java", "*.java"),))
     tiraTokens = ObtenerTiraTokensExternaObj(direccionArchivo)
 
     #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
