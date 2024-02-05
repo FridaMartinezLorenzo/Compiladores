@@ -82,7 +82,7 @@ K->nextfloat
 K->nextdouble
 K->nextboolean
 K->nextline
-L->= scanner . K ( )
+L->= id . K ( )
 L->, id L
 L->= C L
 L->masigual C L

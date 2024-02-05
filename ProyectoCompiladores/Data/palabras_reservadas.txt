@@ -31,7 +31,6 @@ protected
 public
 return
 Scanner
-scanner
 java
 util
 short

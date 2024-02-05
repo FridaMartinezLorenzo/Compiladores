@@ -6,9 +6,9 @@ public class pruebaCompletaFinal {
         int a, b;
         /* Comentario
            de bloque */
-        int[] vec = new int[10];
+        int [] vec = new int [10];
         int categ = 2;
-        float[] vecFloat = {2.3f, 5.0f, 3.1f};
+        float [] vecFloat = {2.3f, 5.0f, 3.1f};
         float sueldo;
         Scanner scanner = new Scanner(System.in);
         
