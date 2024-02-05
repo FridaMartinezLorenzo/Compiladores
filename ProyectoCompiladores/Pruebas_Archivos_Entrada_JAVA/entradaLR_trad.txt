@@ -1,6 +1,6 @@
 S F X E P T A V H R W L C D U G O Z Q B N Y I J K M
 id ; , class { } ( ) new nextint nextfloat nextdouble next nextboolean nextline print import java util scanner public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system out . println printf + * / % if else igualigual mayorigual menorigual diferente and or masmas menosmenos masigual menosigual porigual entredosigual modigual resta > < for return while do break switch case default :
-S->N D F D
+S->N D F D->{S.trad:=N.trad||" "||D.trad||" "||F.trad||" "||D.trad}
 N->import java . util . scanner ;->{N.trad:="#include <stdio.h>"}
 N->λ->{N.trad:=""}
 D->class id { X X }->{D.trad:="class "||id.val||"{"||X.trad||" "||X.trad||"}"}
@@ -43,15 +43,15 @@ H->[ ] H->{H.trad:="[]"||H.trad}
 H->λ->{H.trad:=""}
 Y->[ nint ] Y->{Y.trad:="["||nint.val||"]"||Y.trad}
 Y->λ->{Y.trad:=""}
-W->scanner id = new scanner ( system . id ) ; W
-W->G ( Y varcadena R ) ; W
-Y->id + Y
-Y->id , Y
-R->+ id R
-R->+ C R
-R->, C R
-R->, id R
-W->id L ; W
+W->scanner id = new scanner ( system . id ) ; W->{W.trad:=W.trad}
+W->G ( Y varcadena R ) ; W->{W.trad:=G.trad||"("Y.trad||varcadena.val||R.trad||"); "||W.trad}
+Y->id + Y->{Y.trad:=id.val||"+"||Y.trad}
+Y->id , Y->{Y.trad:=id.val||","||Y.trad}
+R->+ id R->{R.trad:="+"||id.val||R.trad}
+R->+ C R->{R.trad:="+"||C.trad||R.trad}
+R->, C R->{R.trad:=","||C.trad||R.trad}
+R->, id R->{R.trad:=","||id.val||R.trad}
+W->id L ; W->{W.trad:=id.val||L.trad||"; "||W.trad}
 W->if ( Q ) { W } W
 W->if ( Q ) { W } else { W } W
 W->for ( T id = C ; Q ; id masmas ) { W } W
