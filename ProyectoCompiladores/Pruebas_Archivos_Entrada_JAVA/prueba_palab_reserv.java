@@ -1,6 +1,9 @@
 prueba
 in
-int
+int()
 interface
-do
+do()
 double
+System.out.println()
+System.out.print()
+System.out.printf()

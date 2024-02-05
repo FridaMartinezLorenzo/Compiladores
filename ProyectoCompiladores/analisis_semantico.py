@@ -423,24 +423,6 @@ def obtenerValor(accion, results_acc, pila, esCond):
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return str(val1) + str(val2)    # Devuelve el resultado de la concatenación
 
-    prueba_simb = re.split(r"\+", accion, 1)
-    if (len(prueba_simb) > 1):
-        # Hay una suma en la acción
-        print("Entró a suma")
-        # Se usa recursividad para calcular el valor de los segmentos
-        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
-        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
-        return int(val1) + int(val2)    # Devuelve el resultado de la suma
-
-    prueba_simb = re.split(r"-", accion, 1)
-    if (len(prueba_simb) > 1):
-        # Hay una resta en la acción
-        print("Entró a resta")
-        # Se usa recursividad para calcular el valor de los segmentos
-        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
-        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
-        return int(val1) - int(val2)    # Devuelve el resultado de la resta
-
     prueba_simb = re.split(r"\*", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una multiplicación en la acción
@@ -458,6 +440,24 @@ def obtenerValor(accion, results_acc, pila, esCond):
         val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return int(val1) / int(val2)    # Devuelve el resultado de la división
+
+    prueba_simb = re.split(r"\+", accion, 1)
+    if (len(prueba_simb) > 1):
+        # Hay una suma en la acción
+        print("Entró a suma")
+        # Se usa recursividad para calcular el valor de los segmentos
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
+        return int(val1) + int(val2)    # Devuelve el resultado de la suma
+
+    prueba_simb = re.split(r"-", accion, 1)
+    if (len(prueba_simb) > 1):
+        # Hay una resta en la acción
+        print("Entró a resta")
+        # Se usa recursividad para calcular el valor de los segmentos
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
+        return int(val1) - int(val2)    # Devuelve el resultado de la resta
 
     # Si, no hay operación, se debe almacenar un valor (Caso base)
     print("No hay operador")
