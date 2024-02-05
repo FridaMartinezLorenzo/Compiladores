@@ -61,8 +61,8 @@ def abrirArchivo1(Ventana):
     direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
     tiraTokens = ObtenerTiraTokensExterna(direccionArchivo)
     #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
-    tiraTokens = tiraTokens.replace("<","menorque")
-    tiraTokens = tiraTokens.replace(">","mayorque")
+    #tiraTokens = tiraTokens.replace("<","menorque")
+    #tiraTokens = tiraTokens.replace(">","mayorque")
     tiraTokens = tiraTokens.replace("==","igualigual")
     tiraTokens = tiraTokens.replace(">=","mayorigual")
     tiraTokens = tiraTokens.replace("<=","menorigual")
