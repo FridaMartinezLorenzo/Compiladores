@@ -8,11 +8,7 @@ public class pruebaCompletaFinal {
            de bloque */
         int[] vec = new int[10];
         int categ = 2;
-<<<<<<< HEAD
-        float[] vecFloat = {2.3f, 5.0f, 3.1f};
-=======
         float [] vecFloat = {2.3f, 5.0f, 3.1f};
->>>>>>> main
         float sueldo;
         Scanner scanner = new Scanner(System.in);
         
