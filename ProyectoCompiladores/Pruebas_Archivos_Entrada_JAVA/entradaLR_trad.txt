@@ -51,43 +51,43 @@ R->+ id R->{R.trad:="+"||id.val||R.trad}
 R->+ C R->{R.trad:="+"||C.trad||R.trad}
 R->, C R->{R.trad:=","||C.trad||R.trad}
 R->, id R->{R.trad:=","||id.val||R.trad}
-W->id L ; W->{if "cin>>"~L.trad W.trad:=L.trad||id.val||"; "||W.trad else W.trad:=id.val||L.trad||"; "||W.trad}
-W->if ( Q ) { W } W
-W->if ( Q ) { W } else { W } W
-W->for ( T id = C ; Q ; id masmas ) { W } W
-W->for ( T id = C ; Q ; id menosmenos ) { W } W
-W->while ( Q ) { W } W
-W->do { W } while ( Q ) ; W
-W->switch ( id ) { B } W
-B->case C : W B
-B->default : W
+W->id L ; W->{if "cin>>"~~L.trad W.trad:=L.trad||id.val||"; "||W.trad else W.trad:=id.val||L.trad||"; "||W.trad}
+W->if ( Q ) { W } W->{W.trad:="if ("||Q.trad||"){"||W.trad||"} "||W.trad}
+W->if ( Q ) { W } else { W } W->{W.trad:="if ("||Q.trad||"){"||W.trad||"} "||"else"||" {"||W.trad||"} "||W.trad}
+W->for ( T id = C ; Q ; id masmas ) { W } W->{W.trad:="for ("||T.trad||" "||id.val||"="||C.trad||";"||Q.trad||";"||id.val||"++"||"){"||W.trad||"} "||W.trad}
+W->for ( T id = C ; Q ; id menosmenos ) { W } W->{W.trad:="for ("||T.trad||" "||id.val||"="||C.trad||";"||Q.trad||";"||id.val||"--"||"){"||W.trad||"} "||W.trad}
+W->while ( Q ) { W } W->{W.trad:="while ("||Q.trad||"){"||W.trad||"} "||W.trad}
+W->do { W } while ( Q ) ; W->{W.trad:="do {"||W.trad||"} while ("||Q.trad||"); "||W.trad}
+W->switch ( id ) { B } W->{W.trad:="switch ("||id.val||"){"||B.trad||"} "||W.trad}
+B->case C : W B->{B.trad:="case "||C.trad||": "||W.trad||B.trad}
+B->default : W->{B.trad:="default: "||W.trad}
 B->λ->{B.trad:=""}
-W->break ; W
+W->break ; W->{W.trad:="break; "||W.trad}
 W->λ->{W.trad:=""}
-W->return C ; W
-W->return id ; W
-W->return Q ; W
-W->return L ; W
-W->id masmas ; W
-W->id menosmenos ; W
-Q->id Q
-Q->Z id Q
-Q->Z C Q
-Q->C Q
+W->return C ; W->{W.trad:="return "||C.trad||"; "||W.trad}
+W->return id ; W->{W.trad:="return "||id.val||"; "||W.trad}
+W->return Q ; W->{W.trad:="return "||Q.trad||"; "||W.trad}
+W->return L ; W->{W.trad:="return "||L.trad||"; "||W.trad}
+W->id masmas ; W->{W.trad:=id.val||"++"||"; "||W.trad}
+W->id menosmenos ; W->{W.trad:=id.val||"--"||"; "||W.trad}
+Q->id Q->{Q.trad:=id.val||" "||Q.trad}
+Q->Z id Q->{Q.trad:=Z.trad||" "||id.val||" "||Q.trad}
+Q->Z C Q->{Q.trad:=Z.trad||" "||C.trad||" "||Q.trad}
+Q->C Q->{Q.trad:=C.trad||" "||Q.trad}
 Q->λ->{Q.trad}
-Z->igualigual
-Z->diferente
-Z->or
-Z->and
-Z->mayorigual
-Z->menorigual
-Z->>
-Z-><
-K->nextint
-K->nextfloat
-K->nextdouble
-K->nextboolean
-K->nextline
+Z->igualigual->{Z.trad:="=="}
+Z->diferente->{Z.trad:="!="}
+Z->or->{Z.trad:="||"}
+Z->and->{Z.trad:="&&"}
+Z->mayorigual->{Z.trad:=">="}
+Z->menorigual->{Z.trad:="<="}
+Z->>->{Z.trad:=">"}
+Z-><->{Z.trad:="<"}
+K->nextint->{K.trad:=""}
+K->nextfloat->{K.trad:=""}
+K->nextdouble->{K.trad:=""}
+K->nextboolean->{K.trad:=""}
+K->nextline->{K.trad:=""}
 L->= id . K ( )->{L.trad:="cin>>"}
 L->, id L->{L.trad:=","||id.val||L.trad}
 L->= C L->{L.trad:="="||C.trad||L.trad}
