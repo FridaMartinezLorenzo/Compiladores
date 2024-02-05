@@ -94,7 +94,7 @@ def abrirArchivo1(Ventana):
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("txt", "*.txt"),))
+    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("txt", "*.txt"),("java", "*.java"),))
     tiraTokens = ObtenerTiraTokensExternaObj(direccionArchivo)
 
     #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
@@ -116,6 +116,13 @@ def abrirArchivo1(Ventana):
         tok.set_tipo(tok.get_tipo().replace("%=","modigual"))
         tok.set_tipo(tok.get_tipo().replace("-", "resta"))
         tok.set_tipo(tok.get_tipo().replace("String", "string"))
+        tok.set_tipo(tok.get_tipo().replace("Scanner", "scanner"))
+        tok.set_tipo(tok.get_tipo().replace("System", "system"))
+        tok.set_tipo(tok.get_tipo().replace("nextInt", "nextint"))
+        tok.set_tipo(tok.get_tipo().replace("nextLine", "nextline"))
+        tok.set_tipo(tok.get_tipo().replace("nextDouble", "nextdouble"))
+        tok.set_tipo(tok.get_tipo().replace("nextFloat", "nextfloat"))
+        tok.set_tipo(tok.get_tipo().replace("nextBoolean", "nextboolean"))
     print("Tira de tokens recibida en el léxico:\n", tiraTokens)
 
 def imprimirResultados(Ventana):
@@ -158,6 +165,7 @@ def imprimirResultados(Ventana):
     # Este arreglo guardará las acciones semánticas guardadas entre llaves { }
     arreAcciones = []
     for grama in Gramatica:
+        print(grama)
         grama=grama.split("->")
         tuplaGrama=(grama[0],grama[1])
         arreGramatica.append(tuplaGrama)

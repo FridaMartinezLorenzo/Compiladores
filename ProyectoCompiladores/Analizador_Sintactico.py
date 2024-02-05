@@ -110,12 +110,6 @@ def imprimirResultados(Ventana):
     for var in variable:
         contenido=variable[var]
         cont=contenido.cget("text")
-<<<<<<< HEAD
-        #print("clave:",var,"contenido:",cont)
-    #print("simbolos:",simbolos)
-    #print("estados:",estados)
-=======
->>>>>>> main
     tira=tiraTokens.split(" ")
     print("tiraTokens:",tira)
     tuplasimbolos=()
@@ -155,34 +149,7 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
     tabla1=Frame(Ventana,width=900,height=600)
     tabla1.place(x=300,y=150)
     canvas=Canvas(Ventana,width=900,height=600)
-<<<<<<< HEAD
-    canvas.place(x=300,y=150)
-
-    def on_arrow_key(event):
-            if event.keysym == "Left":
-                canvas.xview_scroll(-1, "units")
-            elif event.keysym == "Right":
-                canvas.xview_scroll(1, "units")
-            #canvas.config(scrollregion=canvas.bbox("all"))    
-
-    def on_arrow_key_v(event):
-        if event.keysym == "Up":
-            canvas.yview_scroll(-1, "units")
-        elif event.keysym == "Down":
-            canvas.yview_scroll(1, "units")
-        #canvas.config(scrollregion=canvas.bbox("all"))
-    
-    scrollbar=ttk.Scrollbar(canvas, orient="vertical", command=canvas.yview)
-    scrollbar.set(0.0, 1.0)
-    scrollbar.place(x=5, y=50, height=300)
-
-    horizontal_scrollbar = ttk.Scrollbar(canvas, orient="horizontal", command=canvas.xview)
-    horizontal_scrollbar.set(0.0,1.0)
-    horizontal_scrollbar.place(x=0,y=0,width=300)
-
-=======
     canvas.place(x=300,y=150)    
->>>>>>> main
     tabla=Frame(canvas,width=1470,height=300)
     canvas.create_window((100, 50), window=tabla, anchor=NW)
     #canvas.configure(yscrollcommand=scrollbar.set,xscrollcommand=horizontal_scrollbar.set)
