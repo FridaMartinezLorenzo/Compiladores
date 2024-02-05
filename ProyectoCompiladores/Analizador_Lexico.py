@@ -561,15 +561,20 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     id_aux = ""
                     for i in range(0, len(aux)-1):
                         id_aux = id_aux + aux[i]    # Crea una cadena sin el último símbolo recién leido
-                    flag_found_id = es_id(id_aux, nline, tokenList)
-                    if flag_found_id is True:
-                        #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
-                        symbolList_prog.append(element_SymbolTable(id_aux, "null", "null"))
-                        flag_found_id = False
+                    flag_found1 = word_search(id_aux, nline, tokenList, True)
+                    if flag_found1 is True:
+                        flag_found1 = False
                     else:
-                        errorList_prog.append(element_ErrorTable(id_aux, "ERROR", nline))
+                        flag_found_id = es_id(id_aux, nline, tokenList)
+                        if flag_found_id is True:
+                            #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                            symbolList_prog.append(element_SymbolTable(id_aux, "null", "null"))
+                            flag_found_id = False
+                        else:
+                            errorList_prog.append(element_ErrorTable(id_aux, "ERROR", nline))
                     posSimb += char                 # Agrega el símbolo encontrado a simbPos
                     aux = ""
+                    id_aux = ""
                 elif (posNum == ""):                # Si no hay números posibles almacenados
                     posSimb += char
                     if len(posSimb) == 2:           # Si ya hay dos símbolos almacenados...
@@ -645,7 +650,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
             else:
                 tokenList.append(element_TokenTable(posNum, "nint", nline))
         if aux != "":
-            flag_found1 = word_search(aux, nline, tokenList, flag_chkLex)
+            flag_found1 = word_search(aux, nline, tokenList, True)
             if (flag_found1 == True):
                 flag_found1 = False
                 aux=""
@@ -780,14 +785,14 @@ def eliminar_duplicados(lista):
 
 def word_search(word, nline, tokenList, haTerminado):
     if (haTerminado is False):
-        if word in lista_pReservadas and word!="in" and word!="do" and word!="int":
+        if word in lista_pReservadas and word!="in" and word!="do" and word!="int" and word!="final" and word!="throw" and word!="print":
             tokenList.append(element_TokenTable(word, word, nline)) #Agregamos a la lista de tokens
-            return 1
+            return True
     else:
         if word in lista_pReservadas:
             tokenList.append(element_TokenTable(word, word, nline))
-            return 1
-    return 0
+            return True
+    return False
     
 def es_numero(cadena):
     try:
