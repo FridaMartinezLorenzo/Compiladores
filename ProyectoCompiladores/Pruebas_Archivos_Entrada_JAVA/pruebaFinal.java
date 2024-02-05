@@ -8,8 +8,8 @@ public class pruebaFinal {
            de bloque */
         float c;
         int an;
-        int[] vec = new int[10];
-        int[][] vec1 = new int[10][10];
+        int [] vec = new int [10];
+        int [][] vec1 = new int [10][10];
         int [] ar;
         float[] vecFloat = {2.3f, 5.0f, 3.1f};
         Scanner lectura = new Scanner(System.in);
@@ -21,9 +21,11 @@ public class pruebaFinal {
         System.out.println("Ingrese una cadena: ");
         String cadena = scanner.nextLine();
 
+        
         System.out.println("Ingrese un número flotante: "+ c +an);
         System.out.println("Ingrese un número flotante: "+ 2.01f); 
-        //System.out.println(a + " el numero es ");
+        double equisde = scanner.nextDouble();
+        System.out.println(a + " el numero es ");
 
 
         //a = scanner.nextInt();

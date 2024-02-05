@@ -6,6 +6,7 @@ class
 const
 continue
 default
+double
 do
 else
 enum
