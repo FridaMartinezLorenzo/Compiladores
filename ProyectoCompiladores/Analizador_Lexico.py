@@ -195,7 +195,77 @@ def ObtenerTiraTokensExterna(direccionArchivo):
     print("Tira de tokens: ", tiraTokens1)
     
     return tiraTokens1
+
+# Clase para tokens con tipo de dato y valor, para el análisis semántico
+class token_tipo_val:
+    def __init__(self, tipo, val):
+        self.tipo = tipo
+        self.val = val
+
+    def get_tipo(self):
+        return self.tipo
+
+    def get_val(self):
+        return self.val
+    
+    def set_tipo(self, tipo):
+        self.tipo = tipo
+
+    def set_val(self, val):
+        self.val = val
+
+    def __str__(self):
+        return self.tipo + ".val = " + str(self.val)
+    
+# Obtener tira de tokens con objetos token_tipo_val(tipo:token, val:lexema)
+def ObtenerTiraTokensExternaObj(direccionArchivo):
+    lineas_entrada = []
+    flag_coment = False
+    lineas_aux = []
+    try:
+        with open(direccionArchivo, 'r') as archivo:
+            # Modificar directamente la lista lineas_entrada
+            lineas_entrada.clear()  # Limpiar la lista actual
+            lineas_entrada.extend(archivo.readlines())  # Extender la lista con las nuevas líneas
+            lineas_aux = lineas_entrada
+            for n in range(0, len(lineas_entrada)):     # Revisa si hay comentarios y los elimina
+                nueva_cad = ""
+                if flag_coment == False:                        # Si no hay un comentario multilínea activo...
+                    if (re.search(r'(//.*)|(/\*.*?\*/)', lineas_aux[n]) is not None):   # Si es un comentario de línea o multilínea que cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'(//.*)|(/\*.*?\*/)', '', lineas_aux[n])
+                    if (re.search(r'/\*.*', lineas_aux[n]) is not None):           # Si es un comentario multilínea que no cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'/\*.*', '', lineas_aux[n])
+                        flag_coment = True
+                else:                                           # Si hay un comentario multilínea activo...
+                    if (re.search(r'.*\*/', lineas_aux[n]) is not None):            # Si se encuentra el cierre del comentario multilínea...
+                        lineas_entrada[n] = re.sub(r'.*\*/', '', lineas_aux[n])
+                        flag_coment = False
+                    else:                                                           # Si aún no se cierra el comentario multilínea...
+                        lineas_entrada[n] = ''
+
+                while ("\t" in lineas_entrada[n]):
+                    lineas_entrada[n] = re.sub(r"\t", " ", lineas_entrada[n])
+                    
+            print(direccionArchivo)
+    except Exception as e:
+        print(f"Error al abrir el archivo: {e}")
         
+    lista_Tokens = []
+    listaSimbolos_programa = []
+    lista_errores = []
+    file_breakdown(lineas_entrada, lista_Tokens, listaSimbolos_programa,lista_errores) 
+    #Procedemos a convertir la lista de tokens a una lista de objetos
+    tiraTokens1 = []
+    for token_aux in lista_Tokens:
+        objTokenAux = token_tipo_val(token_aux.get_token(), token_aux.get_lexema())
+        tiraTokens1.append(objTokenAux)
+
+    # Añade el $ al final de la cadena de tokens
+    tiraTokens1.append(token_tipo_val("$", "$"))
+    #Imprimimos la tira de tokens
+    print("Tira de tokens: ", tiraTokens1)
+    
+    return tiraTokens1
     
 
 def MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Prog_lista_tokens):
@@ -464,9 +534,9 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                 #print("flag_comilla:", flag_comilla_simple)
             
                 if char == "'" and flag_comilla_simple == True:
-                    tokenList.append(element_TokenTable(aux,"literalCar",nline)) #Literal caracter
+                    tokenList.append(element_TokenTable(aux,"literalcar",nline)) #Literal caracter
                 else:
-                    tokenList.append(element_TokenTable(aux, "varCadena", nline)) #Agregamos a la lista de tokens
+                    tokenList.append(element_TokenTable(aux, "varcadena", nline)) #Agregamos a la lista de tokens
                 flag_string = False
                 aux=""
             elif (char == '"' and flag_string == False) or (char == "'" and flag_string == False): #Es una cadena, se empieza a guardar y se enciende la bandera y asi si esta la bandera encendida esperamos el siguiente
@@ -544,10 +614,16 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                         posNum = ""
 
                 #print("Evaluacion de palabra reservada")    # Busca si es una palabra reservada
-                flag_found1 = word_search(aux, nline, tokenList)
+                #lastIndex = len (tokenList) - 1;    
+                #if aux in lista_pReservadas and aux  == 'in' and tokenList[lastIndex].get_token() != '.':
+                #    pass
+                #else:
+                flag_found1 = word_search(aux, nline, tokenList, flag_chkLex)
+                
                 #print("flag_found1: ",flag_found1)
                 if (flag_found1 == True):
                     flag_found1 = False
+                    flag_chkLex = False
                     aux=""
                 elif flag_chkLex == True:       # Si se detecta un espacio, puede haber una palabra por revisar
                     #print("Evaluación de id")   # Busca si es un id
@@ -569,7 +645,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
             else:
                 tokenList.append(element_TokenTable(posNum, "nint", nline))
         if aux != "":
-            flag_found1 = word_search(aux, nline, tokenList)
+            flag_found1 = word_search(aux, nline, tokenList, flag_chkLex)
             if (flag_found1 == True):
                 flag_found1 = False
                 aux=""
@@ -620,7 +696,7 @@ def detectarFuncion_tSimbolos(symbolList_prog, tokenList_prog):
             
             ##print("token[i-1].get_token():", tokenList_prog[i - 1].get_token())
             ##print("token[i+1].get_token():", tokenList_prog[i + 1].get_token()) 
-             #Procedemos a identificar si es una clase
+            #Procedemos a identificar si es una clase
             elif (i > 0 and tokenList_prog[i - 1].get_token() == 'class' and tokenList_prog[i + 1].get_token() =='{') :
                 #print("Identificador de clase")
                 identificador_clase = tokenList_prog[i].get_lexema() 
@@ -702,10 +778,15 @@ def eliminar_duplicados(lista):
 
 
 
-def word_search(word, nline, tokenList):
-    if word in lista_pReservadas: 
-        tokenList.append(element_TokenTable(word, word, nline)) #Agregamos a la lista de tokens
-        return 1
+def word_search(word, nline, tokenList, haTerminado):
+    if (haTerminado is False):
+        if word in lista_pReservadas and word!="in" and word!="do" and word!="int":
+            tokenList.append(element_TokenTable(word, word, nline)) #Agregamos a la lista de tokens
+            return 1
+    else:
+        if word in lista_pReservadas:
+            tokenList.append(element_TokenTable(word, word, nline))
+            return 1
     return 0
     
 def es_numero(cadena):

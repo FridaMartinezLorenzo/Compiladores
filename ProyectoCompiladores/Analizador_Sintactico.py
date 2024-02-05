@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
+import getpass
 from lexico import *
 from Analizador_Lexico import *
-from TablaAnalisisSintactico import *
+import TablaAnalisisSintactico as TAS
 from PrimerosYSiguientes import mainPyS
 def analizadorSintacticoJava():
     VentanaPrincipal =Toplevel()
@@ -18,9 +19,9 @@ def encabezado(VentanaPrincipal):
     font2=("Times New Roman",20)
     archivoLabel=Label(VentanaPrincipal,text="Seleccionar Archivo:",font=font1,width=20,background="#363062",foreground="white")
     archivoLabel.place(x=60,y=30)
-    archivoButton=Button(VentanaPrincipal,text="Abrir archivo",width=20,command=lambda:abrirArchivo(VentanaPrincipal),bg="#F99417",font=font1)
+    archivoButton=Button(VentanaPrincipal,text="Cargar Gramatica",width=20,command=lambda:abrirArchivo(VentanaPrincipal),bg="#F99417",font=font1)
     archivoButton.place(x=300,y=20)
-    tokenButton=Button(VentanaPrincipal,text="Seleccionar tira de tokens",width=20,bg="#F99417",font=font1,command=lambda:abrirArchivo1(VentanaPrincipal))
+    tokenButton=Button(VentanaPrincipal,text="Abrir Archivo",width=20,bg="#F99417",font=font1,command=lambda:abrirArchivo1(VentanaPrincipal))
     tokenButton.place(x=300,y=100)
     ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:imprimirResultados(VentanaPrincipal))
     ImprimirResultad0s.place(x=500,y=60)
@@ -60,6 +61,31 @@ def abrirArchivo1(Ventana):
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
     direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
     tiraTokens = ObtenerTiraTokensExterna(direccionArchivo)
+    #SUSTITUIMOS simbolos compuestos para que sean detectados
+    #tiraTokens = tiraTokens.replace("<","menorque")
+    #tiraTokens = tiraTokens.replace(">","mayorque")
+    tiraTokens = tiraTokens.replace("==","igualigual")
+    tiraTokens = tiraTokens.replace(">=","mayorigual")
+    tiraTokens = tiraTokens.replace("<=","menorigual")
+    tiraTokens = tiraTokens.replace("!=","diferente")
+    tiraTokens = tiraTokens.replace("&&","and")
+    tiraTokens = tiraTokens.replace("||","or")
+    tiraTokens = tiraTokens.replace("++","masmas")
+    tiraTokens = tiraTokens.replace("--","menosmenos")
+    tiraTokens = tiraTokens.replace("+=","masigual")
+    tiraTokens = tiraTokens.replace("-=","menosigual")
+    tiraTokens = tiraTokens.replace("*=","porigual")
+    tiraTokens = tiraTokens.replace("/=","entredosigual")
+    tiraTokens = tiraTokens.replace("%=","modigual")
+    tiraTokens = tiraTokens.replace("-", "resta")
+    tiraTokens = tiraTokens.replace("String", "string")
+    tiraTokens = tiraTokens.replace("Scanner", "scanner")
+    tiraTokens = tiraTokens.replace("System", "system")
+    tiraTokens = tiraTokens.replace("nextInt", "nextint")
+    tiraTokens = tiraTokens.replace("nextLine", "nextline")
+    tiraTokens = tiraTokens.replace("nextDouble", "nextdouble")
+    tiraTokens = tiraTokens.replace("nextFloat", "nextfloat")
+    tiraTokens = tiraTokens.replace("nextBoolean", "nextboolean")
     print("Tira de tokens recibida en el lexico:\n", tiraTokens)
 
 
@@ -70,22 +96,20 @@ def imprimirResultados(Ventana):
     ventanaResultados=Toplevel()
     ventanaResultados.title("Resultados")
     ventanaResultados.state("zoomed")
-    ventanaResultados.grab_set()
+    #ventanaResultados.grab_set()
     frameResultados=Frame(ventanaResultados,width=300,height=600)
     frameResultados.place(x=60,y=100)
     ventana2=Toplevel()
     frame2=Frame(ventana2,width=300,height=600)
+    
     #Esto es lo que hay que arreglar
-    datos,reglas=ImprimirResultados2(ventana2,frame2,direccionArchivo2)
+    datos,reglas=TAS.ImprimirResultados2(ventana2,frame2,direccionArchivo2)
     ventana2.destroy()
-    setDireccionArchivo(direccionArchivo2,reglas)
-    variable,simbolos,estados=ImprimirTablaAS(ventanaResultados,frameResultados)#variable es un diccionario con clave el numero de estado y la columna y contenido un label con el contenido de la tabla
+    TAS.setDireccionArchivo(direccionArchivo2,reglas)
+    variable,simbolos,estados=TAS.ImprimirTablaAS(frameResultados)#variable es un diccionario con clave el numero de estado y la columna y contenido un label con el contenido de la tabla
     for var in variable:
         contenido=variable[var]
         cont=contenido.cget("text")
-        print("clave:",var,"contenido:",cont)
-    #print("simbolos:",simbolos)
-    #print("estados:",estados)
     tira=tiraTokens.split(" ")
     print("tiraTokens:",tira)
     tuplasimbolos=()
@@ -106,22 +130,41 @@ def imprimirResultados(Ventana):
     print("simbolos:",arreglosimbolos)
     print("funcion")
     TablaLr(variable,arreglosimbolos,tira,arreGramatica,Ventana)
-    ventanaResultados.grab_release()
-
+    #ventanaResultados.grab_release()
     
+def on_arrow_key(event,canvas):
+        if event.keysym == "Left":
+            canvas.xview_scroll(-1, "units")
+        elif event.keysym == "Right":
+            canvas.xview_scroll(1, "units")
+
+def on_arrow_key_v(event,canvas):
+    if event.keysym == "Up":
+        canvas.yview_scroll(-1, "units")
+    elif event.keysym == "Down":
+        canvas.yview_scroll(1, "units")    
 
 def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
-    Ventana.grab_set()
-    tabla=Frame(Ventana,width=900,height=600)
-    tabla.place(x=300,y=150)
+    #Ventana.grab_set()
+    tabla1=Frame(Ventana,width=900,height=600)
+    tabla1.place(x=300,y=150)
+    canvas=Canvas(Ventana,width=900,height=600)
+    canvas.place(x=300,y=150)    
+    tabla=Frame(canvas,width=1470,height=300)
+    canvas.create_window((100, 50), window=tabla, anchor=NW)
+    #canvas.configure(yscrollcommand=scrollbar.set,xscrollcommand=horizontal_scrollbar.set)
+    canvas.bind_all("<KeyPress-Left> ",  lambda event:on_arrow_key  (event,canvas))
+    canvas.bind_all("<KeyPress-Right>", lambda event:on_arrow_key  (event,canvas))
+    canvas.bind_all("<KeyPress-Up>   "  ,    lambda event:on_arrow_key_v(event,canvas))
+    canvas.bind_all("<KeyPress-Down> ",  lambda event:on_arrow_key_v(event,canvas))
     contadorFila=0
     pila=[]
     accion=[]
     pila.append(0)
     font1=("Times New Roman",14)
-    labelTextPila=Label(tabla,text="Pila",width=20,font=font1,borderwidth=2,relief="solid")
+    labelTextPila=Label(tabla,text="Pila",width=200,font=font1,borderwidth=2,relief="solid")
     labelTextPila.grid(row=contadorFila,column=0)
-    labelTextTira=Label(tabla,text="Entrada",width=30,font=font1,borderwidth=2,relief="solid")
+    labelTextTira=Label(tabla,text="Entrada",width=80,font=font1,borderwidth=2,relief="solid")
     labelTextTira.grid(row=contadorFila,column=1)
     labelTextSalida=Label(tabla,text="Salida",width=40,font=font1,borderwidth=2,relief="solid")
     labelTextSalida.grid(row=contadorFila,column=2,columnspan=2)
@@ -129,9 +172,9 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
     while((len(tira)>0) & (accion!='Aceptacion') & (accion!='')):
         a=tira[0]
         sacarTira=tira[0]
-        labelPila=Label(tabla,text=pilaCadena(pila),width=20,font=font1,borderwidth=2,relief="solid")
+        labelPila=Label(tabla,text=pilaCadena(pila),width=200,font=font1,borderwidth=2,relief="solid")
         labelPila.grid(row=contadorFila,column=0) 
-        labelTira=Label(tabla,text=pilaCadena(tira),width=30,font=font1,borderwidth=2,relief="solid")
+        labelTira=Label(tabla,text=pilaCadena(tira),width=80,font=font1,borderwidth=2,relief="solid")
         labelTira.grid(row=contadorFila,column=1)
         simboloTira=buscarSimbolo(simbolos,sacarTira)
         print("simbolo en la tira:",simboloTira)
@@ -150,7 +193,7 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 labelRegla=Label(tabla,text=" ",width=20,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
                 pila.append(a)
-                estadoAgregar=int(accion[1])
+                estadoAgregar=int(accion[1:])
                 pila.append(estadoAgregar)
                 print("contenido de la pila:",pila)
                 print("tira de tokens despues del desplazamiento:",tira)
@@ -162,13 +205,13 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 labelRegla=Label(tabla,text=" ",width=20,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
                 pila.append(a)
-                estadoAgregar=int(accion[0])
+                estadoAgregar=int(accion)
                 pila.append(estadoAgregar)
                 print("contenido de la pila:",pila)
                 print("tira de tokens despues del desplazamiento:",tira)
             elif(accion[0]=='r'):  #reducir A→β
                 print("es una reduccion")
-                pos=int(accion[1])
+                pos=int(accion[1:])
                 regla=arreGramatica[pos-1]
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
@@ -183,7 +226,6 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 else:
                     tama=tama*2 
                 print("tamaño de beta:",tama)
-                print("ctm")
                 for k in range(0,tama):
                     pila.pop()  #pop 2*|β| símbolos
                 print("contenido de la pila despues de eliminar:",pila)
@@ -191,8 +233,11 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 print("contenido de la pila despues de agregar A:",pila)
                 simbIra=buscarSimbolo(simbolos,pila[len(pila)-1])
                 #s=Ir_a[j,A]
-                s=buscarAccion(variable,pila[len(pila)-2]+2,simbIra)
+                es=int(pila[len(pila)-2])+2
+                print(es)
+                s=buscarAccion(variable,es,simbIra)
                 #push s
+                print(s)
                 pila.append(s)
                 print("contenido de la pila despues de agregar s:",pila)
                 print("tira de tokens despues de la reduccion:",tira)  
@@ -270,6 +315,3 @@ def limpiar(ventana):
 
 direccionArchivo2=""
 tiraTokens=""
-
-
-    

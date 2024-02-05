@@ -81,11 +81,12 @@ def imprimirResultados(Ventana):
     datos,reglas=ImprimirResultados2(ventana2,frame2,direccionArchivo2)
     ventana2.destroy()
     setDireccionArchivo(direccionArchivo2,reglas)
-    variable,simbolos,estados=ImprimirTablaAS(ventanaResultados,frameResultados)#variable es un diccionario con clave el numero de estado y la columna y contenido un label con el contenido de la tabla
+    variable,simbolos,estados=ImprimirTablaAS(frameResultados)#variable es un diccionario con clave el numero de estado y la columna y contenido un label con el contenido de la tabla
+    
     for var in variable:
         contenido=variable[var]
         cont=contenido.cget("text")
-        print("clave:",var,"contenido:",cont)
+        #print("clave:",var,"contenido:",cont)
     #print("simbolos:",simbolos)
     #print("estados:",estados)
     tira=tiraTokens.split(" ")
@@ -152,7 +153,7 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 labelRegla=Label(tabla,text=" ",width=20,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
                 pila.append(a)
-                estadoAgregar=int(accion[1])
+                estadoAgregar=int(accion[1:])
                 pila.append(estadoAgregar)
                 print("contenido de la pila:",pila)
                 print("tira de tokens despues del desplazamiento:",tira)
@@ -164,13 +165,13 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 labelRegla=Label(tabla,text=" ",width=20,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
                 pila.append(a)
-                estadoAgregar=int(accion[0])
+                estadoAgregar=int(accion)
                 pila.append(estadoAgregar)
                 print("contenido de la pila:",pila)
                 print("tira de tokens despues del desplazamiento:",tira)
             elif(accion[0]=='r'):  #reducir A→β
                 print("es una reduccion")
-                pos=int(accion[1])
+                pos=int(accion[1:])
                 regla=arreGramatica[pos-1]
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
@@ -185,7 +186,6 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana):
                 else:
                     tama=tama*2 
                 print("tamaño de beta:",tama)
-                print("ctm")
                 for k in range(0,tama):
                     pila.pop()  #pop 2*|β| símbolos
                 print("contenido de la pila despues de eliminar:",pila)
