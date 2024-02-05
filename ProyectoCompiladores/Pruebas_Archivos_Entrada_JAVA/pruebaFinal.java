@@ -23,7 +23,7 @@ public class pruebaFinal {
 
         System.out.println("Ingrese un número flotante: "+ c +an);
         System.out.println("Ingrese un número flotante: "+ 2.01f); 
-        System.out.println(a + " el numero es ");
+        //System.out.println(a + " el numero es ");
 
 
         //a = scanner.nextInt();
