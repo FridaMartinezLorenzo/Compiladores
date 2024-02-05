@@ -6,18 +6,42 @@ public class pruebaFinal {
         int a, b;
         /* Comentario
            de bloque */
+<<<<<<< HEAD
         int[] vec = new int[10];
         int[][] vec1 = new int[10][10];
+=======
+        float c;
+        int an;
+        int [] vec = new int [10];
+        int [][] vec1 = new int [10][10];
+>>>>>>> main
         int [] ar;
         float[] vecFloat = {2.3f, 5.0f, 3.1f};
         Scanner lectura = new Scanner(System.in);
 
 
+<<<<<<< HEAD
         System.out.print("Ingrese un número entero: ");
         int numeroEntero = scanner.nextInt();
         
         System.out.print("Ingrese una cadena: ");
         String cadena = scanner.nextLine();
+=======
+        System.out.println("Ingrese un número entero: ");
+        int numeroEntero = scanner.nextInt();
+        
+        System.out.println("Ingrese una cadena: ");
+        String cadena = scanner.nextLine();
+
+        
+        System.out.println("Ingrese un número flotante: "+ c +an);
+        System.out.println("Ingrese un número flotante: "+ 2.01f); 
+        double equisde = scanner.nextDouble();
+        System.out.println(a + " el numero es ");
+
+
+        //a = scanner.nextInt();
+>>>>>>> main
         }
 
         int suma(int i, int f, float p) {

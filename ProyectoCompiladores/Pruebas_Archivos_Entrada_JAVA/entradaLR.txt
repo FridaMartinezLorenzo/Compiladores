@@ -1,5 +1,9 @@
 S F X E P T A V H R W L C D U G O Z Q B N Y I J K M
+<<<<<<< HEAD
 id ; , class { } ( ) new nextint nextfloat nextdouble next nextboolean nextline print import java util scanner public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system out . println printf + * / % if else igualigual mayorigual menorigual diferente and or masmas menosmenos masigual menosigual porigual entredosigual modigual resta menorque mayorque for return while do break switch case default :
+=======
+id ; , class { } ( ) new nextint nextfloat nextdouble next nextboolean nextline print import java util scanner public private protected float int string char void double boolean nint nfloat [ ] = static varcadena literalcar true false system out . println printf + * / % if else igualigual mayorigual menorigual diferente and or masmas menosmenos masigual menosigual porigual entredosigual modigual resta > < for return while do break switch case default :
+>>>>>>> main
 S->N D F D
 N->import java . util . scanner ;
 N->λ
@@ -44,7 +48,17 @@ H->λ
 Y->[ nint ] Y
 Y->λ
 W->scanner id = new scanner ( system . id ) ; W
+<<<<<<< HEAD
 W->G ( varcadena ) ; W
+=======
+W->G ( Y varcadena R ) ; W
+Y->id + Y
+Y->id , Y
+R->+ id R
+R->+ C R
+R->, C R
+R->, id R
+>>>>>>> main
 W->id L ; W
 W->if ( Q ) { W } W
 W->if ( Q ) { W } else { W } W
@@ -55,16 +69,19 @@ W->do { W } while ( Q ) ; W
 W->switch ( id ) { B } W
 B->case C : W B
 B->default : W
+B->λ
 W->break ; W
 W->λ
 W->return C ; W
 W->return id ; W
+W->return Q ; W
+W->return L ; W
 W->id masmas ; W
 W->id menosmenos ; W
-Q->id Z id
-Q->id Z C
-Q->C Z id
-Q->C Z C
+Q->id Q
+Q->Z id Q
+Q->Z C Q
+Q->C Q
 Q->λ
 Z->igualigual
 Z->diferente
@@ -72,21 +89,33 @@ Z->or
 Z->and
 Z->mayorigual
 Z->menorigual
+<<<<<<< HEAD
 Z->mayorque
 Z->menorque
+=======
+Z->>
+Z-><
+>>>>>>> main
 K->nextint
 K->nextfloat
 K->nextdouble
 K->nextboolean
 K->nextline
+<<<<<<< HEAD
 L->= scanner . K ( )
+=======
+L->= id . K ( )
+>>>>>>> main
 L->, id L
 L->= C L
-L->masigual C L
-L->menosigual C L
-L->= id O id L
-L->= id O C L
-L->= C O C L
+L->C L
+L->id L
+L->masigual L
+L->menosigual L
+L->= id L
+L->O id L
+L->O C L
+L->= C L
 O->+
 O->*
 O->/
@@ -100,4 +129,8 @@ C->true
 C->false
 G->system . out . println
 G->system . out . print
+<<<<<<< HEAD
 G->printf
+=======
+G->system . out . printf
+>>>>>>> main

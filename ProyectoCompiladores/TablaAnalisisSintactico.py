@@ -5,6 +5,7 @@ from tkinter import messagebox
 import getpass
 from coleccionCanonica import *
 from PrimerosYSiguientes import *
+
 class reglaProduccion:
     def __init__(self, b):
         self.base = b
@@ -41,7 +42,7 @@ def InterfazTablaAS():
     frameSiguientes.place(x=20,y=400)#Aqui va el frame de siguientes
     archivoButton=Button(VentanaPrincipal,text="Abrir archivo",width=20,command=lambda:abrirArchivo(VentanaPrincipal,frameGramatica,frameSiguientes),bg="#F99417",font=font1)
     archivoButton.place(x=300,y=20)
-    ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir tabla ",width=20,bg="#F99417",font=font1,command=lambda:ImprimirTablaAS(VentanaPrincipal,frameTablaAS))
+    ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir tabla ",width=20,bg="#F99417",font=font1,command=lambda:ImprimirTablaAS(frameTablaAS))
     ImprimirResultad0s.place(x=300,y=60)
     limpiarButton=Button(VentanaPrincipal,text="Limpiar",width=20,bg="#F99417",font=font1,command=lambda:limpiar(frameTablaAS,frameGramatica,frameSiguientes))
     limpiarButton.place(x=700,y=60)
@@ -99,29 +100,49 @@ def ImprimirResultados2(Ventana,FrameResultados,direccionArchivo):
     Ventana.grab_release()
     return datos,reglasProduccionTemp
 
+def on_key( event,canvas):
+       if event.char == "a":
+           canvas.xview_scroll(-1, "units")
+       elif event.char == "d":
+           canvas.xview_scroll(1, "units")
+       elif event.char == "w":
+           canvas.yview_scroll(-1, "units")
+       elif event.char == "s":
+           canvas.yview_scroll(1, "units")
 
 
-def ImprimirTablaAS(Ventana,FrameResultados):
+def ImprimirTablaAS(FrameResultados):
     global direccionArchivo
     datos=mainPyS(direccionArchivo)#Obtiene los primeros y siguientes
     archivo=open(direccionArchivo,encoding="utf-8")
     noTerminales=archivo.readline().split()
     terminales=archivo.readline().split()
-    Encabezado=Label(FrameResultados,text="Estado",width=10,background="#F99417",foreground="white")
+    canvasR=Canvas(FrameResultados,width=1100,height=900)
+    canvasR.pack()
+    frameR=Frame(canvasR)
+    canvasR.create_window(0,0,window=frameR,anchor="nw")
+    canvasR.update_idletasks()
+    canvasR.bind_all("<KeyPress>",  lambda event:on_key  (event,canvasR) )
+    canvasR.bind_all("<KeyPress>", lambda event:on_key  (event,canvasR) )
+    canvasR.bind_all("<KeyPress>",    lambda event:on_key(event,canvasR) )
+    canvasR.bind_all("<KeyPress>",  lambda event:on_key(event,canvasR) )
+
+
+    Encabezado=Label(frameR,text="Estado",width=10,background="#F99417",foreground="white")
     Encabezado.grid(row=1,column=0,padx=1,pady=1)
     counter=1
     #Diccionario de terminales
     dictionaryTokens={} 
     for i in terminales:#imprime el encabezado de los terminales
-        Encabezado=Label(FrameResultados,text=str(i),width=10,background="#F99417",foreground="white")
+        Encabezado=Label(frameR,text=str(i),width=10,background="#F99417",foreground="white")
         Encabezado.grid(row=1,column=counter,padx=1,pady=1)
         dictionaryTokens[i]=counter
         counter+=1
     dictionaryTokens["$"]=counter#agregamos el $ al diccionario de tokens
-    Encabezado=Label(FrameResultados,text="$",width=10,background="#F99417",foreground="white")
+    Encabezado=Label(frameR,text="$",width=10,background="#F99417",foreground="white")
     Encabezado.grid(row=1,column=counter,padx=1,pady=1)
     counter1=counter+1
-    labelAccion=Label(FrameResultados,text="              Accion                ",background="#F99417",foreground="white")
+    labelAccion=Label(frameR,text="              Accion                ",background="#F99417",foreground="white")
     labelAccion.grid(row=0,column=1,padx=1,pady=1,columnspan=counter)
 
     #Diccionario de no terminales
@@ -129,10 +150,10 @@ def ImprimirTablaAS(Ventana,FrameResultados):
     for i in noTerminales:
         counter+=1
         dictionaryNoTerminales[i]=counter
-        Encabezado=Label(FrameResultados,text=str(i),width=10,background="#F99417",foreground="white")
+        Encabezado=Label(frameR,text=str(i),width=10,background="#F99417",foreground="white")
         Encabezado.grid(row=1,column=counter,padx=1,pady=1)
 
-    labelAccion=Label(FrameResultados,text="                    Ir A                  ",background="#F99417",foreground="white")#imprime el encabezado de ir a
+    labelAccion=Label(frameR,text="                    Ir A                  ",background="#F99417",foreground="white")#imprime el encabezado de ir a
     labelAccion.grid(row=0,column=counter1,padx=1,pady=1,columnspan=counter-counter1)
 
     ResultadosCanonica=main(direccionArchivo)
@@ -146,7 +167,7 @@ def ImprimirTablaAS(Ventana,FrameResultados):
             aux=j.getEstado()
             arrayEstados.append(aux[0])
             dictionaryEstados[aux[0]]=fila
-            EstadoLabel=Label(FrameResultados,text=str(aux[0]),width=10,background="#F99417",foreground="white")
+            EstadoLabel=Label(frameR,text=str(aux[0]),width=10,background="#F99417",foreground="white")
             EstadoLabel.grid(row=fila,column=0,padx=1,pady=1)
             fila+=1
     #print ("array=",arrayEstados)
@@ -164,14 +185,14 @@ def ImprimirTablaAS(Ventana,FrameResultados):
             if len(j.getEstado()[0])!=1:#si el estado es un conjunto
                     fila = dictionaryEstados[j.getEstadoIr_A()]#obtenemos la fila del estado
                     columnaDeToken = dictionaryTokens[j.getSimboloIr_A()]#obtenemos la columna del token
-                    DesplazamientoLabel=Label(FrameResultados,text="d"+str(j.getEstado()[0].replace("I","")),width=10,background="#363062",foreground="white")
+                    DesplazamientoLabel=Label(frameR,text="d"+str(j.getEstado()[0].replace("I","")),width=10,background="#363062",foreground="white")
                     DesplazamientoLabel.grid(row=fila,column=columnaDeToken,padx=1,pady=1)
                     labels_diccionario[fila,columnaDeToken] = DesplazamientoLabel
 
             else:#si el estado es un solo elemento
                     fila = dictionaryEstados[j.getEstadoIr_A()]#obtenemos la fila del estado
                     columnaDeToken = dictionaryTokens[j.getSimboloIr_A()]#obtenemos la columna del token
-                    DesplazamientoLabel=Label(FrameResultados,text="d"+j.getEstado().replace("I",""),width=10,background="#363062",foreground="white")
+                    DesplazamientoLabel=Label(frameR,text="d"+j.getEstado().replace("I",""),width=10,background="#363062",foreground="white")
                     DesplazamientoLabel.grid(row=fila,column=columnaDeToken,padx=1,pady=1)
                     labels_diccionario[fila,columnaDeToken] = DesplazamientoLabel
 
@@ -180,7 +201,7 @@ def ImprimirTablaAS(Ventana,FrameResultados):
         if j.getSimboloIr_A() == "$":#si el simbolo es un $
             fila = dictionaryEstados[j.getEstadoIr_A()]#obtenemos la fila del estado
             columnaDeToken = dictionaryTokens["$"]#obtenemos la columna del token
-            DesplazamientoLabel=Label(FrameResultados,text="Aceptacion",width=10,background="#CD5C08",foreground="white")
+            DesplazamientoLabel=Label(frameR,text="Aceptacion",width=10,background="#CD5C08",foreground="white")
             DesplazamientoLabel.grid(row=fila,column=columnaDeToken,padx=1,pady=1)
             labels_diccionario[fila,columnaDeToken] = DesplazamientoLabel
 
@@ -213,17 +234,17 @@ def ImprimirTablaAS(Ventana,FrameResultados):
                                 #print("fila: ", fila)
                                 for siguiente in s[2]:#Recorremos la lista de siguientes
                                     columnaDeToken = dictionaryTokens[siguiente]#obtenemos la columna del token
-                                    #LabelReduccion=Label(FrameResultados,text="r"+str(numeroProduccion),width=10,background="#176B87",foreground="white")
+                                    #LabelReduccion=Label(frameR,text="r"+str(numeroProduccion),width=10,background="#176B87",foreground="white")
                                     #LabelReduccion.grid(row=fila,column=columnaDeToken,padx=1,pady=1)
                                     #labels_diccionario[fila,columnaDeToken] = LabelReduccion
                                     if labels_diccionario.get((fila,columnaDeToken)) is None:
-                                        LabelReduccion=Label(FrameResultados,text="r"+str(numeroProduccion),width=10,background="#176B87",foreground="white")
+                                        LabelReduccion=Label(frameR,text="r"+str(numeroProduccion),width=10,background="#176B87",foreground="white")
                                         LabelReduccion.grid(row=fila,column=columnaDeToken,padx=1,pady=1)
                                         labels_diccionario[fila,columnaDeToken] = LabelReduccion
                                     else:
                                         if labels_diccionario.get((fila,columnaDeToken))["text"] != "r"+str(numeroProduccion):
                                             cadenaaa = labels_diccionario.get((fila,columnaDeToken))["text"]
-                                            LabelReduccion=Label(FrameResultados,text=cadenaaa+"/r"+str(numeroProduccion),width=10,background="#B31312",foreground="white")
+                                            LabelReduccion=Label(frameR,text=cadenaaa+"/r"+str(numeroProduccion),width=10,background="#B31312",foreground="white")
                                             LabelReduccion.grid(row=fila,column=columnaDeToken,padx=1,pady=1)
                                             #labels_diccionario[fila,columnaDeToken] = LabelReduccion
 
@@ -240,7 +261,7 @@ def ImprimirTablaAS(Ventana,FrameResultados):
                 cadenaAux = cadenaAux.replace("I","")
             columnaNoTerminal = dictionaryNoTerminales[j.getSimboloIr_A()]
             #print(j.getEstadoIr_A(),j.getSimboloIr_A(),j.getEstado())
-            IrALabel=Label(FrameResultados,text=cadenaAux,width=10,background="#4D4C7D",foreground="white")
+            IrALabel=Label(frameR,text=cadenaAux,width=10,background="#4D4C7D",foreground="white")
             IrALabel.grid(row=fila,column=columnaNoTerminal,padx=1,pady=1)
             labels_diccionario[fila,columnaNoTerminal] = IrALabel
     terminales.append("$")
