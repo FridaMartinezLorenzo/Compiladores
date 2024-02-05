@@ -66,12 +66,14 @@ W->break ; W
 W->λ
 W->return C ; W
 W->return id ; W
+W->return Q ; W
+W->return L ; W
 W->id masmas ; W
 W->id menosmenos ; W
-Q->id Z id
-Q->id Z C
-Q->C Z id
-Q->C Z C
+Q->id Q
+Q->Z id Q
+Q->Z C Q
+Q->C Q
 Q->λ
 Z->igualigual
 Z->diferente
@@ -89,8 +91,10 @@ K->nextline
 L->= id . K ( )
 L->, id L
 L->= C L
-L->masigual C L
-L->menosigual C L
+L->C L
+L->id L
+L->masigual L
+L->menosigual L
 L->= id L
 L->O id L
 L->O C L
