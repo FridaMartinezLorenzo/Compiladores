@@ -135,7 +135,7 @@ def imprimirResultados(Ventana):
     datos,reglas=ImprimirResultados2(ventana2,frame2,direccionArchivo2)
     ventana2.destroy()
     setDireccionArchivo(direccionArchivo2,reglas)
-    variable,simbolos,estados=ImprimirTablaAS(ventanaResultados,frameResultados)#variable es un diccionario con clave el numero de estado y la columna y contenido un label con el contenido de la tabla
+    variable,simbolos,estados=ImprimirTablaAS(frameResultados)#variable es un diccionario con clave el numero de estado y la columna y contenido un label con el contenido de la tabla
     for var in variable:
         contenido=variable[var]
         cont=contenido.cget("text")
