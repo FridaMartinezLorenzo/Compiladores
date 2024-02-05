@@ -551,6 +551,21 @@ def obtenerCondicion(cond, results_acc, pila):
         else:
             print("La condición no se cumple")
             return False
+        
+    prueba_op = re.split(r"~", cond, 1)        # Busca un patrón con expresiones regulares
+    if(len(prueba_op)>1):
+        print("Entró a similitud")
+        # Se usa recursividad para calcular el valor de ambas expresiones
+        exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
+        exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
+        if(re.search(exp1, exp2) is not None):
+            print("La condición se cumple")
+            return True
+        else:
+            print("La condición no se cumple")
+            return False
 
     prueba_op = re.split(r">", cond, 1)        # Busca un mayor que
     if (len(prueba_op) > 1):
