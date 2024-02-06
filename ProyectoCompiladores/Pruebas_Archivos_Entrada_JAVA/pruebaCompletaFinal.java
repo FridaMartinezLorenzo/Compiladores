@@ -10,7 +10,7 @@ public class pruebaCompletaFinal {
         int categ = 2;
         float [] vecFloat = {2.3f, 5.0f, 3.1f};
         float sueldo;
-        //Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
         
         System.out.println("Teclea un numero:");
         a = scanner.nextInt();
