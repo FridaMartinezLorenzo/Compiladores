@@ -4,8 +4,10 @@ from tkinter import ttk
 import getpass
 from lexico import *
 from Analizador_Lexico import *
+import Analizador_Lexico as AL
 import TablaAnalisisSintactico as TAS
 from PrimerosYSiguientes import mainPyS
+
 def analizadorSintacticoJava():
     VentanaPrincipal =Toplevel()
     VentanaPrincipal.title("Analizador sintáctico")
@@ -23,7 +25,7 @@ def encabezado(VentanaPrincipal):
     archivoButton.place(x=300,y=20)
     tokenButton=Button(VentanaPrincipal,text="Abrir Archivo",width=20,bg="#F99417",font=font1,command=lambda:abrirArchivo1(VentanaPrincipal))
     tokenButton.place(x=300,y=100)
-    ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:imprimirResultados(VentanaPrincipal))
+    ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:[imprimirResultados(VentanaPrincipal),imprimirLexico(VentanaPrincipal)])
     ImprimirResultad0s.place(x=500,y=60)
     limpiarButton=Button(VentanaPrincipal,text="Limpiar",width=20,bg="#F99417",font=font1,command=lambda:limpiar(VentanaPrincipal))
     limpiarButton.place(x=700,y=60)
@@ -56,11 +58,13 @@ def abrirArchivo(Ventana):
 
 def abrirArchivo1(Ventana):
     global tiraTokens
+    global direccionArchivo3
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
     direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
-    tiraTokens = ObtenerTiraTokensExterna(direccionArchivo)
+    direccionArchivo3=direccionArchivo
+    tiraTokens = AL.ObtenerTiraTokensExterna(direccionArchivo)
     #SUSTITUIMOS simbolos compuestos para que sean detectados
     #tiraTokens = tiraTokens.replace("<","menorque")
     #tiraTokens = tiraTokens.replace(">","mayorque")
@@ -88,6 +92,8 @@ def abrirArchivo1(Ventana):
     tiraTokens = tiraTokens.replace("nextBoolean", "nextboolean")
     print("Tira de tokens recibida en el lexico:\n", tiraTokens)
 
+def imprimirLexico(Ventana):
+    AL.Analizador_Lexico1()
 
 def imprimirResultados(Ventana):
     global tiraTokens
