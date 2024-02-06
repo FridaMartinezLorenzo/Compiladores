@@ -111,13 +111,13 @@ def abrirArchivo1(Ventana):
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
+    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("txt", "*.txt"),("java", "*.java"),))
     tiraTokens = ObtenerTiraTokensExternaObj(direccionArchivo)
 
     #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
     for tok in tiraTokens:
-        tok.set_tipo(tok.get_tipo().replace("<","menorque"))
-        tok.set_tipo(tok.get_tipo().replace(">","mayorque"))
+        #tok.set_tipo(tok.get_tipo().replace("<","menorque"))
+        #tok.set_tipo(tok.get_tipo().replace(">","mayorque"))
         tok.set_tipo(tok.get_tipo().replace("==","igualigual"))
         tok.set_tipo(tok.get_tipo().replace(">=","mayorigual"))
         tok.set_tipo(tok.get_tipo().replace("<=","menorigual"))
@@ -140,7 +140,7 @@ def abrirArchivo1(Ventana):
         tok.set_tipo(tok.get_tipo().replace("nextDouble", "nextdouble"))
         tok.set_tipo(tok.get_tipo().replace("nextFloat", "nextfloat"))
         tok.set_tipo(tok.get_tipo().replace("nextBoolean", "nextboolean"))
-    ##print("Tira de tokens recibida en el léxico:\n", tiraTokens)
+    print("Tira de tokens recibida en el léxico:\n", tiraTokens)
 
 def imprimirResultados(Ventana):
     global tiraTokens
@@ -163,11 +163,11 @@ def imprimirResultados(Ventana):
     for var in variable:
         contenido=variable[var]
         cont=contenido.cget("text")
-        #print("clave:",var,"contenido:",cont)
-    ##print("simbolos:",simbolos)
-    ##print("estados:",estados)
+        print("clave:",var,"contenido:",cont)
+    #print("simbolos:",simbolos)
+    #print("estados:",estados)
         
-    #print("tiraTokens:",tiraTokens)
+    print("tiraTokens:",tiraTokens)
     tuplasimbolos=()
     arreglosimbolos=[]
     j=0
@@ -182,15 +182,15 @@ def imprimirResultados(Ventana):
     # Este arreglo guardará las acciones semánticas guardadas entre llaves { }
     arreAcciones = []
     for grama in Gramatica:
-        #print(grama)
+        print(grama)
         grama=grama.split("->")
         tuplaGrama=(grama[0],grama[1])
         arreGramatica.append(tuplaGrama)
         arreAcciones.append(grama[2])       # Esta línea busca la sección después de la segunda flecha ->, por lo que NO ACEPTA GRAMATICAS SIN DOS FLECHAS ->
-    #print("Gramatica:",arreGramatica)
-    #print("simbolos:",arreglosimbolos)
-    #print("Acciones:",arreAcciones)
-    #print("funcion")
+    print("Gramatica:",arreGramatica)
+    print("simbolos:",arreglosimbolos)
+    print("Acciones:",arreAcciones)
+    print("funcion")
     TablaLr(variable,arreglosimbolos,tiraTokens,arreGramatica,Ventana,arreAcciones)
     ventanaResultados.grab_release()
 
@@ -243,7 +243,6 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
     labelTextSalida.grid(row=contadorFila,column=2,columnspan=3)
     contadorFila+=1
     results_acc = []
-   
 
     while((len(tira)>0) & (accion!='Aceptacion') & (accion!='')):
         a=tira[0]
@@ -253,17 +252,17 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
         labelTira=Label(tabla,text=pilaCadena(tira),width=30,font=font1,borderwidth=2,relief="solid")
         labelTira.grid(row=contadorFila,column=1)
         simboloTira=buscarSimbolo(simbolos,sacarTira)
-        #print("simbolo en la tira:",simboloTira)
+        print("simbolo en la tira:",simboloTira)
         estado=pila.pop()
         pila.append(estado)
         entero=int(estado)
         entero=entero+2
-        #print("estado en el que vamos:",entero)
+        print("estado en el que vamos:",entero)
         accion=buscarAccion(variable,entero,simboloTira)
         if(accion != None):
             if(accion[0]=='d'):
                 tira.pop(0)
-                #print("salida:",accion) #imprimimos la accion de desplazamiento o reduccion
+                print("salida:",accion) #imprimimos la accion de desplazamiento o reduccion
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
                 labelRegla=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
@@ -273,11 +272,11 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 pila.append(a)
                 estadoAgregar=int(accion[1:])
                 pila.append(estadoAgregar)
-                #print("contenido de la pila:",pila)
-                #print("tira de tokens despues del desplazamiento:",tira)
+                print("contenido de la pila:",pila)
+                print("tira de tokens despues del desplazamiento:",tira)
             elif(accion[0]=='0'or accion[0]=='1' or accion[0]=='2' or accion[0]=='3' or accion[0]=='4' or accion[0]=='5' or accion[0]=='6' or accion[0]=='7' or accion[0]=='8' or accion[0]=='9'):
                 tira.pop(0)
-                #print("salida:",accion) #imprimimos la accion de desplazamiento o reduccion
+                print("salida:",accion) #imprimimos la accion de desplazamiento o reduccion
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
                 labelRegla=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
@@ -287,10 +286,10 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 pila.append(a)
                 estadoAgregar=int(accion)
                 pila.append(estadoAgregar)
-                #print("contenido de la pila:",pila)
-                #print("tira de tokens despues del desplazamiento:",tira)
+                print("contenido de la pila:",pila)
+                print("tira de tokens despues del desplazamiento:",tira)
             elif(accion[0]=='r'):  #reducir A→β
-                #print("es una reduccion")
+                print("es una reduccion")
                 pos=int(accion[1:])
                 regla=arreGramatica[pos-1]
 
@@ -298,7 +297,7 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 # Procesamiento de la acción semántica
                 cad = re.sub(r"^\s*{", "", acc_seman)
                 cad = re.sub(r"}\s*$", "", cad)  # Se eliminan las llaves de los laterales
-                #print("cad:", cad)
+                print("cad:", cad)
 
                 # Se separan las acciones semánticas por espacios, sin romper cadenas que también puedan contenerlos
                 partes = []
@@ -313,7 +312,7 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                         if (car == ' '):
                             if (cad_aux != ""):
                                 partes.append(cad_aux)
-                                #print("Instrucción:", cad_aux)
+                                print("Instrucción:", cad_aux)
                             cad_aux = ""
                         else:
                             if (car == '"'):
@@ -322,7 +321,7 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 
                 if (cad_aux != ""):         # Se guarda la última cadena que pudo no haberse guardado en el arreglo de partes
                     partes.append(cad_aux)
-                    #print("Instrucción:", cad_aux)
+                    print("Instrucción:", cad_aux)
 
                 fase_if = 0     # Fase de la condición if en la que se encuentra actualmente (empieza en 0)
                 se_cumple = False       # Bandera que revisa si la condición del if se cumple
@@ -332,11 +331,11 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                             fase_if = 1                             # Cambiar de fase para evaluar condición
                         else:
                             base = re.sub(r"\..*$", "", partes[pos]).strip()        # Separar la base
-                            #print("Base:", base)
+                            print("Base:", base)
                             atrib = re.sub(r":=.*$", "", re.sub(r"^.*?\.", "", partes[pos])).strip()    # Separar el atributo
-                            #print("Atributo:",atrib)
+                            print("Atributo:",atrib)
                             val = re.sub(r"^.*:=", "", partes[pos]).strip()         # Separar el valor que se debe asignar
-                            #print("Acción:", val)
+                            print("Acción:", val)
                             # Para este punto la acción ya debe estar separada en base, atributo y valor
                             postVal = obtenerValor(val, results_acc, pila, False)   # Llama a la función para hacer las operaciones y obtener el valor final de base.atributo
                             results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
@@ -346,11 +345,11 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                     elif (fase_if==2):              # Instrucción a realizar si la condición se cumple...
                         if (se_cumple is True):         # En caso de que sí se cumpla...
                             base = re.sub(r"\..*$", "", partes[pos]).strip()        # Ejecuta lo mismo que en la fase_if==0
-                            #print("Base:", base)
+                            print("Base:", base)
                             atrib = re.sub(r":=.*$", "", re.sub(r"^.*?\.", "", partes[pos])).strip()
-                            #print("Atributo:",atrib)
+                            print("Atributo:",atrib)
                             val = re.sub(r"^.*:=", "", partes[pos]).strip()
-                            #print("Acción:", val)
+                            print("Acción:", val)
                             # Para este punto la acción ya debe estar separada en base, atributo y valor
                             postVal = obtenerValor(val, results_acc, pila, False)
                             results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
@@ -360,25 +359,25 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                     elif (fase_if==4):
                         if (se_cumple is False):    # Si no se cumplía la condición...
                             base = re.sub(r"\..*$", "", partes[pos]).strip()        # Ejecuta lo mismo que en la fase_if==0
-                            #print("Base:", base)
+                            print("Base:", base)
                             atrib = re.sub(r":=.*$", "", re.sub(r"^.*?\.", "", partes[pos])).strip()
-                            #print("Atributo:",atrib)
+                            print("Atributo:",atrib)
                             val = re.sub(r"^.*:=", "", partes[pos]).strip()
-                            #print("Acción:", val)
+                            print("Acción:", val)
                             # Para este punto la acción ya debe estar separada en base, atributo y valor
                             postVal = obtenerValor(val, results_acc, pila, False)
                             results_acc.append(result_acc(base, atrib, postVal))        # Se guarda el resultado en la pila de resultados
                         fase_if = 0         # Vuelve a la normalidad, a la fase_if==0
 
                 # Imprimir la lista de resultados para verificar, solo para depuración
-                #print("--- Resultados hasta ahora ---")
-                #for i in range(len(results_acc)-1, -1, -1):
-                    #print(str(results_acc[i]))
+                print("--- Resultados hasta ahora ---")
+                for i in range(len(results_acc)-1, -1, -1):
+                    print(str(results_acc[i]))
 
                 labelSalida=Label(tabla,text=pilaCadena(accion),width=20,font=font1,borderwidth=2,relief="solid")
                 labelSalida.grid(row=contadorFila,column=2)
                 #imprimir la producción A→β
-                #print("Regla:",regla)
+                print("Regla:",regla)
                 labelRegla=Label(tabla,text=str(regla[0])+"->"+str(regla[1]),width=40,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=3)
                 labelAccion=Label(tabla,text=acc_seman,width=40,font=font1,borderwidth=2,relief="solid")
@@ -389,27 +388,27 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                     tama=0
                 else:
                     tama=tama*2 
-                #print("tamaño de beta:",tama)
-                #print("ctm")
+                print("tamaño de beta:",tama)
+                print("ctm")
                 for k in range(0,tama):
                     pila.pop()  #pop 2*|β| símbolos
-                #print("contenido de la pila despues de eliminar:",pila)
+                print("contenido de la pila despues de eliminar:",pila)
                 pila.append(regla[0])   #push A
-                #print("contenido de la pila despues de agregar A:",pila)
+                print("contenido de la pila despues de agregar A:",pila)
                 simbIra=buscarSimbolo(simbolos,pila[len(pila)-1])
                 #s=Ir_a[j,A]
                 es=int(pila[len(pila)-2])+2
-                #print(es)
+                print(es)
                 s=buscarAccion(variable,es,simbIra)
                 #push s
-                #print(s)
+                print(s)
                 pila.append(s)
-                #print("contenido de la pila despues de agregar s:",pila)
-                #print("tira de tokens despues de la reduccion:",tira)
+                print("contenido de la pila despues de agregar s:",pila)
+                print("tira de tokens despues de la reduccion:",tira)
 
             
             elif(accion=='Aceptacion'):
-                #print("Aceptado")
+                print("Aceptado")
                 labelRegla=Label(tabla,text="Aceptacion",width=20,font=font1,borderwidth=2,relief="solid")
                 labelRegla.grid(row=contadorFila,column=2)
                 label2=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
@@ -417,13 +416,13 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 labelAccion=Label(tabla,text="Resultado: "+str(results_acc[len(results_acc)-1]),width=40,font=font1,borderwidth=2,relief="solid")
                 labelAccion.grid(row=contadorFila,column=4)
             elif(accion==''):
-                #print("Error de sintaxis")
+                print("Error de sintaxis")
                 break
         else:
-            #print("Error de sintaxis")
+            print("Error de sintaxis")
             esperaba=[]
             esperaba=buscarSeEsperaba(entero,variable,simbolos)
-            #print("se esperaba: ",esperaba)
+            print("se esperaba: ",esperaba)
             labelError=Label(tabla,text="se esperaba: "+pilaError(esperaba),width=40,font=font1,borderwidth=2,relief="solid")
             labelError.grid(row=contadorFila,column=2)
             label2=Label(tabla,text=" ",width=30,font=font1,borderwidth=2,relief="solid")
@@ -436,24 +435,23 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
 # Función que recibe la cadena de la acción, la pila con los resultados semánticos anteriores, la pila de la tabla semántica, y si la operación se ejecuta solo para una condición (esto evita que se modifique la pila de resultados anteriores)
 # Devuelve únicamente el valor final
 def obtenerValor(accion, results_acc, pila, esCond):
-    global pilaTemporal
-    #print("Entra a función")
-    #print(accion)
+    print("Entra a función")
+    print(accion)
     band = False
 
     prueba_simb = re.split(r"\|\|", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una concatenación en la acción
-        #print("Entró a concatenación")
+        print("Entró a concatenación")
         # Se usa recursividad para calcular el valor de los segmentos
         val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return str(val1) + str(val2)    # Devuelve el resultado de la concatenación
 
-    prueba_simb = re.split(r"\*", accion, 1)
+    '''prueba_simb = re.split(r"\*", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una multiplicación en la acción
-        #print("Entró a multiplicación")
+        print("Entró a multiplicación")
         # Se usa recursividad para calcular el valor de los segmentos
         val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
@@ -462,7 +460,7 @@ def obtenerValor(accion, results_acc, pila, esCond):
     prueba_simb = re.split(r"/", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una división en la acción
-        #print("Entró a división")
+        print("Entró a división")
         # Se usa recursividad para calcular el valor de los segmentos
         val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
@@ -471,7 +469,7 @@ def obtenerValor(accion, results_acc, pila, esCond):
     prueba_simb = re.split(r"\+", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una suma en la acción
-        #print("Entró a suma")
+        print("Entró a suma")
         # Se usa recursividad para calcular el valor de los segmentos
         val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
@@ -480,34 +478,48 @@ def obtenerValor(accion, results_acc, pila, esCond):
     prueba_simb = re.split(r"-", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una resta en la acción
-        #print("Entró a resta")
+        print("Entró a resta")
         # Se usa recursividad para calcular el valor de los segmentos
         val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
-        return int(val1) - int(val2)    # Devuelve el resultado de la resta
+        return int(val1) - int(val2)    # Devuelve el resultado de la resta'''
 
     # Si, no hay operación, se debe almacenar un valor (Caso base)
-    #print("No hay operador")
+    print("No hay operador")
     prueba_simb = re.split(r"\.", accion, 1)
     if (prueba_simb[0] == "nint"):          # Si lo que se busca es un nfloat...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
-            #print(pila[i])
+            print(pila[i])
             if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nint"):    # Si el tipo es el buscado...
-                #print("Se encontró int")
+                print("Se encontró int")
                 return pila[i].get_val()         # Devuelve el valor de la variable nint
             
     elif (prueba_simb[0] == "nfloat"):          # Si lo que se busca es un nint...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
-            #print(pila[i])
+            print(pila[i])
             if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nfloat"):    # Si el tipo es el buscado...
-                #print("Se encontró float")
+                print("Se encontró float")
                 return pila[i].get_val()         # Devuelve el valor de la variable nfloat
             
     elif (prueba_simb[0] == "id"):          # Si lo que se busca es un id...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
-            #print(pila[i])
+            print(pila[i])
             if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "id"):    # Si el tipo es el buscado...
-                #print("Se encontró id")
+                print("Se encontró id")
+                return pila[i].get_val()         # Devuelve el valor de la variable id
+            
+    elif (prueba_simb[0] == "varcadena"):          # Si lo que se busca es un varcadena...
+        for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+            print(pila[i])
+            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "varcadena"):    # Si el tipo es el buscado...
+                print("Se encontró id")
+                return pila[i].get_val()         # Devuelve el valor de la variable id
+            
+    elif (prueba_simb[0] == "literalcar"):          # Si lo que se busca es un literalcar...
+        for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+            print(pila[i])
+            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "literalcar"):    # Si el tipo es el buscado...
+                print("Se encontró id")
                 return pila[i].get_val()         # Devuelve el valor de la variable id
 
     else:       # Si no se debe buscar en la pila de la tabla...
@@ -520,10 +532,10 @@ def obtenerValor(accion, results_acc, pila, esCond):
         # Verifica si es una cadena entre comillas " "
         prueba_simb = re.search(r'^".*?"$', accion)
         if (prueba_simb is not None):
-            #print("Se asigna una cadena")
+            print("Se asigna una cadena")
             result = re.sub(r'^\s*"', "", accion)
             result = re.sub(r'"\s*$', "", result)
-            #print(result)
+            print(result)
             return result   # Devuelve la cadena ya sin comillas
     
         # Si no es cadena...
@@ -531,134 +543,127 @@ def obtenerValor(accion, results_acc, pila, esCond):
             prueba_simb = re.split(r"\.", accion, 1)    # Se separa la cadena por el primer punto que se encuentre (separando base y atributo)
             for i in range(len(results_acc)-1, -1, -1):     # Se recorre la pila de resultados buscando la misma base y el mismo atributo
                 if (results_acc[i].get_base()==prueba_simb[0] and results_acc[i].get_atrib()==prueba_simb[1]):  # Si la base y el atributo coinciden...
-                    #print("Se encontró el valor de la pila de resultados")
-                    #print(results_acc[i].get_base())
-                    #print(results_acc[i].get_atrib())
-                    #print(results_acc[i].get_val())
+                    print("Se encontró el valor de la pila de resultados")
+                    print(results_acc[i].get_base())
+                    print(results_acc[i].get_atrib())
+                    print(results_acc[i].get_val())
                     result = results_acc[i].get_val()
-
-                    if (esCond is False):
-                        # Si la acción no es comparación, debe ser ejecutada...
-                        a=results_acc.pop(i) 
-                        pilaTemporal.append(a.get_val()+"\n")  # Guardar el valor en una pila temporal  
-                        traduccion.write(a.get_val()+"\n")
-                        #print(a.get_val())
-                        # Asignar el valor almacenado y eliminar resultado de la pila
-                              # Guardar el valor en una pila temporal
+                    if (esCond is False):           # Si la acción no es comparación, debe ser ejecutada...
+                        results_acc.pop(i)               # Asignar el valor almacenado y eliminar resultado de la pila
                     return result                   # Devolver el valor encontrado
         
-            #print("*** No se encontró valor para asociar ***")
+            print("*** No se encontró valor para asociar ***")
             return None                 # Por defecto se devuelve None si no se encuentra el valor buscado
         
 # Similar a obtenerValor, pero recibe solo la instrucción, la pila de resultados semánticos anteriores, y la pila de la tabla semántica
 # Devuelve True si la condición se evalua de forma positiva, o False si la condición no se cumple
 def obtenerCondicion(cond, results_acc, pila):
-    #print("Entra a condición")
-    #print(cond)
+    print("Entra a condición")
+    print(cond)
 
     prueba_op = re.split(r"!=", cond, 1)         # Busca una negación
     if (len(prueba_op) > 1):
-        #print("Entró a negación")
+        print("Entró a negación")
         # Se usa recursividad para calcular el valor de ambas expresiones
         exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
         exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
-        #print("exp1:", exp1)
-        #print("exp2:", exp2)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
         if (exp1 != exp2):          # Se evalúa la negación...
-            #print("La condición se cumple")
+            print("La condición se cumple")
             return True
         else:
-            #print("La condición no se cumple")
+            print("La condición no se cumple")
             return False
     
     prueba_op = re.split(r"==", cond, 1)        # Busca una igualdad
     if (len(prueba_op) > 1):
-        #print("Entró a afirmación")
+        print("Entró a afirmación")
         # Se usa recursividad para calcular el valor de ambas expresiones
         exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
         exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
-        #print("exp1:", exp1)
-        #print("exp2:", exp2)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
         if (exp1 == exp2):          # Se evalúa la igualdad
-            #print("La condición se cumple")
+            print("La condición se cumple")
             return True
         else:
-            #print("La condición no se cumple")
+            print("La condición no se cumple")
             return False
         
     prueba_op = re.split(r"~~", cond, 1)        # Busca un patrón con expresiones regulares
     if(len(prueba_op) > 1):
-        #print("Entró a similitud")
+        print("Entró a similitud")
         # Se usa recursividad para calcular el valor de ambas expresiones
         exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
         exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
-        #print("exp1:", exp1)
-        #print("exp2:", exp2)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
         if(re.search(exp1, exp2) is not None):  # Se evalúa la similitud
-            #print("La condición se cumple")
+            print("La condición se cumple")
             return True
         else:
-            #print("La condición no se cumple")
+            print("La condición no se cumple")
             return False
 
     prueba_op = re.split(r">", cond, 1)        # Busca un mayor que
     if (len(prueba_op) > 1):
-        #print("Entró a mayor que")
+        print("Entró a mayor que")
         # Se usa recursividad para calcular el valor de ambas expresiones
         exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
         exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
-        #print("exp1:", exp1)
-        #print("exp2:", exp2)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
         if (exp1 > exp2):          # Se evalúa el mayor que
-            #print("La condición se cumple")
+            print("La condición se cumple")
             return True
         else:
-            #print("La condición no se cumple")
+            print("La condición no se cumple")
             return False
         
     prueba_op = re.split(r"<", cond, 1)        # Busca un menor que
     if (len(prueba_op) > 1):
-        #print("Entró a menor que")
+        print("Entró a menor que")
         # Se usa recursividad para calcular el valor de ambas expresiones
         exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
         exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
-        #print("exp1:", exp1)
-        #print("exp2:", exp2)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
         if (exp1 < exp2):          # Se evalúa el menor que
-            #print("La condición se cumple")
+            print("La condición se cumple")
             return True
         else:
-            #print("La condición no se cumple")
+            print("La condición no se cumple")
             return False
         
     prueba_op = re.split(r">=", cond, 1)        # Busca un mayor igual
     if (len(prueba_op) > 1):
-        #print("Entró a mayor igual")
+        print("Entró a mayor igual")
         # Se usa recursividad para calcular el valor de ambas expresiones
         exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
         exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
-        #print("exp1:", exp1)
-        #print("exp2:", exp2)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
         if (exp1 >= exp2):          # Se evalúa el mayor igual
-            #print("La condición se cumple")
+            print("La condición se cumple")
             return True
         else:
-            #print("La condición no se cumple")
+            print("La condición no se cumple")
             return False
         
     prueba_op = re.split(r"<=", cond, 1)        # Busca un menor igual
     if (len(prueba_op) > 1):
-        #print("Entró a menor igual")
+        print("Entró a menor igual")
         # Se usa recursividad para calcular el valor de ambas expresiones
         exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
         exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
-        #print("exp1:", exp1)
-        #print("exp2:", exp2)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
         if (exp1 <= exp2):          # Se evalúa el menor igual
-            #print("La condición se cumple")
+            print("La condición se cumple")
             return True
         else:
-            #print("La condición no se cumple")
+            print("La condición no se cumple")
             return False
 
 def pilaError(esperaba):
@@ -715,12 +720,12 @@ def buscarAccion(variable,estado,posTira):  #esta es una funcion que busca la ac
 
 def buscarSimbolo(simbolos,tira): #esta es una funcion que busca el simbolo en la tira de tokens pero asocia el simbolo con el numero de columna
     if isinstance(tira, token_tipo_val):
-        #print("tira:",tira.get_tipo())
+        print("tira:",tira.get_tipo())
         for simbolo in simbolos:
             if(simbolo[0]==tira.get_tipo()):
                 return simbolo[1]
     else:
-        #print("tira:",tira)
+        print("tira:",tira)
         for simbolo in simbolos:
             if(simbolo[0]==tira):
                 return simbolo[1]
@@ -735,7 +740,3 @@ def limpiar(ventana):
 
 direccionArchivo2=""
 tiraTokens=""
-
-traduccion = open("datos.txt", "w")
-pilaTemporal = []
-print("holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")

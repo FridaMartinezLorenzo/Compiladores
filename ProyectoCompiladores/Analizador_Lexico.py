@@ -632,15 +632,25 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     aux=""
                 elif flag_chkLex == True:       # Si se detecta un espacio, puede haber una palabra por revisar
                     #print("Evaluación de id")   # Busca si es un id
-                    flag_found_id = es_id(aux, nline, tokenList)
-                    if flag_found_id is True:
-                        #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
-                        symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
-                        flag_found_id = False
-                    elif (len(aux)>0):
-                        errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
-                    flag_chkLex = False
-                    aux = ""
+                    if posNum!="":
+                        if flag_found_float:
+                            tokenList.append(element_TokenTable(posNum, "nfloat", nline))
+                            flag_found_float = False
+                        else:
+                            tokenList.append(element_TokenTable(posNum, "nint", nline))
+                        posNum = ""
+                        aux = ""
+                        pass
+                    else:    
+                        flag_found_id = es_id(aux, nline, tokenList)
+                        if flag_found_id is True:
+                            #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                            symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
+                            flag_found_id = False
+                        elif (len(aux)>0):
+                            errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
+                        flag_chkLex = False
+                        aux = ""
                 pass
         if posSimb != "":
             tokenList.append(element_TokenTable(posSimb, posSimb, nline))
@@ -662,6 +672,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     flag_found_id = False
                 else:
                     errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
+
 
                     
 def contar_llaves(tokens):
