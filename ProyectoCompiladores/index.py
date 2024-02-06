@@ -4,6 +4,7 @@ from tkinter import ttk
 from lexico import *
 from sintactico import *
 from analisis_semantico import *
+
 root=Tk()
 root.title("Compilador")#Titulo de ventana
 root.iconbitmap("Compiler.ico")#Icono del programa

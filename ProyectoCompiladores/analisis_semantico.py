@@ -8,9 +8,10 @@ from tkinter import ttk
 from lexico import *
 from Analizador_Lexico import *
 from TablaAnalisisSintactico import *
-from Analizador_Semantico_Final import *
+from Analizador_Semantico_Final import analizadorSemanticoFinal
 from PrimerosYSiguientes import mainPyS
 import re
+
 
 def analizadorSemanticoDespliegue(opcion):
     arr=["Analizador Semántico CLASE", "Analizador Semántico"]
@@ -106,7 +107,7 @@ def abrirArchivo1(Ventana):
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("txt", "*.txt"),))
+    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("txt", "*.txt"),("java", "*.java"),))
     tiraTokens = ObtenerTiraTokensExternaObj(direccionArchivo)
 
     #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
@@ -128,6 +129,13 @@ def abrirArchivo1(Ventana):
         tok.set_tipo(tok.get_tipo().replace("%=","modigual"))
         tok.set_tipo(tok.get_tipo().replace("-", "resta"))
         tok.set_tipo(tok.get_tipo().replace("String", "string"))
+        tok.set_tipo(tok.get_tipo().replace("Scanner", "scanner"))
+        tok.set_tipo(tok.get_tipo().replace("System", "system"))
+        tok.set_tipo(tok.get_tipo().replace("nextInt", "nextint"))
+        tok.set_tipo(tok.get_tipo().replace("nextLine", "nextline"))
+        tok.set_tipo(tok.get_tipo().replace("nextDouble", "nextdouble"))
+        tok.set_tipo(tok.get_tipo().replace("nextFloat", "nextfloat"))
+        tok.set_tipo(tok.get_tipo().replace("nextBoolean", "nextboolean"))
     print("Tira de tokens recibida en el léxico:\n", tiraTokens)
 
 def imprimirResultados(Ventana):
@@ -170,6 +178,7 @@ def imprimirResultados(Ventana):
     # Este arreglo guardará las acciones semánticas guardadas entre llaves { }
     arreAcciones = []
     for grama in Gramatica:
+        print(grama)
         grama=grama.split("->")
         tuplaGrama=(grama[0],grama[1])
         arreGramatica.append(tuplaGrama)
@@ -435,24 +444,6 @@ def obtenerValor(accion, results_acc, pila, esCond):
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return str(val1) + str(val2)    # Devuelve el resultado de la concatenación
 
-    prueba_simb = re.split(r"\+", accion, 1)
-    if (len(prueba_simb) > 1):
-        # Hay una suma en la acción
-        print("Entró a suma")
-        # Se usa recursividad para calcular el valor de los segmentos
-        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
-        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
-        return int(val1) + int(val2)    # Devuelve el resultado de la suma
-
-    prueba_simb = re.split(r"-", accion, 1)
-    if (len(prueba_simb) > 1):
-        # Hay una resta en la acción
-        print("Entró a resta")
-        # Se usa recursividad para calcular el valor de los segmentos
-        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
-        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
-        return int(val1) - int(val2)    # Devuelve el resultado de la resta
-
     prueba_simb = re.split(r"\*", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una multiplicación en la acción
@@ -470,6 +461,24 @@ def obtenerValor(accion, results_acc, pila, esCond):
         val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return int(val1) / int(val2)    # Devuelve el resultado de la división
+
+    prueba_simb = re.split(r"\+", accion, 1)
+    if (len(prueba_simb) > 1):
+        # Hay una suma en la acción
+        print("Entró a suma")
+        # Se usa recursividad para calcular el valor de los segmentos
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
+        return int(val1) + int(val2)    # Devuelve el resultado de la suma
+
+    prueba_simb = re.split(r"-", accion, 1)
+    if (len(prueba_simb) > 1):
+        # Hay una resta en la acción
+        print("Entró a resta")
+        # Se usa recursividad para calcular el valor de los segmentos
+        val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
+        val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
+        return int(val1) - int(val2)    # Devuelve el resultado de la resta
 
     # Si, no hay operación, se debe almacenar un valor (Caso base)
     print("No hay operador")
@@ -558,6 +567,21 @@ def obtenerCondicion(cond, results_acc, pila):
         print("exp1:", exp1)
         print("exp2:", exp2)
         if (exp1 == exp2):          # Se evalúa la igualdad
+            print("La condición se cumple")
+            return True
+        else:
+            print("La condición no se cumple")
+            return False
+        
+    prueba_op = re.split(r"~~", cond, 1)        # Busca un patrón con expresiones regulares
+    if(len(prueba_op) > 1):
+        print("Entró a similitud")
+        # Se usa recursividad para calcular el valor de ambas expresiones
+        exp2 = obtenerValor(prueba_op[1], results_acc, pila, True)
+        exp1 = obtenerValor(prueba_op[0], results_acc, pila, True)
+        print("exp1:", exp1)
+        print("exp2:", exp2)
+        if(re.search(exp1, exp2) is not None):  # Se evalúa la similitud
             print("La condición se cumple")
             return True
         else:
