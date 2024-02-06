@@ -13,6 +13,7 @@ import Analizador_Lexico as AL
 from TablaAnalisisSintactico import *
 import re
 from pip._vendor.distlib.util import AND
+import textwrap
 
 # Clase para guardar resultados de acciones semánticas
 # Ejemplo: T.trad:="Prueba" se guarda en una clase con base T, atributo trad, y valor Prueba
@@ -68,15 +69,13 @@ def encabezado(VentanaPrincipal):
     nuevoArchivoButton.place(x=700,y=100)
     
 def nuevoArchivo():
-    global pilaTemporal
-    traduccion=open("traduccion.txt","w")
-    while pilaTemporal:
-        tok=pilaTemporal.pop()
-        print(tok+"1")
-        print(type(tok))
-        tok.replace(" ","") 
-        if tok!="\n" and tok!=" " and tok!="\t":
-            traduccion.write(str(tok))
+    traduccion=open("traduccion.cpp","w")
+    traduccion2 = codigotraducido.replace("<iostream>", "<iostream>\n")
+    traduccion2 = re.sub(r"{", "{\n", traduccion2)
+    traduccion2 = re.sub(r"}[^;]", "}\n", traduccion2)
+    traduccion2 = traduccion2.replace(";", ";\n")
+    traduccion.write(traduccion2)
+    traduccion.write(traduccion2)
     traduccion.close()
     
 def cargarGramatica(Ventana,direccionArchivo):
@@ -111,7 +110,7 @@ def abrirArchivo1(Ventana):
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("txt", "*.txt"),("java", "*.java"),))
+    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
     tiraTokens = ObtenerTiraTokensExternaObj(direccionArchivo)
 
     #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
@@ -413,6 +412,8 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 labelRegla.grid(row=contadorFila,column=2)
                 label2=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
                 label2.grid(row=contadorFila,column=3)
+                global codigotraducido 
+                codigotraducido = str(results_acc[len(results_acc)-1].get_val())
                 labelAccion=Label(tabla,text="Resultado: "+str(results_acc[len(results_acc)-1]),width=40,font=font1,borderwidth=2,relief="solid")
                 labelAccion.grid(row=contadorFila,column=4)
             elif(accion==''):
