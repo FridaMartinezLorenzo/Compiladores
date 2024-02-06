@@ -75,8 +75,8 @@ def nuevoArchivo():
     traduccion2 = re.sub(r"}[^;]", "}\n", traduccion2)
     traduccion2 = traduccion2.replace(";", ";\n")
     traduccion.write(traduccion2)
-    traduccion.write(traduccion2)
     traduccion.close()
+    
     
 def cargarGramatica(Ventana,direccionArchivo):
     global Gramatica
