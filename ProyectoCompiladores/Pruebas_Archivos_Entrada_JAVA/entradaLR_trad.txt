@@ -6,7 +6,7 @@ N->λ->{N.trad:=""}
 D->class id { X X }->{D.trad:="class "||id.val||"{"||X.trad||" "||X.trad||"}"}
 D->λ->{D.trad:=""}
 F->λ->{F.trad:=""}
-F->E class id { X X }->{F.trad:=""}
+F->E class id { X X }->{F.trad:=E.trad||" class "||id.val||"{"||X.trad||" "||X.trad||"}"}
 X->E U T id ( P ) { W }->{X.trad:=E.trad||" "||U.trad||" "||T.trad||" "||id.val||"("||P.trad||"){"||W.trad||"}"}
 X->T id ( P ) { W }->{X.trad:=T.trad||" "||id.val||"("||P.trad||"){"||W.trad||"}"}
 X->X X->{X.trad:=X.trad||" "||X.trad}
@@ -75,7 +75,7 @@ Q->id Q->{Q.trad:=id.val||" "||Q.trad}
 Q->Z id Q->{Q.trad:=Z.trad||" "||id.val||" "||Q.trad}
 Q->Z C Q->{Q.trad:=Z.trad||" "||C.trad||" "||Q.trad}
 Q->C Q->{Q.trad:=C.trad||" "||Q.trad}
-Q->λ->{Q.trad}
+Q->λ->{Q.trad:=""}
 Z->igualigual->{Z.trad:="=="}
 Z->diferente->{Z.trad:="!="}
 Z->or->{Z.trad:="||"}

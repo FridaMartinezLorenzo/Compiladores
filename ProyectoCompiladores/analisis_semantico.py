@@ -99,8 +99,8 @@ def abrirArchivo1(Ventana):
 
     #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
     for tok in tiraTokens:
-        tok.set_tipo(tok.get_tipo().replace("<","menorque"))
-        tok.set_tipo(tok.get_tipo().replace(">","mayorque"))
+        #tok.set_tipo(tok.get_tipo().replace("<","menorque"))
+        #tok.set_tipo(tok.get_tipo().replace(">","mayorque"))
         tok.set_tipo(tok.get_tipo().replace("==","igualigual"))
         tok.set_tipo(tok.get_tipo().replace(">=","mayorigual"))
         tok.set_tipo(tok.get_tipo().replace("<=","menorigual"))
@@ -431,7 +431,7 @@ def obtenerValor(accion, results_acc, pila, esCond):
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return str(val1) + str(val2)    # Devuelve el resultado de la concatenación
 
-    prueba_simb = re.split(r"\*", accion, 1)
+    '''prueba_simb = re.split(r"\*", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una multiplicación en la acción
         print("Entró a multiplicación")
@@ -465,7 +465,7 @@ def obtenerValor(accion, results_acc, pila, esCond):
         # Se usa recursividad para calcular el valor de los segmentos
         val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
-        return int(val1) - int(val2)    # Devuelve el resultado de la resta
+        return int(val1) - int(val2)    # Devuelve el resultado de la resta'''
 
     # Si, no hay operación, se debe almacenar un valor (Caso base)
     print("No hay operador")
