@@ -4,6 +4,7 @@ from Cargado_Datos_AL import *
 from tkinter import *
 import lexico as lx
 import Analizador_Sintactico as asin
+import Analizador_Semantico_Final as sem
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
@@ -97,6 +98,76 @@ def Analizador_Lexico1():
     Prog_lista_errores = []
 
     abrirArchivo1(lexWindow,lineas_entrada,asin.direccionArchivo3)
+
+    canvas=Canvas(lexWindow,width=1500,height=900)
+    canvas.place(x=0,y=120)
+
+    def on_arrow_key(event):
+            if event.keysym == "Left":
+                canvas.xview_scroll(-1, "units")
+            elif event.keysym == "Right":
+                canvas.xview_scroll(1, "units")
+            #canvas.config(scrollregion=canvas.bbox("all"))    
+
+    def on_arrow_key_v(event):
+         if event.keysym == "Up":
+             canvas.yview_scroll(-1, "units")
+         elif event.keysym == "Down":
+             canvas.yview_scroll(1, "units")
+         #canvas.config(scrollregion=canvas.bbox("all"))
+    
+    scrollbar=ttk.Scrollbar(canvas, orient="vertical", command=canvas.yview)
+    scrollbar.set(0.0, 1.0)
+    scrollbar.place(x=5, y=50, height=300)
+
+    horizontal_scrollbar = ttk.Scrollbar(canvas, orient="horizontal", command=canvas.xview)
+    horizontal_scrollbar.set(0.0,1.0)
+    horizontal_scrollbar.place(x=0,y=0,width=300)
+
+    tabla=Frame(canvas,width=1470,height=300)
+    canvas.create_window((100, 50), window=tabla, anchor=NW)
+    canvas.configure(yscrollcommand=scrollbar.set,xscrollcommand=horizontal_scrollbar.set)
+    
+    ttokenButton=Button(lexWindow,text="Tabla Tokens",width=20,command=lambda:MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lineas_entrada,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores),bg="#83A2E8" ,font=font1)
+    ttokenButton.place(x=350,y=70)
+
+    terroresButton=Button(lexWindow,text="Tabla Errores",width=20,command=lambda:MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores),bg="#83A2E8" ,font=font1)
+    terroresButton.place(x=550,y=70)
+    
+    tsimbolosButton=Button(lexWindow,text="Tabla Símbolos",width=20,command=lambda:MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Prog_lista_tokens),bg="#83A2E8" ,font=font1)
+    tsimbolosButton.place(x=750,y=70)
+    
+
+    def on_mousewheel(event):
+         canvas.yview_scroll(-1 * (event.delta // 120), "units")
+    
+    cleanButton=Button(lexWindow,text="Limpiar",font=font1,bg="#F99417",command=lambda:cleanTable(tabla,arrLabels))
+    cleanButton.place(x=550,y=20)
+    
+    cleanAllButton=Button(lexWindow,text="Limpiar todo",font=font1,bg="#F99417",command=lambda:cleanAll(tabla,arrLabels,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores,lineas_entrada))
+    cleanAllButton.place(x=750,y=20)
+    
+    tabla.update_idletasks()
+    #canvas.config(scrollregion=canvas.bbox("all"))
+    canvas.bind("<MouseWheel>", on_mousewheel)
+    #canvas.bind_all("<KeyPress-Left>", on_arrow_key)
+    #canvas.bind_all("<KeyPress-Right>", on_arrow_key)
+    #canvas.bind_all("<KeyPress-Up>", on_arrow_key_v)
+    #canvas.bind_all("<KeyPress-Down>", on_arrow_key_v)
+
+def Analizador_Lexico2():
+    font1=("Times New Roman",12)
+    arrLabels=[]
+    lexWindow=Toplevel()
+    lexWindow.state("zoomed")
+    lexWindow.title("Analizador Lexico")
+    lexWindow.config(bg="#363062")
+    lineas_entrada = []
+    Prog_lista_tokens = []
+    Prog_lista_simbolos = []
+    Prog_lista_errores = []
+
+    abrirArchivo1(lexWindow,lineas_entrada,sem.direccionArchivo3)
 
     canvas=Canvas(lexWindow,width=1500,height=900)
     canvas.place(x=0,y=120)
@@ -487,10 +558,10 @@ def abrirArchivo1(lexWindow, lineas_entrada,direccion):
     flag_coment = False
     lineas_aux = []
     lexWindow.grab_set()
-    direccionArchivo=direccion
+    direccionArchivo_1=direccion
     
     try:
-        with open(direccionArchivo, 'r') as archivo:
+        with open(direccionArchivo_1, 'r') as archivo:
             # Modificar directamente la lista lineas_entrada
             lineas_entrada.clear()  # Limpiar la lista actual
             lineas_entrada.extend(archivo.readlines())  # Extender la lista con las nuevas líneas

@@ -61,7 +61,8 @@ def encabezado(VentanaPrincipal):
     archivoButton.place(x=300,y=20)
     tokenButton=Button(VentanaPrincipal,text="Abrir Archivo",width=20,bg="#F99417",font=font1,command=lambda:abrirArchivo1(VentanaPrincipal))
     tokenButton.place(x=300,y=100)
-    ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:imprimirResultados(VentanaPrincipal))
+    #ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:imprimirResultados(VentanaPrincipal))
+    ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:[imprimirResultados(VentanaPrincipal),imprimirLexico1(VentanaPrincipal)])
     ImprimirResultad0s.place(x=700,y=20)
     limpiarButton=Button(VentanaPrincipal,text="Limpiar",width=20,bg="#F99417",font=font1,command=lambda:limpiar(VentanaPrincipal))
     limpiarButton.place(x=900,y=20)
@@ -106,12 +107,19 @@ def abrirArchivo(Ventana):
     cargarGramatica(Ventana,direccionArchivo2)
 
 def abrirArchivo1(Ventana):
+    #global tiraTokens
+    #Ventana.grab_set()
+    #username=getpass.getuser()
+    #ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
+    #direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
     global tiraTokens
+    global direccionArchivo3
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
     direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
-    tiraTokens = ObtenerTiraTokensExternaObj(direccionArchivo)
+    direccionArchivo3=direccionArchivo
+    tiraTokens = AL.ObtenerTiraTokensExternaObj(direccionArchivo)
 
     #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
     for tok in tiraTokens:
@@ -141,6 +149,9 @@ def abrirArchivo1(Ventana):
         tok.set_tipo(tok.get_tipo().replace("nextBoolean", "nextboolean"))
     print("Tira de tokens recibida en el léxico:\n", tiraTokens)
 
+def imprimirLexico1(Ventana):
+    AL.Analizador_Lexico2()
+    
 def imprimirResultados(Ventana):
     global tiraTokens
     global direccionArchivo2
@@ -388,7 +399,6 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 else:
                     tama=tama*2 
                 print("tamaño de beta:",tama)
-                print("ctm")
                 for k in range(0,tama):
                     pila.pop()  #pop 2*|β| símbolos
                 print("contenido de la pila despues de eliminar:",pila)
