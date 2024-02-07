@@ -7,22 +7,13 @@ from tkinter import filedialog
 from tkinter import ttk
 from lexico import *
 from Analizador_Lexico import *
-from TablaAnalisisSintactico import *
-from Analizador_Semantico_Final import analizadorSemanticoFinal
+from Analizador_Semantico_Final import *
 from PrimerosYSiguientes import mainPyS
+import Analizador_Lexico as AL
+from TablaAnalisisSintactico import *
 import re
-
-
-def analizadorSemanticoDespliegue(opcion):
-    arr=["Analizador Semántico CLASE", "Analizador Semántico"]
-    if opcion==arr[0]:
-        analizadorSemantico()
-    elif opcion==arr[1]:
-        analizadorSemanticoFinal()
-    else:
-        messagebox.showerror("Error","Aún no existe esa opción")
-    return
-
+from pip._vendor.distlib.util import AND
+import textwrap
 
 # Clase para guardar resultados de acciones semánticas
 # Ejemplo: T.trad:="Prueba" se guarda en una clase con base T, atributo trad, y valor Prueba
@@ -53,7 +44,7 @@ class result_acc:
     def __str__(self):
         return str(self.base) + "." + str(self.atrib) + ":=" + str(self.val)
 
-def analizadorSemantico():
+def analizadorSemanticoFinal():
     VentanaPrincipal =Toplevel()
     VentanaPrincipal.title("Analizador semántico")
     VentanaPrincipal.state("zoomed")
@@ -71,10 +62,22 @@ def encabezado(VentanaPrincipal):
     tokenButton=Button(VentanaPrincipal,text="Abrir Archivo",width=20,bg="#F99417",font=font1,command=lambda:abrirArchivo1(VentanaPrincipal))
     tokenButton.place(x=300,y=100)
     ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:imprimirResultados(VentanaPrincipal))
-    ImprimirResultad0s.place(x=500,y=60)
+    ImprimirResultad0s.place(x=700,y=20)
     limpiarButton=Button(VentanaPrincipal,text="Limpiar",width=20,bg="#F99417",font=font1,command=lambda:limpiar(VentanaPrincipal))
-    limpiarButton.place(x=700,y=60)
-
+    limpiarButton.place(x=900,y=20)
+    nuevoArchivoButton=Button(VentanaPrincipal,text="Generar Código",width=20,bg="#F99417",font=font1,command=lambda:nuevoArchivo())
+    nuevoArchivoButton.place(x=700,y=100)
+    
+def nuevoArchivo():
+    traduccion=open("traduccion.cpp","w")
+    traduccion2 = codigotraducido.replace("<iostream>", "<iostream>\n")
+    traduccion2 = re.sub(r"{", "{\n", traduccion2)
+    traduccion2 = re.sub(r"}[^;]", "}\n", traduccion2)
+    traduccion2 = traduccion2.replace(";", ";\n")
+    traduccion.write(traduccion2)
+    traduccion.close()
+    
+    
 def cargarGramatica(Ventana,direccionArchivo):
     global Gramatica
     frameGramatica=Frame(Ventana,width=300,height=600)
@@ -98,8 +101,8 @@ def abrirArchivo(Ventana):
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    # direccionArchivo2= "Pruebas_Archivos_Entrada_JAVA/entradaLR.txt"      Antes solo aceptaba una gramática, esto se tuvo que cambiar
-    direccionArchivo2 = filedialog.askopenfilename(initialdir=ruta_proyecto, title="Cargar Gramática", filetypes=(("txt", "*.txt"),))
+    direccionArchivo2= "Pruebas_Archivos_Entrada_JAVA/entradaLR_trad.txt"    #  Antes solo aceptaba una gramática, esto se tuvo que cambiar
+    #direccionArchivo2 = filedialog.askopenfilename(initialdir=ruta_proyecto, title="Cargar Gramática", filetypes=(("txt", "*.txt"),))
     cargarGramatica(Ventana,direccionArchivo2)
 
 def abrirArchivo1(Ventana):
@@ -107,13 +110,13 @@ def abrirArchivo1(Ventana):
     Ventana.grab_set()
     username=getpass.getuser()
     ruta_proyecto = r"C:\Users\{username}\Documents\ProyectoCompiladores"
-    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("txt", "*.txt"),("java", "*.java"),))
+    direccionArchivo=filedialog.askopenfilename(initialdir=ruta_proyecto,title="Abrir Archivo",filetypes=(("java","*.java"),))
     tiraTokens = ObtenerTiraTokensExternaObj(direccionArchivo)
 
     #SUSTITUIMOS LOS == y simbolos compuestos por dos caracteres para que sean detectados
     for tok in tiraTokens:
-        tok.set_tipo(tok.get_tipo().replace("<","menorque"))
-        tok.set_tipo(tok.get_tipo().replace(">","mayorque"))
+        #tok.set_tipo(tok.get_tipo().replace("<","menorque"))
+        #tok.set_tipo(tok.get_tipo().replace(">","mayorque"))
         tok.set_tipo(tok.get_tipo().replace("==","igualigual"))
         tok.set_tipo(tok.get_tipo().replace(">=","mayorigual"))
         tok.set_tipo(tok.get_tipo().replace("<=","menorigual"))
@@ -409,6 +412,8 @@ def TablaLr(variable,simbolos,tira,arreGramatica,Ventana,arreAcciones):
                 labelRegla.grid(row=contadorFila,column=2)
                 label2=Label(tabla,text=" ",width=40,font=font1,borderwidth=2,relief="solid")
                 label2.grid(row=contadorFila,column=3)
+                global codigotraducido 
+                codigotraducido = str(results_acc[len(results_acc)-1].get_val())
                 labelAccion=Label(tabla,text="Resultado: "+str(results_acc[len(results_acc)-1]),width=40,font=font1,borderwidth=2,relief="solid")
                 labelAccion.grid(row=contadorFila,column=4)
             elif(accion==''):
@@ -444,7 +449,7 @@ def obtenerValor(accion, results_acc, pila, esCond):
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
         return str(val1) + str(val2)    # Devuelve el resultado de la concatenación
 
-    prueba_simb = re.split(r"\*", accion, 1)
+    '''prueba_simb = re.split(r"\*", accion, 1)
     if (len(prueba_simb) > 1):
         # Hay una multiplicación en la acción
         print("Entró a multiplicación")
@@ -478,7 +483,7 @@ def obtenerValor(accion, results_acc, pila, esCond):
         # Se usa recursividad para calcular el valor de los segmentos
         val2 = obtenerValor(prueba_simb[1], results_acc, pila, esCond)
         val1 = obtenerValor(prueba_simb[0], results_acc, pila, esCond)
-        return int(val1) - int(val2)    # Devuelve el resultado de la resta
+        return int(val1) - int(val2)    # Devuelve el resultado de la resta'''
 
     # Si, no hay operación, se debe almacenar un valor (Caso base)
     print("No hay operador")
@@ -501,6 +506,20 @@ def obtenerValor(accion, results_acc, pila, esCond):
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
             print(pila[i])
             if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "id"):    # Si el tipo es el buscado...
+                print("Se encontró id")
+                return pila[i].get_val()         # Devuelve el valor de la variable id
+            
+    elif (prueba_simb[0] == "varcadena"):          # Si lo que se busca es un varcadena...
+        for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+            print(pila[i])
+            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "varcadena"):    # Si el tipo es el buscado...
+                print("Se encontró id")
+                return pila[i].get_val()         # Devuelve el valor de la variable id
+            
+    elif (prueba_simb[0] == "literalcar"):          # Si lo que se busca es un literalcar...
+        for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
+            print(pila[i])
+            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "literalcar"):    # Si el tipo es el buscado...
                 print("Se encontró id")
                 return pila[i].get_val()         # Devuelve el valor de la variable id
 

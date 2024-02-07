@@ -4,6 +4,7 @@ from tkinter import ttk
 from lexico import *
 from sintactico import *
 from analisis_semantico import *
+
 root=Tk()
 root.title("Compilador")#Titulo de ventana
 root.iconbitmap("Compiler.ico")#Icono del programa
@@ -23,6 +24,13 @@ def opcionesSintactico():
     combo = ttk.Combobox(root, values=arr,width=23,height=15,font=font1,state="readonly")
     combo.place(x=790,y=350)
     syntaxButton.config(text="Buscar",command=lambda:DesplegarAlgoritmoSintactico(combo.get()))
+    combo.set(arr[0])
+
+def analizadorSemantico():
+    arr=["Analizador Semántico CLASE", "Analizador Semántico"]
+    combo = ttk.Combobox(root, values=arr,width=23,height=15,font=font1,state="readonly")
+    combo.place(x=1060,y=350)
+    semanticoButton.config(text="Buscar",command=lambda:analizadorSemanticoDespliegue(combo.get()))
     combo.set(arr[0])
 
 font1=("Times New Roman",14)

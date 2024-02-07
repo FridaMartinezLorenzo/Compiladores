@@ -3,6 +3,7 @@
 from Cargado_Datos_AL import *
 from tkinter import *
 import lexico as lx
+import Analizador_Sintactico as asin
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
@@ -82,6 +83,76 @@ def Analizador_Lexico():
     canvas.bind_all("<KeyPress-Right>", on_arrow_key)
     canvas.bind_all("<KeyPress-Up>", on_arrow_key_v)
     canvas.bind_all("<KeyPress-Down>", on_arrow_key_v)
+
+def Analizador_Lexico1():
+    font1=("Times New Roman",12)
+    arrLabels=[]
+    lexWindow=Toplevel()
+    lexWindow.state("zoomed")
+    lexWindow.title("Analizador Lexico")
+    lexWindow.config(bg="#363062")
+    lineas_entrada = []
+    Prog_lista_tokens = []
+    Prog_lista_simbolos = []
+    Prog_lista_errores = []
+
+    abrirArchivo1(lexWindow,lineas_entrada,asin.direccionArchivo3)
+
+    canvas=Canvas(lexWindow,width=1500,height=900)
+    canvas.place(x=0,y=120)
+
+    def on_arrow_key(event):
+            if event.keysym == "Left":
+                canvas.xview_scroll(-1, "units")
+            elif event.keysym == "Right":
+                canvas.xview_scroll(1, "units")
+            #canvas.config(scrollregion=canvas.bbox("all"))    
+
+    def on_arrow_key_v(event):
+         if event.keysym == "Up":
+             canvas.yview_scroll(-1, "units")
+         elif event.keysym == "Down":
+             canvas.yview_scroll(1, "units")
+         #canvas.config(scrollregion=canvas.bbox("all"))
+    
+    scrollbar=ttk.Scrollbar(canvas, orient="vertical", command=canvas.yview)
+    scrollbar.set(0.0, 1.0)
+    scrollbar.place(x=5, y=50, height=300)
+
+    horizontal_scrollbar = ttk.Scrollbar(canvas, orient="horizontal", command=canvas.xview)
+    horizontal_scrollbar.set(0.0,1.0)
+    horizontal_scrollbar.place(x=0,y=0,width=300)
+
+    tabla=Frame(canvas,width=1470,height=300)
+    canvas.create_window((100, 50), window=tabla, anchor=NW)
+    canvas.configure(yscrollcommand=scrollbar.set,xscrollcommand=horizontal_scrollbar.set)
+    
+    ttokenButton=Button(lexWindow,text="Tabla Tokens",width=20,command=lambda:MostrarTablaTokens(tabla,canvas,lexWindow,arrLabels,lineas_entrada,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores),bg="#83A2E8" ,font=font1)
+    ttokenButton.place(x=350,y=70)
+
+    terroresButton=Button(lexWindow,text="Tabla Errores",width=20,command=lambda:MostrarTablaErrores(tabla,canvas,lexWindow,arrLabels,Prog_lista_errores),bg="#83A2E8" ,font=font1)
+    terroresButton.place(x=550,y=70)
+    
+    tsimbolosButton=Button(lexWindow,text="Tabla Símbolos",width=20,command=lambda:MostrarTablaSimbolos(tabla,canvas,lexWindow,arrLabels,Prog_lista_simbolos,Prog_lista_tokens),bg="#83A2E8" ,font=font1)
+    tsimbolosButton.place(x=750,y=70)
+    
+
+    def on_mousewheel(event):
+         canvas.yview_scroll(-1 * (event.delta // 120), "units")
+    
+    cleanButton=Button(lexWindow,text="Limpiar",font=font1,bg="#F99417",command=lambda:cleanTable(tabla,arrLabels))
+    cleanButton.place(x=550,y=20)
+    
+    cleanAllButton=Button(lexWindow,text="Limpiar todo",font=font1,bg="#F99417",command=lambda:cleanAll(tabla,arrLabels,Prog_lista_tokens,Prog_lista_simbolos,Prog_lista_errores,lineas_entrada))
+    cleanAllButton.place(x=750,y=20)
+    
+    tabla.update_idletasks()
+    #canvas.config(scrollregion=canvas.bbox("all"))
+    canvas.bind("<MouseWheel>", on_mousewheel)
+    #canvas.bind_all("<KeyPress-Left>", on_arrow_key)
+    #canvas.bind_all("<KeyPress-Right>", on_arrow_key)
+    #canvas.bind_all("<KeyPress-Up>", on_arrow_key_v)
+    #canvas.bind_all("<KeyPress-Down>", on_arrow_key_v)
 
 def cleanTable(tabla,arrLabels):
     for widget in tabla.winfo_children():
@@ -412,6 +483,47 @@ def abrirArchivo(lexWindow, lineas_entrada):
     
     lexWindow.grab_release()
 
+def abrirArchivo1(lexWindow, lineas_entrada,direccion):
+    flag_coment = False
+    lineas_aux = []
+    lexWindow.grab_set()
+    direccionArchivo=direccion
+    
+    try:
+        with open(direccionArchivo, 'r') as archivo:
+            # Modificar directamente la lista lineas_entrada
+            lineas_entrada.clear()  # Limpiar la lista actual
+            lineas_entrada.extend(archivo.readlines())  # Extender la lista con las nuevas líneas
+            lineas_aux = lineas_entrada
+            for n in range(0, len(lineas_entrada)):     # Revisa si hay comentarios y los elimina
+                nueva_cad = ""
+                if flag_coment == False:                        # Si no hay un comentario multilínea activo...
+                    if (re.search(r'(//.*)|(/\*.*?\*/)', lineas_aux[n]) is not None):   # Si es un comentario de línea o multilínea que cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'(//.*)|(/\*.*?\*/)', '', lineas_aux[n])
+                    if (re.search(r'/\*.*', lineas_aux[n]) is not None):           # Si es un comentario multilínea que no cierra en la misma línea...
+                        lineas_entrada[n] = re.sub(r'/\*.*', '', lineas_aux[n])
+                        flag_coment = True
+                else:                                           # Si hay un comentario multilínea activo...
+                    if (re.search(r'.*\*/', lineas_aux[n]) is not None):            # Si se encuentra el cierre del comentario multilínea...
+                        lineas_entrada[n] = re.sub(r'.*\*/', '', lineas_aux[n])
+                        flag_coment = False
+                    else:                                                           # Si aún no se cierra el comentario multilínea...
+                        lineas_entrada[n] = ''
+
+                while ("\t" in lineas_entrada[n]):
+                    lineas_entrada[n] = re.sub(r"\t", " ", lineas_entrada[n])
+                    
+            print(direccionArchivo)
+    except Exception as e:
+        print(f"Error al abrir el archivo: {e}")
+    
+    lexWindow.grab_release()
+
+
+
+
+
+
 
 
 
@@ -632,15 +744,25 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     aux=""
                 elif flag_chkLex == True:       # Si se detecta un espacio, puede haber una palabra por revisar
                     #print("Evaluación de id")   # Busca si es un id
-                    flag_found_id = es_id(aux, nline, tokenList)
-                    if flag_found_id is True:
-                        #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
-                        symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
-                        flag_found_id = False
-                    elif (len(aux)>0):
-                        errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
-                    flag_chkLex = False
-                    aux = ""
+                    if posNum!="":
+                        if flag_found_float:
+                            tokenList.append(element_TokenTable(posNum, "nfloat", nline))
+                            flag_found_float = False
+                        else:
+                            tokenList.append(element_TokenTable(posNum, "nint", nline))
+                        posNum = ""
+                        aux = ""
+                        pass
+                    else:    
+                        flag_found_id = es_id(aux, nline, tokenList)
+                        if flag_found_id is True:
+                            #if (not BuscarSimbolo_ts(aux, symbolList_prog)):    # No existe en la tabla
+                            symbolList_prog.append(element_SymbolTable(aux, "null", "null"))
+                            flag_found_id = False
+                        elif (len(aux)>0):
+                            errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
+                        flag_chkLex = False
+                        aux = ""
                 pass
         if posSimb != "":
             tokenList.append(element_TokenTable(posSimb, posSimb, nline))
@@ -662,6 +784,7 @@ def file_breakdown (lines, tokenList,symbolList_prog,errorList_prog):
                     flag_found_id = False
                 else:
                     errorList_prog.append(element_ErrorTable(aux, "ERROR", nline))
+
 
                     
 def contar_llaves(tokens):
