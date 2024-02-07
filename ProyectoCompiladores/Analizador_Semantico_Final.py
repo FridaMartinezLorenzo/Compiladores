@@ -62,7 +62,7 @@ def encabezado(VentanaPrincipal):
     tokenButton=Button(VentanaPrincipal,text="Abrir Archivo",width=20,bg="#F99417",font=font1,command=lambda:abrirArchivo1(VentanaPrincipal))
     tokenButton.place(x=300,y=100)
     #ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:imprimirResultados(VentanaPrincipal))
-    ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:[imprimirResultados(VentanaPrincipal),imprimirLexico1(VentanaPrincipal)])
+    ImprimirResultad0s=Button(VentanaPrincipal,text="Imprimir Resultados",width=20,bg="#F99417",font=font1,command=lambda:[imprimirResultados(VentanaPrincipal),imprimirLexico2(VentanaPrincipal)])
     ImprimirResultad0s.place(x=700,y=20)
     limpiarButton=Button(VentanaPrincipal,text="Limpiar",width=20,bg="#F99417",font=font1,command=lambda:limpiar(VentanaPrincipal))
     limpiarButton.place(x=900,y=20)
@@ -149,7 +149,7 @@ def abrirArchivo1(Ventana):
         tok.set_tipo(tok.get_tipo().replace("nextBoolean", "nextboolean"))
     print("Tira de tokens recibida en el léxico:\n", tiraTokens)
 
-def imprimirLexico1(Ventana):
+def imprimirLexico2(Ventana):
     AL.Analizador_Lexico2()
     
 def imprimirResultados(Ventana):
@@ -501,35 +501,35 @@ def obtenerValor(accion, results_acc, pila, esCond):
     if (prueba_simb[0] == "nint"):          # Si lo que se busca es un nfloat...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
             print(pila[i])
-            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nint"):    # Si el tipo es el buscado...
+            if (isinstance(pila[i], AL.token_tipo_val) and pila[i].get_tipo() == "nint"):    # Si el tipo es el buscado...
                 print("Se encontró int")
                 return pila[i].get_val()         # Devuelve el valor de la variable nint
             
     elif (prueba_simb[0] == "nfloat"):          # Si lo que se busca es un nint...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
             print(pila[i])
-            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "nfloat"):    # Si el tipo es el buscado...
+            if (isinstance(pila[i], AL.token_tipo_val) and pila[i].get_tipo() == "nfloat"):    # Si el tipo es el buscado...
                 print("Se encontró float")
                 return pila[i].get_val()         # Devuelve el valor de la variable nfloat
             
     elif (prueba_simb[0] == "id"):          # Si lo que se busca es un id...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
             print(pila[i])
-            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "id"):    # Si el tipo es el buscado...
+            if (isinstance(pila[i], AL.token_tipo_val) and pila[i].get_tipo() == "id"):    # Si el tipo es el buscado...
                 print("Se encontró id")
                 return pila[i].get_val()         # Devuelve el valor de la variable id
             
     elif (prueba_simb[0] == "varcadena"):          # Si lo que se busca es un varcadena...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
             print(pila[i])
-            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "varcadena"):    # Si el tipo es el buscado...
+            if (isinstance(pila[i], AL.token_tipo_val) and pila[i].get_tipo() == "varcadena"):    # Si el tipo es el buscado...
                 print("Se encontró id")
                 return pila[i].get_val()         # Devuelve el valor de la variable id
             
     elif (prueba_simb[0] == "literalcar"):          # Si lo que se busca es un literalcar...
         for i in range(len(pila)-1, -1, -1):    # Recorrer la pila de la tabla...
             print(pila[i])
-            if (isinstance(pila[i], token_tipo_val) and pila[i].get_tipo() == "literalcar"):    # Si el tipo es el buscado...
+            if (isinstance(pila[i], AL.token_tipo_val) and pila[i].get_tipo() == "literalcar"):    # Si el tipo es el buscado...
                 print("Se encontró id")
                 return pila[i].get_val()         # Devuelve el valor de la variable id
 
@@ -691,7 +691,7 @@ def pilaCadena(pila):
     k=""
     for i in pila:
         # Si i es de tipo token
-        if isinstance(i, token_tipo_val):
+        if isinstance(i, AL.token_tipo_val):
             # Si es un tipo de dato con valor almacenado
             if (i.get_tipo()=="id") or (i.get_tipo()=="nint") or (i.get_tipo()=="varcadena") or (i.get_tipo()=="nfloat") or (i.get_tipo()=="literalcar"):
                 k+=i.get_tipo()+"."
@@ -730,7 +730,7 @@ def buscarAccion(variable,estado,posTira):  #esta es una funcion que busca la ac
     return None
 
 def buscarSimbolo(simbolos,tira): #esta es una funcion que busca el simbolo en la tira de tokens pero asocia el simbolo con el numero de columna
-    if isinstance(tira, token_tipo_val):
+    if isinstance(tira, AL.token_tipo_val):
         print("tira:",tira.get_tipo())
         for simbolo in simbolos:
             if(simbolo[0]==tira.get_tipo()):
